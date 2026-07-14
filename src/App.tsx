@@ -420,6 +420,7 @@ export default function App() {
             toggleWishlist={handleToggleWishlist}
             wishlistedIds={wishlistedIds}
             settings={atelierSettings}
+            galleryPosts={galleryPosts}
           />
         )}
 
@@ -483,10 +484,11 @@ export default function App() {
       <Footer
         setCurrentTab={setCurrentTab}
         openPolicyModal={(policyType) => setActivePolicy(policyType)}
+        settings={atelierSettings}
       />
 
       {/* 4. WHATSAPP FLOATING CTA INTEGRATION */}
-      <WhatsAppButton />
+      <WhatsAppButton whatsappNumber={atelierSettings.whatsappNumber} />
 
       {/* 5. SLIDE-IN CART & INQUIRY CHECKOUT SIDEBAR */}
       <CartSidebar
@@ -498,6 +500,7 @@ export default function App() {
         onRemoveInquiry={handleRemoveInquiry}
         onUpdateQty={handleUpdateCartQty}
         onCheckoutOrders={handleCheckoutOrders}
+        whatsappNumber={atelierSettings.whatsappNumber}
       />
 
       {/* 6. PRODUCT QUICK VIEW MODAL */}

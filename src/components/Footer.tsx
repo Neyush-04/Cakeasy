@@ -1,12 +1,14 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Instagram, Facebook, Globe, Sparkles, ShieldCheck } from 'lucide-react';
+import { AtelierSettings } from '../types';
 
 interface FooterProps {
   setCurrentTab: (tab: string) => void;
   openPolicyModal: (policyType: string) => void;
+  settings?: AtelierSettings;
 }
 
-export default function Footer({ setCurrentTab, openPolicyModal }: FooterProps) {
+export default function Footer({ setCurrentTab, openPolicyModal, settings }: FooterProps) {
   const handleNavigation = (tabId: string) => {
     setCurrentTab(tabId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -31,7 +33,7 @@ export default function Footer({ setCurrentTab, openPolicyModal }: FooterProps) 
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a 
-                href="https://instagram.com/cakeasy.in" 
+                href={settings?.instagramUrl || "https://instagram.com/cakeasy.in"} 
                 target="_blank" 
                 rel="noreferrer"
                 className="h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all"
@@ -99,8 +101,7 @@ export default function Footer({ setCurrentTab, openPolicyModal }: FooterProps) 
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-[#F6B8C8] shrink-0 mt-0.5" />
                 <span>
-                  Bespoke Kitchen Studio, Phase II,<br />
-                  Bandra West, Mumbai - 400050
+                  {settings?.address || "Bespoke Kitchen Studio, Phase II, Bandra West, Mumbai - 400050"}
                 </span>
               </li>
               <li className="flex items-center gap-2.5">

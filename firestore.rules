@@ -29,7 +29,7 @@ service cloud.firestore {
         && data.description is string && data.description.size() <= 500
         && data.priceRange is string && data.priceRange.size() <= 50
         && (data.category == 'bento' || data.category == 'celebration' || data.category == 'wedding' || data.category == 'cupcakes')
-        && data.image is string && data.image.size() <= 300
+        && data.image is string && data.image.size() <= 1000
         && data.popularFlavors is list && data.popularFlavors.size() <= 20;
     }
 
@@ -49,7 +49,7 @@ service cloud.firestore {
       return data.keys().hasAll(['id', 'imageUrl', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
         && data.keys().size() == 7
         && data.id is string && data.id.size() <= 128
-        && data.imageUrl is string && data.imageUrl.size() <= 300
+        && data.imageUrl is string && data.imageUrl.size() <= 1000
         && data.caption is string && data.caption.size() <= 1000
         && data.likes is number
         && data.commentsCount is number

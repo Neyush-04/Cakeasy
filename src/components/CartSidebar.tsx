@@ -20,6 +20,7 @@ interface CartSidebarProps {
   onRemoveInquiry: (index: number) => void;
   onUpdateQty: (index: number, newQty: number) => void;
   onCheckoutOrders?: (items: CartItem[]) => void;
+  whatsappNumber?: string;
 }
 
 export default function CartSidebar({
@@ -31,6 +32,7 @@ export default function CartSidebar({
   onRemoveInquiry,
   onUpdateQty,
   onCheckoutOrders,
+  whatsappNumber,
 }: CartSidebarProps) {
   if (!isOpen) return null;
 
@@ -80,7 +82,7 @@ export default function CartSidebar({
       onCheckoutOrders(cartItems);
     }
 
-    const phoneNumber = '919876543210';
+    const phoneNumber = whatsappNumber || '919876543210';
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`, '_blank');
   };
 

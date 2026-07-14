@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, ArrowRight, Sparkles, Heart, Clock, Truck, ShieldCheck, Star, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from '../data';
-import { MenuItem, AtelierSettings } from '../types';
+import { MenuItem, AtelierSettings, InstagramPost } from '../types';
 import { resolveCakeImage } from '../utils';
 import ScrollReveal from './ScrollReveal';
 import TextSplitter from './TextSplitter';
@@ -13,6 +13,7 @@ interface HomeViewProps {
   toggleWishlist: (product: MenuItem) => void;
   wishlistedIds: string[];
   settings: AtelierSettings;
+  galleryPosts: InstagramPost[];
 }
 
 export default function HomeView({
@@ -22,6 +23,7 @@ export default function HomeView({
   toggleWishlist,
   wishlistedIds,
   settings,
+  galleryPosts,
 }: HomeViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTrendingTab, setActiveTrendingTab] = useState<'trending' | 'new' | 'bestseller'>('trending');
@@ -404,7 +406,7 @@ export default function HomeView({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          {INSTAGRAM_POSTS.map((post) => (
+          {(galleryPosts || []).slice(0, 3).map((post) => (
             <div
               key={post.id}
               onClick={() => setCurrentTab('gallery')}
@@ -423,7 +425,7 @@ export default function HomeView({
               <div className="p-5 flex-grow space-y-2">
                 <div className="flex justify-between items-center text-xs text-gray-500 font-medium">
                   <span>❤️ {post.likes} likes</span>
-                  <span>💬 {post.commentsCount} comments</span>
+                  <span>💬 {post.comments?.length || 0} comments</span>
                 </div>
                 <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
                   {post.caption}
