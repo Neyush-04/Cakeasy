@@ -1,51 +1,30 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, Eye, X, Send, Sparkles, AlertCircle } from 'lucide-react';
-import { INSTAGRAM_POSTS } from '../data';
+import { Heart, MessageCircle, Eye, X, Send, Sparkles } from 'lucide-react';
 import { InstagramPost } from '../types';
 import { resolveCakeImage } from '../utils';
 
-export default function GalleryView() {
-  const [posts, setPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
-  const [selectedPost, setSelectedPost] = useState<InstagramPost | null>(null);
+interface GalleryViewProps {
+  posts: InstagramPost[];
+  onLikePost: (id: string) => void;
+  onAddComment: (postId: string, comment: { username: string; text: string }) => void;
+}
+
+export default function GalleryView({ posts, onLikePost, onAddComment }: GalleryViewProps) {
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
+
+  const selectedPost = posts.find(p => p.id === selectedPostId) || null;
 
   const handleLike = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setPosts(prev => prev.map(p => {
-      if (p.id === id) {
-        return { ...p, likes: p.likes + 1 };
-      }
-      return p;
-    }));
-    if (selectedPost && selectedPost.id === id) {
-      setSelectedPost(prev => prev ? { ...prev, likes: prev.likes + 1 } : null);
-    }
+    onLikePost(id);
   };
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || !selectedPost) return;
 
-    const updatedComment = { username: 'you_sweet_lover', text: newComment.trim() };
-    const updatedComments = [...selectedPost.comments, updatedComment];
-
-    setPosts(prev => prev.map(p => {
-      if (p.id === selectedPost.id) {
-        return {
-          ...p,
-          commentsCount: p.commentsCount + 1,
-          comments: updatedComments
-        };
-      }
-      return p;
-    }));
-
-    setSelectedPost(prev => prev ? {
-      ...prev,
-      commentsCount: prev.commentsCount + 1,
-      comments: updatedComments
-    } : null);
-
+    onAddComment(selectedPost.id, { username: 'you_sweet_lover', text: newComment.trim() });
     setNewComment('');
   };
 
@@ -67,7 +46,7 @@ export default function GalleryView() {
         {posts.map((post) => (
           <div
             key={post.id}
-            onClick={() => setSelectedPost(post)}
+            onClick={() => setSelectedPostId(post.id)}
             className="break-inside-avoid bg-white rounded-[24px] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer relative"
           >
             {/* Image Stage */}
@@ -125,7 +104,7 @@ export default function GalleryView() {
                 className="max-h-[50vh] md:max-h-[80vh] w-full object-cover"
               />
               <button
-                onClick={() => setSelectedPost(null)}
+                onClick={() => setSelectedPostId(null)}
                 className="absolute top-4 left-4 h-10 w-10 bg-white/20 hover:bg-white/40 text-white rounded-full flex items-center justify-center md:hidden"
               >
                 <X className="h-5 w-5" />
@@ -146,7 +125,7 @@ export default function GalleryView() {
                   </div>
                 </div>
                 <button
-                  onClick={() => setSelectedPost(null)}
+                  onClick={() => setSelectedPostId(null)}
                   className="h-10 w-10 bg-neutral-100 hover:bg-[#FFF5F8] text-gray-400 hover:text-[#D63384] rounded-full hidden md:flex items-center justify-center transition-colors"
                 >
                   <X className="h-5 w-5" />

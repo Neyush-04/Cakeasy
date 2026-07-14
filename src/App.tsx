@@ -13,8 +13,8 @@ import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
 
-import { ALL_PRODUCTS } from './data';
-import { MenuItem, CustomCakeState, AtelierSettings, PromoCoupon } from './types';
+import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
+import { MenuItem, CustomCakeState, AtelierSettings, PromoCoupon, InstagramPost } from './types';
 import { ShieldCheck, Sparkles, X, Heart, ShoppingBag } from 'lucide-react';
 
 import { 
@@ -48,6 +48,7 @@ export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customInquiries, setCustomInquiries] = useState<{ cake: CustomCakeState; date: string; notes: string }[]>([]);
   const [ordersList, setOrdersList] = useState<any[]>([]);
+  const [galleryPosts, setGalleryPosts] = useState<InstagramPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Dynamic configuration states
@@ -179,10 +180,34 @@ export default function App() {
       console.error("Error fetching coupons:", error);
     });
 
+    // 5. Realtime listener for Instagram posts
+    const unsubscribeGallery = onSnapshot(collection(db, 'instagram_posts'), async (snapshot) => {
+      if (snapshot.empty) {
+        const seedPromises = INSTAGRAM_POSTS.map(async (post) => {
+          try {
+            await setDoc(doc(db, 'instagram_posts', post.id), post);
+          } catch (e) {
+            console.error("Error seeding default instagram post:", e);
+          }
+        });
+        await Promise.all(seedPromises);
+        setGalleryPosts(INSTAGRAM_POSTS);
+      } else {
+        const loadedPosts: InstagramPost[] = [];
+        snapshot.forEach((doc) => {
+          loadedPosts.push(doc.data() as InstagramPost);
+        });
+        setGalleryPosts(loadedPosts);
+      }
+    }, (error) => {
+      console.error("Error fetching instagram posts:", error);
+    });
+
     return () => {
       unsubscribeOrders();
       unsubscribeSettings();
       unsubscribeCoupons();
+      unsubscribeGallery();
     };
   }, []);
 
@@ -326,6 +351,50 @@ export default function App() {
     }
   };
 
+  const handleLikeGalleryPost = async (id: string) => {
+    try {
+      const post = galleryPosts.find(p => p.id === id);
+      if (post) {
+        await updateDoc(doc(db, 'instagram_posts', id), {
+          likes: post.likes + 1
+        });
+      }
+    } catch (error) {
+      console.error("Error liking gallery post:", error);
+    }
+  };
+
+  const handleCommentGalleryPost = async (postId: string, comment: { username: string; text: string }) => {
+    try {
+      const post = galleryPosts.find(p => p.id === postId);
+      if (post) {
+        const updatedComments = [...post.comments, comment];
+        await updateDoc(doc(db, 'instagram_posts', postId), {
+          comments: updatedComments,
+          commentsCount: updatedComments.length
+        });
+      }
+    } catch (error) {
+      console.error("Error commenting on gallery post:", error);
+    }
+  };
+
+  const handleAddGalleryPost = async (newPost: InstagramPost) => {
+    try {
+      await setDoc(doc(db, 'instagram_posts', newPost.id), newPost);
+    } catch (error) {
+      console.error("Error adding gallery post:", error);
+    }
+  };
+
+  const handleDeleteGalleryPost = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'instagram_posts', id));
+    } catch (error) {
+      console.error("Error deleting gallery post:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between font-sans text-[#1E1E1E] antialiased">
       {/* 1. STICKY TOP NAVBAR */}
@@ -371,7 +440,11 @@ export default function App() {
         )}
 
         {currentTab === 'gallery' && (
-          <GalleryView />
+          <GalleryView
+            posts={galleryPosts}
+            onLikePost={handleLikeGalleryPost}
+            onAddComment={handleCommentGalleryPost}
+          />
         )}
 
         {currentTab === 'about' && (
@@ -395,6 +468,9 @@ export default function App() {
               coupons={couponsList}
               onAddCoupon={handleAddPromoCoupon}
               onToggleCoupon={handleTogglePromoCoupon}
+              galleryPosts={galleryPosts}
+              onAddGalleryPost={handleAddGalleryPost}
+              onDeleteGalleryPost={handleDeleteGalleryPost}
               onLogout={() => setIsAdminLoggedIn(false)}
             />
           ) : (

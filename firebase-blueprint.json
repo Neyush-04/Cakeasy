@@ -108,6 +108,21 @@
         "active": { "type": "boolean" }
       },
       "required": ["code", "discount", "type", "active"]
+    },
+    "InstagramPost": {
+      "title": "InstagramPost",
+      "description": "Visual post from the boutique's Instagram feed",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "caption": { "type": "string" },
+        "likes": { "type": "number" },
+        "commentsCount": { "type": "number" },
+        "date": { "type": "string" },
+        "comments": { "type": "array" }
+      },
+      "required": ["id", "imageUrl", "caption", "likes", "commentsCount", "date", "comments"]
     }
   },
   "firestore": {
@@ -126,6 +141,10 @@
     "/coupons/{couponId}": {
       "schema": "PromoCoupon",
       "description": "Dynamic codes for discount verification"
+    },
+    "/instagram_posts/{postId}": {
+      "schema": "InstagramPost",
+      "description": "Dynamic feed from the boutique's social showcase"
     }
   }
 }

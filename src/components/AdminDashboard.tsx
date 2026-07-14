@@ -16,7 +16,7 @@ import {
   MapPin, 
   Image as ImageIcon 
 } from 'lucide-react';
-import { MenuItem, AtelierSettings, PromoCoupon } from '../types';
+import { MenuItem, AtelierSettings, PromoCoupon, InstagramPost } from '../types';
 import { resolveCakeImage } from '../utils';
 
 interface AdminDashboardProps {
@@ -30,6 +30,9 @@ interface AdminDashboardProps {
   coupons: PromoCoupon[];
   onAddCoupon: (coupon: PromoCoupon) => void;
   onToggleCoupon: (code: string) => void;
+  galleryPosts: InstagramPost[];
+  onAddGalleryPost: (post: InstagramPost) => Promise<void>;
+  onDeleteGalleryPost: (id: string) => Promise<void>;
   onLogout: () => void;
 }
 
@@ -44,9 +47,12 @@ export default function AdminDashboard({
   coupons,
   onAddCoupon,
   onToggleCoupon,
+  galleryPosts,
+  onAddGalleryPost,
+  onDeleteGalleryPost,
   onLogout,
 }: AdminDashboardProps) {
-  const [activePanel, setActivePanel] = useState<'orders' | 'products' | 'coupons' | 'settings'>('orders');
+  const [activePanel, setActivePanel] = useState<'orders' | 'products' | 'coupons' | 'settings' | 'gallery'>('orders');
   
   // Products listing form states
   const [newName, setNewName] = useState('');
@@ -54,6 +60,12 @@ export default function AdminDashboard({
   const [newPrice, setNewPrice] = useState('₹499');
   const [newCategory, setNewCategory] = useState('bento');
   const [newImage, setNewImage] = useState('https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=800');
+
+  // Gallery posts form states
+  const [newGalleryUrl, setNewGalleryUrl] = useState('');
+  const [newGalleryCaption, setNewGalleryCaption] = useState('');
+  const [newGalleryLikes, setNewGalleryLikes] = useState<number>(0);
+  const [newGalleryDate, setNewGalleryDate] = useState('Just now');
 
   // Coupons form states
   const [newCode, setNewCode] = useState('');
@@ -125,6 +137,26 @@ export default function AdminDashboard({
     setNewDiscount('');
   };
 
+  const handleCreateGalleryPost = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGalleryUrl || !newGalleryCaption) return;
+
+    onAddGalleryPost({
+      id: `ig-${Date.now()}`,
+      imageUrl: newGalleryUrl,
+      caption: newGalleryCaption,
+      likes: Number(newGalleryLikes) || 0,
+      commentsCount: 0,
+      date: newGalleryDate || 'Just now',
+      comments: []
+    });
+
+    setNewGalleryUrl('');
+    setNewGalleryCaption('');
+    setNewGalleryLikes(0);
+    setNewGalleryDate('Just now');
+  };
+
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
     const updatedSettings: AtelierSettings = {
@@ -183,6 +215,7 @@ export default function AdminDashboard({
           { id: 'products', label: 'Product Catalog', icon: Layers },
           { id: 'coupons', label: 'Promos & Coupons', icon: CreditCard },
           { id: 'settings', label: 'Studio Settings', icon: Sliders },
+          { id: 'gallery', label: 'Live Gallery', icon: Instagram },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -640,6 +673,113 @@ export default function AdminDashboard({
             </button>
           </div>
         </form>
+      )}
+
+      {/* PANEL 5: INSTAGRAM LIVE GALLERY MANAGER */}
+      {activePanel === 'gallery' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fadeIn text-[#1E1E1E]">
+          {/* Left Form Box */}
+          <div className="bg-white rounded-[32px] p-6 sm:p-8 border border-[#FFF5F8] shadow-sm space-y-6 lg:col-span-1 h-fit">
+            <div className="flex items-center gap-2 pb-2 border-b border-gray-50">
+              <Plus className="h-5 w-5 text-[#D63384]" />
+              <h3 className="font-serif font-bold text-base text-[#1E1E1E]">Add Social Post</h3>
+            </div>
+
+            <form onSubmit={handleCreateGalleryPost} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Image URL</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Paste Unsplash, Cloudinary or direct image link..."
+                  value={newGalleryUrl}
+                  onChange={(e) => setNewGalleryUrl(e.target.value)}
+                  className="w-full bg-neutral-50 border border-neutral-100 rounded-xl py-2.5 px-3 text-xs focus:outline-none focus:border-[#D63384] text-[#1E1E1E]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Caption / Hashtags</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="E.g., Mint chocolate luxury in Bandra... #bento #cakeasy"
+                  value={newGalleryCaption}
+                  onChange={(e) => setNewGalleryCaption(e.target.value)}
+                  className="w-full bg-neutral-50 border border-neutral-100 rounded-xl py-2.5 px-3 text-xs focus:outline-none focus:border-[#D63384] text-[#1E1E1E]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Initial Likes</label>
+                  <input
+                    type="number"
+                    value={newGalleryLikes}
+                    onChange={(e) => setNewGalleryLikes(Number(e.target.value))}
+                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl py-2.5 px-3 text-xs focus:outline-none focus:border-[#D63384] text-[#1E1E1E]"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Timestamp</label>
+                  <input
+                    type="text"
+                    value={newGalleryDate}
+                    onChange={(e) => setNewGalleryDate(e.target.value)}
+                    className="w-full bg-neutral-50 border border-neutral-100 rounded-xl py-2.5 px-3 text-xs focus:outline-none focus:border-[#D63384] text-[#1E1E1E]"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm animate-pulseFast"
+              >
+                Publish directly to Gallery
+              </button>
+            </form>
+          </div>
+
+          {/* Right Grid of Current Gallery Posts */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-[32px] p-6 sm:p-8 border border-[#FFF5F8] shadow-sm space-y-4">
+              <div className="flex justify-between items-center border-b border-gray-50 pb-3">
+                <div className="flex items-center gap-2">
+                  <Instagram className="h-5 w-5 text-[#D63384]" />
+                  <h3 className="font-serif font-bold text-base text-[#1E1E1E]">Live Instagram Feed ({galleryPosts?.length || 0} Posts)</h3>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[550px] overflow-y-auto pr-1">
+                {galleryPosts?.map((post) => (
+                  <div key={post.id} className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100 flex gap-4 items-start relative group">
+                    <img
+                      src={resolveCakeImage(post.imageUrl)}
+                      alt={post.caption}
+                      className="w-16 h-16 object-cover rounded-xl border border-neutral-200 shrink-0"
+                    />
+                    <div className="space-y-1 flex-grow pr-6">
+                      <p className="text-[10px] text-[#D63384] font-bold">@{settings.instagramHandle || 'cakeasy.in'}</p>
+                      <p className="text-xs text-gray-700 font-sans line-clamp-2 leading-relaxed">{post.caption}</p>
+                      <div className="flex gap-3 text-[10px] text-gray-400 font-semibold pt-1">
+                        <span>❤️ {post.likes}</span>
+                        <span>💬 {post.comments?.length || 0}</span>
+                        <span>🕒 {post.date}</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => onDeleteGalleryPost(post.id)}
+                      className="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors cursor-pointer"
+                      title="Delete post"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
