@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, ArrowRight, Sparkles, Heart, Clock, Truck, ShieldCheck, Star, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from '../data';
 import { MenuItem, AtelierSettings } from '../types';
+import { resolveCakeImage } from '../utils';
 import ScrollReveal from './ScrollReveal';
 import TextSplitter from './TextSplitter';
 
@@ -151,7 +152,7 @@ export default function HomeView({
             <div className="lg:col-span-6 relative">
               <div className="relative mx-auto w-full max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-[0_20px_50px_rgba(214,51,132,0.08)] bg-[#FFF5F8]">
                 <img 
-                  src={settings.bannerImage || "/src/assets/images/cakeasy_hero_banner_1784021815776.jpg"} 
+                  src={resolveCakeImage(settings.bannerImage || "/src/assets/images/cakeasy_hero_banner_1784021815776.jpg")} 
                   alt="Stunning Wedding Cake" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
@@ -237,7 +238,7 @@ export default function HomeView({
                     {/* Image container */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
                       <img
-                        src={product.image}
+                        src={resolveCakeImage(product.image)}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
@@ -411,7 +412,7 @@ export default function HomeView({
             >
               <div className="relative aspect-square overflow-hidden bg-gray-50">
                 <img
-                  src={post.imageUrl}
+                  src={resolveCakeImage(post.imageUrl)}
                   alt={post.caption}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />

@@ -17,6 +17,7 @@ import {
   Image as ImageIcon 
 } from 'lucide-react';
 import { MenuItem, AtelierSettings, PromoCoupon } from '../types';
+import { resolveCakeImage } from '../utils';
 
 interface AdminDashboardProps {
   products: MenuItem[];
@@ -350,7 +351,7 @@ export default function AdminDashboard({
               {products.map((p) => (
                 <div key={p.id} className="flex gap-4 p-3 border border-gray-50 rounded-2xl items-center justify-between">
                   <div className="flex gap-3 items-center">
-                    <img src={p.image} alt={p.name} className="w-12 h-12 rounded-lg object-cover border border-neutral-100" />
+                    <img src={resolveCakeImage(p.image)} alt={p.name} className="w-12 h-12 rounded-lg object-cover border border-neutral-100" />
                     <div>
                       <h4 className="font-bold text-xs text-[#1E1E1E]">{p.name}</h4>
                       <p className="text-[10px] text-[#D63384] font-medium uppercase tracking-wider">{p.category} • {p.priceRange}</p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Check, ShoppingBag, Sparkles, AlertCircle, Info, Heart } from 'lucide-react';
 import { MenuItem } from '../types';
 import { POPULAR_FLAVORS } from '../data';
+import { resolveCakeImage } from '../utils';
 
 interface QuickViewModalProps {
   product: MenuItem | null;
@@ -65,7 +66,7 @@ export default function QuickViewModal({
         {/* Left Col: High-Res Image with badges */}
         <div className="relative bg-neutral-100 aspect-square md:h-full overflow-hidden">
           <img
-            src={product.image}
+            src={resolveCakeImage(product.image)}
             alt={product.name}
             className="w-full h-full object-cover"
           />

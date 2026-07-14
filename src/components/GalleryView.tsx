@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Heart, MessageCircle, Eye, X, Send, Sparkles, AlertCircle } from 'lucide-react';
 import { INSTAGRAM_POSTS } from '../data';
 import { InstagramPost } from '../types';
+import { resolveCakeImage } from '../utils';
 
 export default function GalleryView() {
   const [posts, setPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
@@ -72,7 +73,7 @@ export default function GalleryView() {
             {/* Image Stage */}
             <div className="relative overflow-hidden bg-gray-50">
               <img
-                src={post.imageUrl}
+                src={resolveCakeImage(post.imageUrl)}
                 alt={post.caption}
                 className="w-full object-cover group-hover:scale-102 transition-transform duration-500"
               />
@@ -119,7 +120,7 @@ export default function GalleryView() {
             {/* Left Box: Large image aspect */}
             <div className="bg-neutral-900 relative flex items-center justify-center aspect-square md:h-full">
               <img
-                src={selectedPost.imageUrl}
+                src={resolveCakeImage(selectedPost.imageUrl)}
                 alt={selectedPost.caption}
                 className="max-h-[50vh] md:max-h-[80vh] w-full object-cover"
               />

@@ -25,7 +25,7 @@ export const ALL_PRODUCTS: MenuItem[] = [
     description: 'A trendy, pastel-toned personal cake with delicate retro buttercream piping. Perfect for intimate milestones, birthday surprises, or spontaneous sweet cravings.',
     priceRange: '₹399 - ₹499',
     category: 'bento',
-    image: '/src/assets/images/cakeasy_bento_cake_1784021831791.jpg',
+    image: 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&q=80&w=800',
     popularFlavors: ['Classic Madagascar Vanilla', 'Lotus Biscoff Premium', 'Belgian Chocolate Ganache'],
   },
   {
@@ -34,7 +34,7 @@ export const ALL_PRODUCTS: MenuItem[] = [
     description: 'A grand multi-tiered wedding masterpiece frosted with smooth pastel buttercream, hand-applied edible gold leaf accents, and fresh, organic cascading roses.',
     priceRange: '₹4,999 - ₹12,000',
     category: 'wedding',
-    image: '/src/assets/images/cakeasy_hero_banner_1784021815776.jpg',
+    image: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=800',
     popularFlavors: ['Rose Water & Pistachio', 'Classic Madagascar Vanilla', 'Zesty Lemon Blueberry'],
   },
   {
@@ -43,7 +43,7 @@ export const ALL_PRODUCTS: MenuItem[] = [
     description: 'An elegant, tall celebration cake dressed in white chocolate drip, topped with hand-crafted French macarons, organic summer berries, and subtle edible gold foil highlights.',
     priceRange: '₹1,499 - ₹2,999',
     category: 'celebration',
-    image: '/src/assets/images/cakeasy_drip_cake_1784021848957.jpg',
+    image: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800',
     popularFlavors: ['Salted Caramel Crunch', 'Belgian Chocolate Ganache', 'Red Velvet Cream Cheese'],
   },
   {
@@ -78,7 +78,7 @@ export const ALL_PRODUCTS: MenuItem[] = [
 export const INSTAGRAM_POSTS: InstagramPost[] = [
   {
     id: 'ig-1',
-    imageUrl: '/src/assets/images/cakeasy_bento_cake_1784021831791.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&q=80&w=800',
     caption: 'Lavender dreams in a box 💜 Our signature bento cakes are the perfect size for your mini celebrations. DM to book yours! #cakeasy #bentocakes #koreancake #bakinglove',
     likes: 1248,
     commentsCount: 32,
@@ -91,7 +91,7 @@ export const INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: 'ig-2',
-    imageUrl: '/src/assets/images/cakeasy_hero_banner_1784021815776.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?auto=format&fit=crop&q=80&w=800',
     caption: 'Crafting sweet memories for beautiful beginnings. Deeply in love with the gold leaf detail on this multi-tiered pastel rose beauty. 🌹✨ #weddingcake #luxurybaking #confectionery #cakeasy',
     likes: 2405,
     commentsCount: 89,
@@ -104,7 +104,7 @@ export const INSTAGRAM_POSTS: InstagramPost[] = [
   },
   {
     id: 'ig-3',
-    imageUrl: '/src/assets/images/cakeasy_drip_cake_1784021848957.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800',
     caption: 'Macarons, white chocolate drip, and fresh berries—a celebration of elegance and texture. What occasion are we celebrating today? 🍓🍰 #celebrationcakes #dripcake #instacake #aestheticbaking',
     likes: 1892,
     commentsCount: 45,

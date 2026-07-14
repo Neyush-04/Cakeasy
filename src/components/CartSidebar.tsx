@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, ShoppingBag, Trash2, ArrowRight, MessageCircle, AlertTriangle } from 'lucide-react';
 import { MenuItem, CustomCakeState } from '../types';
+import { resolveCakeImage } from '../utils';
 
 interface CartItem {
   product: MenuItem;
@@ -130,7 +131,7 @@ export default function CartSidebar({
                   {cartItems.map((item, index) => (
                     <div key={index} className="flex gap-4 border border-gray-50 rounded-2xl p-4 relative group">
                       <img
-                        src={item.product.image}
+                        src={resolveCakeImage(item.product.image)}
                         alt={item.product.name}
                         className="w-16 h-16 rounded-xl object-cover shrink-0 border border-neutral-100"
                       />

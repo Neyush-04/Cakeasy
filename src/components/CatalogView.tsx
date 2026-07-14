@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Filter, SlidersHorizontal, Heart, Sparkles, Check, Info, ArrowUpDown } from 'lucide-react';
 import { ALL_PRODUCTS, CAKE_CATEGORIES, POPULAR_FLAVORS } from '../data';
 import { MenuItem } from '../types';
+import { resolveCakeImage } from '../utils';
 
 interface CatalogViewProps {
   products: MenuItem[];
@@ -256,7 +257,7 @@ export default function CatalogView({
                     {/* Image */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
                       <img
-                        src={product.image}
+                        src={resolveCakeImage(product.image)}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
