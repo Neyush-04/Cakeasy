@@ -18,6 +18,7 @@ interface CartSidebarProps {
   onRemoveItem: (index: number) => void;
   onRemoveInquiry: (index: number) => void;
   onUpdateQty: (index: number, newQty: number) => void;
+  onCheckoutOrders?: (items: CartItem[]) => void;
 }
 
 export default function CartSidebar({
@@ -28,6 +29,7 @@ export default function CartSidebar({
   onRemoveItem,
   onRemoveInquiry,
   onUpdateQty,
+  onCheckoutOrders,
 }: CartSidebarProps) {
   if (!isOpen) return null;
 
@@ -71,6 +73,11 @@ export default function CartSidebar({
 
     text += `*📍 CONTACT DETAILS:*\n`;
     text += `- Please contact me to finalize flavor layers, transit coordinates, and billing options. Thank you!`;
+
+    // Persist standard orders to Firestore before redirecting to WhatsApp
+    if (cartItems.length > 0 && onCheckoutOrders) {
+      onCheckoutOrders(cartItems);
+    }
 
     const phoneNumber = '919876543210';
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`, '_blank');

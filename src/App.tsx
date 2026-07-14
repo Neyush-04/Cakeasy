@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -14,8 +14,19 @@ import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
 
 import { ALL_PRODUCTS } from './data';
-import { MenuItem, CustomCakeState } from './types';
+import { MenuItem, CustomCakeState, AtelierSettings, PromoCoupon } from './types';
 import { ShieldCheck, Sparkles, X, Heart, ShoppingBag } from 'lucide-react';
+
+import { 
+  collection, 
+  getDocs, 
+  setDoc, 
+  doc, 
+  deleteDoc, 
+  updateDoc, 
+  onSnapshot 
+} from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from './firebase';
 
 interface CartItem {
   product: MenuItem;
@@ -32,17 +43,148 @@ export default function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   // Core application states lifted
-  const [productsList, setProductsList] = useState<MenuItem[]>(ALL_PRODUCTS);
+  const [productsList, setProductsList] = useState<MenuItem[]>([]);
   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customInquiries, setCustomInquiries] = useState<{ cake: CustomCakeState; date: string; notes: string }[]>([]);
-  
-  // Simulated Order Database
-  const [ordersList, setOrdersList] = useState<any[]>([
-    { id: 'CK-7790', customer: 'Priya Sharma', cake: 'Pastel Lavender Bento Cake', status: 'piping', eta: 'Today at 5:30 PM' },
-    { id: 'CK-8824', customer: 'Rohan Deshmukh', cake: 'Chilled White Chocolate Drip Cake', status: 'baking', eta: 'Tomorrow at 1:00 PM' },
-    { id: 'CK-5510', customer: 'Ananya Mehta', cake: 'Artisanal Pastel Rose Wedding Cake', status: 'received', eta: 'July 20th at 12:00 PM' },
-  ]);
+  const [ordersList, setOrdersList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Dynamic configuration states
+  const [atelierSettings, setAtelierSettings] = useState<AtelierSettings>({
+    instagramUrl: 'https://instagram.com/cakeasy.in',
+    instagramHandle: '@cakeasy.in',
+    whatsappNumber: '919876543210',
+    address: 'Cakeasy Studio, Bandra West, Mumbai',
+    email: 'hello@cakeasy.in',
+    bannerImage: '/src/assets/images/cakeasy_hero_banner_1784021815776.jpg',
+    egglessPremium: 100,
+    base1Tier: 999,
+    base2Tiers: 2499,
+    base3Tiers: 4999,
+    deliveryFeePerKm: 45
+  });
+  const [couponsList, setCouponsList] = useState<PromoCoupon[]>([]);
+
+  // Sync Products, Orders, Settings, and Coupons
+  useEffect(() => {
+    // 1. Fetch & Seed Products
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        if (querySnapshot.empty) {
+          // Seed initial products if collection is empty
+          const seedPromises = ALL_PRODUCTS.map(async (p) => {
+            await setDoc(doc(db, 'products', p.id), p);
+          });
+          await Promise.all(seedPromises);
+          setProductsList(ALL_PRODUCTS);
+        } else {
+          const loadedProducts: MenuItem[] = [];
+          querySnapshot.forEach((doc) => {
+            loadedProducts.push(doc.data() as MenuItem);
+          });
+          setProductsList(loadedProducts);
+        }
+      } catch (error) {
+        handleFirestoreError(error, OperationType.LIST, 'products');
+      }
+    };
+
+    fetchProducts();
+
+    // 2. Realtime listener for Orders
+    const unsubscribeOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
+      if (snapshot.empty) {
+        // If empty, seed default orders so dashboard has demo records
+        const defaultOrders = [
+          { id: 'CK-7790', customer: 'Priya Sharma', cake: 'Pastel Lavender Bento Cake', status: 'piping', eta: 'Today at 5:30 PM' },
+          { id: 'CK-8824', customer: 'Rohan Deshmukh', cake: 'Chilled White Chocolate Drip Cake', status: 'baking', eta: 'Tomorrow at 1:00 PM' },
+          { id: 'CK-5510', customer: 'Ananya Mehta', cake: 'Artisanal Pastel Rose Wedding Cake', status: 'received', eta: 'July 20th at 12:00 PM' },
+        ];
+        defaultOrders.forEach(async (order) => {
+          try {
+            await setDoc(doc(db, 'orders', order.id), order);
+          } catch (e) {
+            console.error("Error seeding default order:", e);
+          }
+        });
+        setOrdersList(defaultOrders);
+      } else {
+        const loadedOrders: any[] = [];
+        snapshot.forEach((doc) => {
+          loadedOrders.push(doc.data());
+        });
+        // Sort orders so newer ones appear higher
+        setOrdersList(loadedOrders);
+      }
+      setIsLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'orders');
+    });
+
+    // 3. Realtime listener for Atelier Settings
+    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'atelier'), async (snapshot) => {
+      if (!snapshot.exists()) {
+        const defaultSettings: AtelierSettings = {
+          instagramUrl: 'https://instagram.com/cakeasy.in',
+          instagramHandle: '@cakeasy.in',
+          whatsappNumber: '919876543210',
+          address: 'Cakeasy Studio, Bandra West, Mumbai',
+          email: 'hello@cakeasy.in',
+          bannerImage: '/src/assets/images/cakeasy_hero_banner_1784021815776.jpg',
+          egglessPremium: 100,
+          base1Tier: 999,
+          base2Tiers: 2499,
+          base3Tiers: 4999,
+          deliveryFeePerKm: 45
+        };
+        try {
+          await setDoc(doc(db, 'settings', 'atelier'), defaultSettings);
+          setAtelierSettings(defaultSettings);
+        } catch (e) {
+          console.error("Error seeding default settings:", e);
+        }
+      } else {
+        setAtelierSettings(snapshot.data() as AtelierSettings);
+      }
+    }, (error) => {
+      console.error("Error fetching settings:", error);
+    });
+
+    // 4. Realtime listener for Coupons
+    const unsubscribeCoupons = onSnapshot(collection(db, 'coupons'), async (snapshot) => {
+      if (snapshot.empty) {
+        const defaultCoupons: PromoCoupon[] = [
+          { code: 'CAKEASY10', discount: '10% OFF', type: 'percentage', active: true },
+          { code: 'BENTOLOVER', discount: '₹100 OFF', type: 'fixed', active: true },
+          { code: 'WEDDINGMASTER', discount: 'Free Transit Delivery', type: 'shipping', active: false },
+        ];
+        defaultCoupons.forEach(async (coupon) => {
+          try {
+            await setDoc(doc(db, 'coupons', coupon.code), coupon);
+          } catch (e) {
+            console.error("Error seeding default coupon:", e);
+          }
+        });
+        setCouponsList(defaultCoupons);
+      } else {
+        const loadedCoupons: PromoCoupon[] = [];
+        snapshot.forEach((doc) => {
+          loadedCoupons.push(doc.data() as PromoCoupon);
+        });
+        setCouponsList(loadedCoupons);
+      }
+    }, (error) => {
+      console.error("Error fetching coupons:", error);
+    });
+
+    return () => {
+      unsubscribeOrders();
+      unsubscribeSettings();
+      unsubscribeCoupons();
+    };
+  }, []);
 
   // Policy Modal States
   const [activePolicy, setActivePolicy] = useState<string | null>(null);
@@ -67,21 +209,46 @@ export default function App() {
   };
 
   // Custom cake inquiries list
-  const handleAddCustomInquiry = (cake: CustomCakeState, date: string, notes: string) => {
+  const handleAddCustomInquiry = async (cake: CustomCakeState, date: string, notes: string) => {
     setCustomInquiries(prev => [...prev, { cake, date, notes }]);
     
     // Auto-append custom inquiry as a simulated trackable order!
     const mockId = `CK-${Math.floor(1000 + Math.random() * 9000)}`;
-    setOrdersList(prev => [
-      {
+    const newOrder = {
+      id: mockId,
+      customer: 'You (Website Guest)',
+      cake: `Bespoke ${cake.tiers} Tier ${cake.shape} Cake`,
+      status: 'received',
+      eta: date ? `${date} at 4:00 PM` : 'Scheduled TBD',
+    };
+
+    try {
+      await setDoc(doc(db, 'orders', mockId), newOrder);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `orders/${mockId}`);
+    }
+  };
+
+  // Standard cart order submissions
+  const handleCheckoutOrders = async (items: CartItem[]) => {
+    const promises = items.map(async (item) => {
+      const mockId = `CK-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newOrder = {
         id: mockId,
         customer: 'You (Website Guest)',
-        cake: `Bespoke ${cake.tiers} Tier ${cake.shape} Cake`,
+        cake: `${item.product.name} (${item.weight}, ${item.flavor})`,
         status: 'received',
-        eta: date ? `${date} at 4:00 PM` : 'Scheduled TBD',
-      },
-      ...prev
-    ]);
+        eta: 'Scheduled in 48 hours',
+      };
+      await setDoc(doc(db, 'orders', mockId), newOrder);
+    });
+
+    try {
+      await Promise.all(promises);
+      setCartItems([]); // Clear cart items after successful checkout
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'orders');
+    }
   };
 
   const handleRemoveInquiry = (index: number) => {
@@ -98,21 +265,65 @@ export default function App() {
   };
 
   // Admin CMS actions
-  const handleAddProductCatalog = (newProduct: MenuItem) => {
-    setProductsList(prev => [...prev, newProduct]);
+  const handleAddProductCatalog = async (newProduct: MenuItem) => {
+    try {
+      await setDoc(doc(db, 'products', newProduct.id), newProduct);
+      setProductsList(prev => [...prev, newProduct]);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `products/${newProduct.id}`);
+    }
   };
 
-  const handleDeleteProductCatalog = (id: string) => {
-    setProductsList(prev => prev.filter(p => p.id !== id));
+  const handleDeleteProductCatalog = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'products', id));
+      setProductsList(prev => prev.filter(p => p.id !== id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `products/${id}`);
+    }
   };
 
-  const handleUpdateOrderStatus = (orderId: string, nextStatus: string) => {
-    setOrdersList(prev => prev.map(o => {
-      if (o.id === orderId) {
-        return { ...o, status: nextStatus };
+  const handleUpdateOrderStatus = async (orderId: string, nextStatus: string) => {
+    try {
+      await updateDoc(doc(db, 'orders', orderId), { status: nextStatus });
+      setOrdersList(prev => prev.map(o => {
+        if (o.id === orderId) {
+          return { ...o, status: nextStatus };
+        }
+        return o;
+      }));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `orders/${orderId}`);
+    }
+  };
+
+  // Save studio operations config to Firestore
+  const handleUpdateAtelierSettings = async (nextSettings: AtelierSettings) => {
+    try {
+      await setDoc(doc(db, 'settings', 'atelier'), nextSettings);
+      setAtelierSettings(nextSettings);
+    } catch (error) {
+      console.error("Error saving settings to Firestore:", error);
+    }
+  };
+
+  const handleAddPromoCoupon = async (newCoupon: PromoCoupon) => {
+    try {
+      await setDoc(doc(db, 'coupons', newCoupon.code), newCoupon);
+    } catch (error) {
+      console.error("Error adding coupon:", error);
+    }
+  };
+
+  const handleTogglePromoCoupon = async (code: string) => {
+    try {
+      const coupon = couponsList.find(c => c.code === code);
+      if (coupon) {
+        await updateDoc(doc(db, 'coupons', code), { active: !coupon.active });
       }
-      return o;
-    }));
+    } catch (error) {
+      console.error("Error toggling coupon active status:", error);
+    }
   };
 
   return (
@@ -139,6 +350,7 @@ export default function App() {
             setSelectedProduct={setSelectedProduct}
             toggleWishlist={handleToggleWishlist}
             wishlistedIds={wishlistedIds}
+            settings={atelierSettings}
           />
         )}
 
@@ -154,6 +366,7 @@ export default function App() {
         {currentTab === 'custom' && (
           <CustomBuilderView
             onAddCustomInquiry={handleAddCustomInquiry}
+            settings={atelierSettings}
           />
         )}
 
@@ -177,6 +390,11 @@ export default function App() {
               onDeleteProduct={handleDeleteProductCatalog}
               orders={ordersList}
               onUpdateOrderStatus={handleUpdateOrderStatus}
+              settings={atelierSettings}
+              onUpdateSettings={handleUpdateAtelierSettings}
+              coupons={couponsList}
+              onAddCoupon={handleAddPromoCoupon}
+              onToggleCoupon={handleTogglePromoCoupon}
               onLogout={() => setIsAdminLoggedIn(false)}
             />
           ) : (
@@ -203,6 +421,7 @@ export default function App() {
         onRemoveItem={handleRemoveCartItem}
         onRemoveInquiry={handleRemoveInquiry}
         onUpdateQty={handleUpdateCartQty}
+        onCheckoutOrders={handleCheckoutOrders}
       />
 
       {/* 6. PRODUCT QUICK VIEW MODAL */}

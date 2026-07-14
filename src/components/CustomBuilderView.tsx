@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Sparkles, ArrowRight, ArrowLeft, Upload, Cake, Calendar, Heart, FileText, CheckCircle2 } from 'lucide-react';
 import { POPULAR_FLAVORS } from '../data';
-import { CustomCakeState } from '../types';
+import { CustomCakeState, AtelierSettings } from '../types';
 
 interface CustomBuilderViewProps {
   onAddCustomInquiry: (cake: CustomCakeState, date: string, notes: string) => void;
+  settings: AtelierSettings;
 }
 
-export default function CustomBuilderView({ onAddCustomInquiry }: CustomBuilderViewProps) {
+export default function CustomBuilderView({ onAddCustomInquiry, settings }: CustomBuilderViewProps) {
   const [step, setStep] = useState(1);
   const [tiers, setTiers] = useState<1 | 2 | 3>(1);
   const [shape, setShape] = useState<'round' | 'square' | 'heart'>('round');
@@ -21,7 +22,7 @@ export default function CustomBuilderView({ onAddCustomInquiry }: CustomBuilderV
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
+  
   const frostingColors = [
     { name: 'Rose Blush', hex: '#F6B8C8' },
     { name: 'Lavender Mist', hex: '#E2D4F0' },
@@ -47,9 +48,9 @@ export default function CustomBuilderView({ onAddCustomInquiry }: CustomBuilderV
   };
 
   const calculateEstPrice = () => {
-    let base = 999;
-    if (tiers === 2) base = 2499;
-    if (tiers === 3) base = 4999;
+    let base = settings.base1Tier || 999;
+    if (tiers === 2) base = settings.base2Tiers || 2499;
+    if (tiers === 3) base = settings.base3Tiers || 4999;
 
     // Weight multiplication factor (roughly)
     let weightFactor = 1;

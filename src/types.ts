@@ -1,3 +1,24 @@
+export interface AtelierSettings {
+  instagramUrl: string;
+  instagramHandle: string;
+  whatsappNumber: string;
+  address: string;
+  email: string;
+  bannerImage: string;
+  egglessPremium: number;
+  base1Tier: number;
+  base2Tiers: number;
+  base3Tiers: number;
+  deliveryFeePerKm: number;
+}
+
+export interface PromoCoupon {
+  code: string;
+  discount: string;
+  type: 'percentage' | 'fixed' | 'shipping';
+  active: boolean;
+}
+
 export interface CustomCakeState {
   tiers: 1 | 2 | 3;
   shape: 'round' | 'square' | 'heart';

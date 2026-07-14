@@ -6,6 +6,11 @@
   --font-serif: "Playfair Display", Georgia, serif;
 }
 
+/* Smooth HTML scrolling behavior */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Custom scrollbar to match our elegant theme */
 ::-webkit-scrollbar {
   width: 6px;
@@ -20,4 +25,35 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #d4c1b2;
 }
+
+/* Advanced Luxury Motion Utilities */
+.ease-premium {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* Custom elegant easing */
+}
+
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.split-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+  animation: revealChar 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes revealChar {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 

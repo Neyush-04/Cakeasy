@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable primitive validators
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprint for MenuItem
+    function isValidMenuItem(data) {
+      return data.keys().hasAll(['id', 'name', 'description', 'priceRange', 'category', 'image', 'popularFlavors'])
+        && data.keys().size() == 7
+        && data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 100
+        && data.description is string && data.description.size() <= 500
+        && data.priceRange is string && data.priceRange.size() <= 50
+        && (data.category == 'bento' || data.category == 'celebration' || data.category == 'wedding' || data.category == 'cupcakes')
+        && data.image is string && data.image.size() <= 300
+        && data.popularFlavors is list && data.popularFlavors.size() <= 20;
+    }
+
+    // Validation Blueprint for Order Inquiries
+    function isValidOrder(data) {
+      return data.keys().hasAll(['id', 'customer', 'cake', 'status', 'eta'])
+        && data.keys().size() >= 5
+        && data.id is string && data.id.size() <= 128
+        && data.customer is string && data.customer.size() <= 100
+        && data.cake is string && data.cake.size() <= 200
+        && (data.status == 'received' || data.status == 'baking' || data.status == 'piping' || data.status == 'checked' || data.status == 'dispatched')
+        && data.eta is string && data.eta.size() <= 100;
+    }
+
+    // Products Catalog Match Rules
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isValidId(productId) && isValidMenuItem(incoming());
+      allow delete: if isValidId(productId);
+    }
+
+    // Order Tracking Match Rules
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if isValidId(orderId) && isValidOrder(incoming());
+      allow update: if isValidId(orderId) && isValidOrder(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['status']) ||
+        incoming().diff(existing()).affectedKeys().hasOnly(['id', 'customer', 'cake', 'status', 'eta'])
+      );
+      allow delete: if isValidId(orderId);
+    }
+
+    // General Studio Operations Settings Match Rules
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow write: if isValidId(settingsId);
+    }
+
+    // Promo Coupons Match Rules
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isValidId(couponId);
+    }
+  }
+}

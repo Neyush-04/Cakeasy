@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Search, ArrowRight, Sparkles, Heart, Clock, Truck, ShieldCheck, Star, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from '../data';
-import { MenuItem } from '../types';
+import { MenuItem, AtelierSettings } from '../types';
+import ScrollReveal from './ScrollReveal';
+import TextSplitter from './TextSplitter';
 
 interface HomeViewProps {
   products: MenuItem[];
@@ -9,6 +11,7 @@ interface HomeViewProps {
   setSelectedProduct: (product: MenuItem) => void;
   toggleWishlist: (product: MenuItem) => void;
   wishlistedIds: string[];
+  settings: AtelierSettings;
 }
 
 export default function HomeView({
@@ -17,6 +20,7 @@ export default function HomeView({
   setSelectedProduct,
   toggleWishlist,
   wishlistedIds,
+  settings,
 }: HomeViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTrendingTab, setActiveTrendingTab] = useState<'trending' | 'new' | 'bestseller'>('trending');
@@ -99,11 +103,13 @@ export default function HomeView({
               
               <div className="space-y-4">
                 <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1E1E1E] leading-tight">
-                  Crafting <span className="text-[#D63384] relative italic">Sweet</span> Memories<span className="text-[#D63384]">.</span>
+                  <TextSplitter text="Crafting Sweet Memories." className="text-[#1E1E1E]" />
                 </h1>
-                <p className="text-gray-600 text-lg leading-relaxed max-w-xl">
-                  Artisanal customized cakes baked fresh daily. Experience Le Cordon Bleu precision, premium ingredients, and breathtaking designs tailored for your milestones.
-                </p>
+                <ScrollReveal delay={300}>
+                  <p className="text-gray-600 text-lg leading-relaxed max-w-xl">
+                    Artisanal customized cakes baked fresh daily. Experience Le Cordon Bleu precision, premium ingredients, and breathtaking designs tailored for your milestones.
+                  </p>
+                </ScrollReveal>
               </div>
 
               {/* Action Buttons */}
@@ -145,7 +151,7 @@ export default function HomeView({
             <div className="lg:col-span-6 relative">
               <div className="relative mx-auto w-full max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-[0_20px_50px_rgba(214,51,132,0.08)] bg-[#FFF5F8]">
                 <img 
-                  src="/src/assets/images/cakeasy_hero_banner_1784021815776.jpg" 
+                  src={settings.bannerImage || "/src/assets/images/cakeasy_hero_banner_1784021815776.jpg"} 
                   alt="Stunning Wedding Cake" 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
@@ -162,25 +168,28 @@ export default function HomeView({
 
       {/* 2. FEATURED CATEGORIES SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto space-y-3 mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Bespoke Categories</span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E1E1E]">Explore Our Sweet Creations</h2>
-          <p className="text-gray-500 text-sm">Select a curated theme designed to add exquisite flair to your sweet celebration.</p>
-        </div>
+        <ScrollReveal>
+          <div className="text-center max-w-xl mx-auto space-y-3 mb-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Bespoke Categories</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E1E1E]">Explore Our Sweet Creations</h2>
+            <p className="text-gray-500 text-sm">Select a curated theme designed to add exquisite flair to your sweet celebration.</p>
+          </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              onClick={() => setCurrentTab('catalog')}
-              className={`cursor-pointer border border-[#FFF5F8] rounded-[24px] p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1 bg-white`}
-            >
-              <div className="h-16 w-16 mx-auto rounded-full bg-[#FFF5F8] flex items-center justify-center text-3xl group-hover:scale-110 transition-transform mb-4">
-                {cat.icon}
+          {categories.map((cat, index) => (
+            <ScrollReveal key={cat.id} delay={index * 100}>
+              <div
+                onClick={() => setCurrentTab('catalog')}
+                className={`cursor-pointer border border-[#FFF5F8] rounded-[24px] p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1 bg-white h-full`}
+              >
+                <div className="h-16 w-16 mx-auto rounded-full bg-[#FFF5F8] flex items-center justify-center text-3xl group-hover:scale-110 transition-transform mb-4">
+                  {cat.icon}
+                </div>
+                <h3 className="font-serif font-bold text-base text-[#1E1E1E] group-hover:text-[#D63384] transition-colors">{cat.label}</h3>
+                <p className="text-xs text-gray-400 mt-1">{cat.count}</p>
               </div>
-              <h3 className="font-serif font-bold text-base text-[#1E1E1E] group-hover:text-[#D63384] transition-colors">{cat.label}</h3>
-              <p className="text-xs text-gray-400 mt-1">{cat.count}</p>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -218,68 +227,69 @@ export default function HomeView({
 
           {/* Product Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {getFilteredTrending().map((product) => {
+            {getFilteredTrending().map((product, index) => {
               const isWishlisted = wishlistedIds.includes(product.id);
               return (
-                <div
-                  key={product.id}
-                  className="bg-white rounded-[24px] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-md transition-all group relative flex flex-col h-full"
-                >
-                  {/* Image container */}
-                  <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Badge */}
-                    <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-[#D63384] text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-[#FFF5F8]">
-                      {product.category === 'bento' ? 'Personal Bento' : product.category === 'wedding' ? 'Artisanal Wedding' : 'Celebration Special'}
-                    </span>
-                    {/* Wishlist Button */}
-                    <button
-                      onClick={() => toggleWishlist(product)}
-                      className="absolute top-4 right-4 h-9 w-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-[#D63384] transition-colors shadow-sm"
-                    >
-                      <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-[#D63384] stroke-[#D63384]' : ''}`} />
-                    </button>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex flex-col flex-grow space-y-4">
-                    <div className="space-y-1">
-                      <h3 className="font-serif font-bold text-lg text-[#1E1E1E] leading-snug group-hover:text-[#D63384] transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-gray-500 line-clamp-2">
-                        {product.description}
-                      </p>
-                    </div>
-
-                    {/* Flavors bar */}
-                    <div className="flex flex-wrap gap-1">
-                      {product.popularFlavors.slice(0, 2).map((flavor, index) => (
-                        <span key={index} className="bg-[#FFF5F8] text-[#D63384] text-[10px] px-2 py-0.5 rounded font-medium">
-                          {flavor}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Pricing & CTA */}
-                    <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
-                      <div>
-                        <p className="text-[10px] text-gray-400 uppercase tracking-widest">Starting at</p>
-                        <p className="font-serif font-bold text-base text-[#1E1E1E]">{product.priceRange.split(' - ')[0]}</p>
-                      </div>
+                <ScrollReveal key={product.id} delay={index * 150} className="h-full">
+                  <div
+                    className="bg-white rounded-[24px] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-md transition-all group relative flex flex-col h-full"
+                  >
+                    {/* Image container */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {/* Badge */}
+                      <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-[#D63384] text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-[#FFF5F8]">
+                        {product.category === 'bento' ? 'Personal Bento' : product.category === 'wedding' ? 'Artisanal Wedding' : 'Celebration Special'}
+                      </span>
+                      {/* Wishlist Button */}
                       <button
-                        onClick={() => setSelectedProduct(product)}
-                        className="bg-[#FFF5F8] hover:bg-[#D63384] text-[#D63384] hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5"
+                        onClick={() => toggleWishlist(product)}
+                        className="absolute top-4 right-4 h-9 w-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-[#D63384] transition-colors shadow-sm"
                       >
-                        Details & Baker Options
+                        <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-[#D63384] stroke-[#D63384]' : ''}`} />
                       </button>
                     </div>
+
+                    {/* Content */}
+                    <div className="p-6 flex flex-col flex-grow space-y-4">
+                      <div className="space-y-1">
+                        <h3 className="font-serif font-bold text-lg text-[#1E1E1E] leading-snug group-hover:text-[#D63384] transition-colors">
+                          {product.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 line-clamp-2">
+                          {product.description}
+                        </p>
+                      </div>
+
+                      {/* Flavors bar */}
+                      <div className="flex flex-wrap gap-1">
+                        {product.popularFlavors.slice(0, 2).map((flavor, index) => (
+                          <span key={index} className="bg-[#FFF5F8] text-[#D63384] text-[10px] px-2 py-0.5 rounded font-medium">
+                            {flavor}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Pricing & CTA */}
+                      <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-widest">Starting at</p>
+                          <p className="font-serif font-bold text-base text-[#1E1E1E]">{product.priceRange.split(' - ')[0]}</p>
+                        </div>
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className="bg-[#FFF5F8] hover:bg-[#D63384] text-[#D63384] hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5"
+                        >
+                          Details & Baker Options
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </ScrollReveal>
               );
             })}
           </div>
@@ -297,35 +307,41 @@ export default function HomeView({
 
       {/* 4. VALUE PROPOSITION SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div className="space-y-4 text-center">
-          <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
-            <Clock className="h-6 w-6" />
+        <ScrollReveal delay={0}>
+          <div className="space-y-4 text-center">
+            <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20 animate-pulse">
+              <Clock className="h-6 w-6" />
+            </div>
+            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Bespoke Express Schedule</h3>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Need a same-day custom cake? Our collection of signature bento cakes can be custom-piped and hand-delivered within 4 to 6 hours!
+            </p>
           </div>
-          <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Bespoke Express Schedule</h3>
-          <p className="text-sm text-gray-500 leading-relaxed">
-            Need a same-day custom cake? Our collection of signature bento cakes can be custom-piped and hand-delivered within 4 to 6 hours!
-          </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="space-y-4 text-center">
-          <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
-            <Truck className="h-6 w-6" />
+        <ScrollReveal delay={150}>
+          <div className="space-y-4 text-center">
+            <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
+              <Truck className="h-6 w-6" />
+            </div>
+            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Temperature-Controlled Transit</h3>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Delivered in specialized, chilled boutique containers to prevent delicate custom toppings and intricate ganaches from losing form.
+            </p>
           </div>
-          <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Temperature-Controlled Transit</h3>
-          <p className="text-sm text-gray-500 leading-relaxed">
-            Delivered in specialized, chilled boutique containers to prevent delicate custom toppings and intricate ganaches from losing form.
-          </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="space-y-4 text-center">
-          <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
-            <ShieldCheck className="h-6 w-6" />
+        <ScrollReveal delay={300}>
+          <div className="space-y-4 text-center">
+            <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Allergen & Eggless Distinction</h3>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Our kitchen runs a strict clean-workspace policy. All recipes can be ordered 100% eggless with organic, premium dairy alternatives.
+            </p>
           </div>
-          <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Allergen & Eggless Distinction</h3>
-          <p className="text-sm text-gray-500 leading-relaxed">
-            Our kitchen runs a strict clean-workspace policy. All recipes can be ordered 100% eggless with organic, premium dairy alternatives.
-          </p>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* 5. TESTIMONIALS SLIDER SECTION */}
@@ -373,11 +389,11 @@ export default function HomeView({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="space-y-1 text-center sm:text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Join @cakeasy.in</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Join {settings.instagramHandle || "@cakeasy.in"}</span>
             <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">Follow Our Instagram Journey</h2>
           </div>
           <a
-            href="https://instagram.com/cakeasy.in"
+            href={settings.instagramUrl || "https://instagram.com/cakeasy.in"}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 bg-white hover:bg-[#FFF5F8] border border-[#F6B8C8] text-[#D63384] font-semibold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition-all"

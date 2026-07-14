@@ -1,0 +1,131 @@
+{
+  "entities": {
+    "MenuItem": {
+      "title": "MenuItem",
+      "description": "Bake items listed in the catalogue",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the cake item"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Visual name of the cake"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Detailed mouthwatering description"
+        },
+        "priceRange": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Price bracket e.g. ₹499 - ₹899"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["bento", "celebration", "wedding", "cupcakes"],
+          "description": "Cake category type"
+        },
+        "image": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Secure image location URL"
+        },
+        "popularFlavors": {
+          "type": "array",
+          "description": "Customizable list of flavors available for this product"
+        }
+      },
+      "required": ["id", "name", "description", "priceRange", "category", "image", "popularFlavors"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "An incoming bespoke order or catalog cake order",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Order code starting with CK-"
+        },
+        "customer": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Ordering user or guest name"
+        },
+        "cake": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Cake style and configuration details"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["received", "baking", "piping", "checked", "dispatched"],
+          "description": "Order progression status"
+        },
+        "eta": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Estimated time of arrival or transit target"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the inquiry was saved"
+        }
+      },
+      "required": ["id", "customer", "cake", "status", "eta"]
+    },
+    "AtelierSettings": {
+      "title": "AtelierSettings",
+      "description": "Dynamic general operational settings and pricing formulas for the studio",
+      "type": "object",
+      "properties": {
+        "instagramUrl": { "type": "string" },
+        "instagramHandle": { "type": "string" },
+        "whatsappNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "email": { "type": "string" },
+        "bannerImage": { "type": "string" },
+        "egglessPremium": { "type": "number" },
+        "base1Tier": { "type": "number" },
+        "base2Tiers": { "type": "number" },
+        "base3Tiers": { "type": "number" },
+        "deliveryFeePerKm": { "type": "number" }
+      },
+      "required": ["instagramUrl", "instagramHandle", "whatsappNumber", "address", "email", "bannerImage", "egglessPremium", "base1Tier", "base2Tiers", "base3Tiers", "deliveryFeePerKm"]
+    },
+    "PromoCoupon": {
+      "title": "PromoCoupon",
+      "description": "Discount code campaigns",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "discount": { "type": "string" },
+        "type": { "type": "string", "enum": ["percentage", "fixed", "shipping"] },
+        "active": { "type": "boolean" }
+      },
+      "required": ["code", "discount", "type", "active"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "MenuItem",
+      "description": "Collection of bakery products listed in the catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Active tracking collection of bespoke order inquiries"
+    },
+    "/settings/{settingsId}": {
+      "schema": "AtelierSettings",
+      "description": "General settings document"
+    },
+    "/coupons/{couponId}": {
+      "schema": "PromoCoupon",
+      "description": "Dynamic codes for discount verification"
+    }
+  }
+}
