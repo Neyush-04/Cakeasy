@@ -21,15 +21,15 @@ import { resolveCakeImage } from '../utils';
 
 interface AdminDashboardProps {
   products: MenuItem[];
-  onAddProduct: (product: MenuItem) => void;
-  onDeleteProduct: (id: string) => void;
+  onAddProduct: (product: MenuItem) => Promise<void>;
+  onDeleteProduct: (id: string) => Promise<void>;
   orders: any[];
-  onUpdateOrderStatus: (id: string, nextStatus: string) => void;
+  onUpdateOrderStatus: (id: string, nextStatus: string) => Promise<void>;
   settings: AtelierSettings;
-  onUpdateSettings: (settings: AtelierSettings) => void;
+  onUpdateSettings: (settings: AtelierSettings) => Promise<void>;
   coupons: PromoCoupon[];
-  onAddCoupon: (coupon: PromoCoupon) => void;
-  onToggleCoupon: (code: string) => void;
+  onAddCoupon: (coupon: PromoCoupon) => Promise<void>;
+  onToggleCoupon: (code: string) => Promise<void>;
   galleryPosts: InstagramPost[];
   onAddGalleryPost: (post: InstagramPost) => Promise<void>;
   onDeleteGalleryPost: (id: string) => Promise<void>;
@@ -61,16 +61,31 @@ export default function AdminDashboard({
   const [newCategory, setNewCategory] = useState('bento');
   const [newImage, setNewImage] = useState('https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&q=80&w=800');
 
+  // Products feedback state
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+  const [productSuccess, setProductSuccess] = useState(false);
+  const [productError, setProductError] = useState<string | null>(null);
+
   // Gallery posts form states
   const [newGalleryUrl, setNewGalleryUrl] = useState('');
   const [newGalleryCaption, setNewGalleryCaption] = useState('');
   const [newGalleryLikes, setNewGalleryLikes] = useState<number>(0);
   const [newGalleryDate, setNewGalleryDate] = useState('Just now');
 
+  // Gallery feedback state
+  const [isAddingGallery, setIsAddingGallery] = useState(false);
+  const [gallerySuccess, setGallerySuccess] = useState(false);
+  const [galleryError, setGalleryError] = useState<string | null>(null);
+
   // Coupons form states
   const [newCode, setNewCode] = useState('');
   const [newDiscount, setNewDiscount] = useState('');
   const [newCouponType, setNewCouponType] = useState<'percentage' | 'fixed' | 'shipping'>('percentage');
+
+  // Coupons feedback state
+  const [isAddingCoupon, setIsAddingCoupon] = useState(false);
+  const [couponSuccess, setCouponSuccess] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   // Atelier settings states (local edit buffers)
   const [instUrl, setInstUrl] = useState(settings.instagramUrl);
@@ -85,7 +100,10 @@ export default function AdminDashboard({
   const [b3Tiers, setB3Tiers] = useState(settings.base3Tiers);
   const [delFee, setDelFee] = useState(settings.deliveryFeePerKm);
 
+  // Settings feedback state
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [settingsSuccess, setSettingsSuccess] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
 
   // Sync edit buffers when db settings change
   useEffect(() => {
@@ -102,9 +120,13 @@ export default function AdminDashboard({
     setDelFee(settings.deliveryFeePerKm);
   }, [settings]);
 
-  const handleCreateProduct = (e: React.FormEvent) => {
+  const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName || !newDesc) return;
+
+    setIsAddingProduct(true);
+    setProductSuccess(false);
+    setProductError(null);
 
     const newProd: MenuItem = {
       id: `prod-${Date.now()}`,
@@ -116,14 +138,27 @@ export default function AdminDashboard({
       popularFlavors: ['Classic Madagascar Vanilla', 'Belgian Chocolate Ganache'],
     };
 
-    onAddProduct(newProd);
-    setNewName('');
-    setNewDesc('');
+    try {
+      await onAddProduct(newProd);
+      setNewName('');
+      setNewDesc('');
+      setProductSuccess(true);
+      setTimeout(() => setProductSuccess(false), 5000);
+    } catch (err: any) {
+      console.error(err);
+      setProductError(err?.message || "Failed to save product. Ensure it strictly matches database security policies.");
+    } finally {
+      setIsAddingProduct(false);
+    }
   };
 
-  const handleCreateCouponSubmit = (e: React.FormEvent) => {
+  const handleCreateCouponSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCode || !newDiscount) return;
+
+    setIsAddingCoupon(true);
+    setCouponSuccess(false);
+    setCouponError(null);
 
     const newCoupon: PromoCoupon = {
       code: newCode.toUpperCase().trim(),
@@ -132,49 +167,83 @@ export default function AdminDashboard({
       active: true
     };
 
-    onAddCoupon(newCoupon);
-    setNewCode('');
-    setNewDiscount('');
+    try {
+      await onAddCoupon(newCoupon);
+      setNewCode('');
+      setNewDiscount('');
+      setCouponSuccess(true);
+      setTimeout(() => setCouponSuccess(false), 5000);
+    } catch (err: any) {
+      console.error(err);
+      setCouponError(err?.message || "Failed to create coupon. Verify security policies.");
+    } finally {
+      setIsAddingCoupon(false);
+    }
   };
 
-  const handleCreateGalleryPost = (e: React.FormEvent) => {
+  const handleCreateGalleryPost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newGalleryUrl || !newGalleryCaption) return;
 
-    onAddGalleryPost({
-      id: `ig-${Date.now()}`,
-      imageUrl: newGalleryUrl,
-      caption: newGalleryCaption,
-      likes: Number(newGalleryLikes) || 0,
-      commentsCount: 0,
-      date: newGalleryDate || 'Just now',
-      comments: []
-    });
+    setIsAddingGallery(true);
+    setGallerySuccess(false);
+    setGalleryError(null);
 
-    setNewGalleryUrl('');
-    setNewGalleryCaption('');
-    setNewGalleryLikes(0);
-    setNewGalleryDate('Just now');
+    try {
+      await onAddGalleryPost({
+        id: `ig-${Date.now()}`,
+        imageUrl: newGalleryUrl,
+        caption: newGalleryCaption,
+        likes: Number(newGalleryLikes) || 0,
+        commentsCount: 0,
+        date: newGalleryDate || 'Just now',
+        comments: []
+      });
+
+      setNewGalleryUrl('');
+      setNewGalleryCaption('');
+      setNewGalleryLikes(0);
+      setNewGalleryDate('Just now');
+      setGallerySuccess(true);
+      setTimeout(() => setGallerySuccess(false), 5000);
+    } catch (err: any) {
+      console.error(err);
+      setGalleryError(err?.message || "Failed to publish gallery post. Ensure image URL and description size are under limits.");
+    } finally {
+      setIsAddingGallery(false);
+    }
   };
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSavingSettings(true);
+    setSettingsSuccess(false);
+    setSettingsError(null);
+
     const updatedSettings: AtelierSettings = {
-      instagramUrl: instUrl,
-      instagramHandle: instHandle,
-      whatsappNumber: whatsNo,
-      address: strAddress,
-      email: strEmail,
-      bannerImage: bannerImg,
-      egglessPremium: Number(egglessP),
-      base1Tier: Number(b1Tier),
-      base2Tiers: Number(b2Tiers),
-      base3Tiers: Number(b3Tiers),
-      deliveryFeePerKm: Number(delFee),
+      instagramUrl: instUrl || '',
+      instagramHandle: instHandle || '',
+      whatsappNumber: whatsNo || '',
+      address: strAddress || '',
+      email: strEmail || '',
+      bannerImage: bannerImg || '',
+      egglessPremium: Number(egglessP) || 0,
+      base1Tier: Number(b1Tier) || 0,
+      base2Tiers: Number(b2Tiers) || 0,
+      base3Tiers: Number(b3Tiers) || 0,
+      deliveryFeePerKm: Number(delFee) || 0,
     };
-    onUpdateSettings(updatedSettings);
-    setSettingsSuccess(true);
-    setTimeout(() => setSettingsSuccess(false), 3000);
+
+    try {
+      await onUpdateSettings(updatedSettings);
+      setSettingsSuccess(true);
+      setTimeout(() => setSettingsSuccess(false), 5000);
+    } catch (err: any) {
+      console.error(err);
+      setSettingsError(err?.message || "Failed to update configurations. Verify Firestore permissions.");
+    } finally {
+      setIsSavingSettings(false);
+    }
   };
 
   return (
@@ -306,6 +375,17 @@ export default function AdminDashboard({
           <form onSubmit={handleCreateProduct} className="lg:col-span-5 bg-white rounded-3xl p-6 border border-[#FFF5F8] space-y-4 shadow-sm">
             <h3 className="font-serif font-bold text-base text-[#1E1E1E]">Add Cake Listing</h3>
             
+            {productSuccess && (
+              <div className="bg-emerald-50 text-emerald-700 p-3 rounded-xl border border-emerald-100 text-[11px] font-bold">
+                ✓ Product successfully saved and published!
+              </div>
+            )}
+            {productError && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-xl border border-red-100 text-[11px] font-semibold leading-normal">
+                ⚠ {productError}
+              </div>
+            )}
+            
             <div className="space-y-1">
               <label className="text-[10px] uppercase font-bold tracking-wider text-gray-500">Cake Name</label>
               <input
@@ -370,9 +450,18 @@ export default function AdminDashboard({
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              disabled={isAddingProduct}
+              className="w-full py-2.5 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Plus className="h-4 w-4" /> Save to Catalog
+              {isAddingProduct ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" /> Saving...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4" /> Save to Catalog
+                </>
+              )}
             </button>
           </form>
 
@@ -410,6 +499,17 @@ export default function AdminDashboard({
           {/* Coupon creation form */}
           <form onSubmit={handleCreateCouponSubmit} className="lg:col-span-5 bg-white rounded-3xl p-6 border border-[#FFF5F8] space-y-4 shadow-sm">
             <h3 className="font-serif font-bold text-base text-[#1E1E1E]">Create Promo Code</h3>
+            
+            {couponSuccess && (
+              <div className="bg-emerald-50 text-emerald-700 p-3 rounded-xl border border-emerald-100 text-[11px] font-bold">
+                ✓ Promo code deployed successfully!
+              </div>
+            )}
+            {couponError && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-xl border border-red-100 text-[11px] font-semibold leading-normal">
+                ⚠ {couponError}
+              </div>
+            )}
             
             <div className="space-y-1">
               <label className="text-[10px] uppercase font-bold tracking-wider text-gray-500">Coupon Code</label>
@@ -451,9 +551,18 @@ export default function AdminDashboard({
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              disabled={isAddingCoupon}
+              className="w-full py-2.5 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Plus className="h-4 w-4" /> Deploy Promo Code
+              {isAddingCoupon ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" /> Deploying...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-4 w-4" /> Deploy Promo Code
+                </>
+              )}
             </button>
           </form>
 
@@ -493,6 +602,11 @@ export default function AdminDashboard({
             <div className="bg-emerald-50 text-emerald-700 p-4 rounded-2xl border border-emerald-100 text-xs font-bold flex items-center gap-2">
               <Check className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>Studio configurations and pricing schedules successfully saved and synchronized in Firestore!</span>
+            </div>
+          )}
+          {settingsError && (
+            <div className="bg-red-50 text-red-700 p-4 rounded-2xl border border-red-100 text-xs font-semibold leading-normal">
+              ⚠ {settingsError}
             </div>
           )}
 
@@ -667,9 +781,18 @@ export default function AdminDashboard({
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="py-3.5 px-8 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+              disabled={isSavingSettings}
+              className="py-3.5 px-8 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Save className="h-4 w-4" /> Save Atelier Configurations
+              {isSavingSettings ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" /> Saving Configurations...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4" /> Save Atelier Configurations
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -684,6 +807,17 @@ export default function AdminDashboard({
               <Plus className="h-5 w-5 text-[#D63384]" />
               <h3 className="font-serif font-bold text-base text-[#1E1E1E]">Add Social Post</h3>
             </div>
+
+            {gallerySuccess && (
+              <div className="bg-emerald-50 text-emerald-700 p-3 rounded-xl border border-emerald-100 text-[11px] font-bold">
+                ✓ Gallery post published successfully!
+              </div>
+            )}
+            {galleryError && (
+              <div className="bg-red-50 text-red-700 p-3 rounded-xl border border-red-100 text-[11px] font-semibold leading-normal">
+                ⚠ {galleryError}
+              </div>
+            )}
 
             <form onSubmit={handleCreateGalleryPost} className="space-y-4">
               <div className="space-y-1.5">
@@ -733,9 +867,18 @@ export default function AdminDashboard({
 
               <button
                 type="submit"
-                className="w-full py-3 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm animate-pulseFast"
+                disabled={isAddingGallery}
+                className="w-full py-3 bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Publish directly to Gallery
+                {isAddingGallery ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" /> Publishing...
+                  </>
+                ) : (
+                  <>
+                    Publish directly to Gallery
+                  </>
+                )}
               </button>
             </form>
           </div>

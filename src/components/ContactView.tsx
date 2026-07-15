@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Instagram, Globe, HelpCircle, Check, Loader2, Sparkles, Send, ShieldCheck, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Globe, HelpCircle, Check, Loader2, Sparkles, Send, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
 import { FAQS } from '../data';
 
-export default function ContactView() {
+interface ContactViewProps {
+  orders?: any[];
+}
+
+export default function ContactView({ orders = [] }: ContactViewProps) {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [orderId, setOrderId] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
   const [trackedOrder, setTrackedOrder] = useState<any | null>(null);
+  const [trackingError, setTrackingError] = useState<string | null>(null);
 
   // Contact Form State
   const [name, setName] = useState('');
@@ -20,19 +25,31 @@ export default function ContactView() {
 
     setSearchLoading(true);
     setTrackedOrder(null);
+    setTrackingError(null);
 
     setTimeout(() => {
       setSearchLoading(false);
-      // Simulated orders matching standard formats
-      setTrackedOrder({
-        id: orderId.trim().toUpperCase(),
-        customer: 'Priya Sharma',
-        cake: 'Pastel Lavender Bento Cake',
-        status: 'piping', // received -> baking -> piping -> checked -> dispatched
-        eta: 'Today at 5:30 PM',
-        deliveryType: 'Temperature-Controlled Chilled Transit',
-      });
-    }, 1500);
+      const queryId = orderId.trim().toUpperCase();
+      
+      // Look up in live orders list
+      const found = orders.find(o => 
+        o.id.toUpperCase() === queryId || 
+        o.id.toUpperCase() === `CK-${queryId}`
+      );
+
+      if (found) {
+        setTrackedOrder({
+          id: found.id,
+          customer: found.customer || 'Guest Customer',
+          cake: found.cake || 'Custom Artisanal Cake',
+          status: found.status || 'received',
+          eta: found.eta || 'Scheduled within 48h',
+          deliveryType: found.deliveryType || 'Temperature-Controlled Chilled Transit',
+        });
+      } else {
+        setTrackingError(`Order code "${queryId}" was not found in our live kitchen logs. Please check your order ticket receipt or contact the studio at hello@cakeasy.in.`);
+      }
+    }, 1200);
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -98,6 +115,14 @@ export default function ContactView() {
               )}
             </button>
           </form>
+
+          {/* Tracking Error Feedback */}
+          {trackingError && (
+            <div className="bg-red-50 text-red-700 p-4 rounded-2xl border border-red-100 text-xs font-semibold max-w-lg mx-auto flex gap-2.5 items-start leading-normal animate-fadeIn">
+              <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+              <span>{trackingError}</span>
+            </div>
+          )}
 
           {/* Display Tracked Status Details */}
           {trackedOrder && (

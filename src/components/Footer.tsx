@@ -1,6 +1,7 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Instagram, Facebook, Globe, Sparkles, ShieldCheck } from 'lucide-react';
 import { AtelierSettings } from '../types';
+import logo from '../assets/images/cakeasy_logo_1784034642737.jpg';
 
 interface FooterProps {
   setCurrentTab: (tab: string) => void;
@@ -21,8 +22,8 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
           {/* Brand Col */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-full bg-[#D63384]/20 flex items-center justify-center border border-[#D63384]/40">
-                <Sparkles className="h-4.5 w-4.5 text-[#F6B8C8]" />
+              <div className="h-10 w-10 rounded-full overflow-hidden flex items-center justify-center border border-[#D63384]/40 bg-white shrink-0">
+                <img src={logo} alt="Cakeasy Logo" className="h-full w-full object-cover" />
               </div>
               <span className="font-serif text-2xl font-bold tracking-tight text-white">
                 Cakeasy<span className="text-[#F6B8C8]">.</span>

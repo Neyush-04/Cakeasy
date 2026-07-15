@@ -328,7 +328,7 @@ export default function App() {
       await setDoc(doc(db, 'settings', 'atelier'), nextSettings);
       setAtelierSettings(nextSettings);
     } catch (error) {
-      console.error("Error saving settings to Firestore:", error);
+      handleFirestoreError(error, OperationType.WRITE, 'settings/atelier');
     }
   };
 
@@ -336,7 +336,7 @@ export default function App() {
     try {
       await setDoc(doc(db, 'coupons', newCoupon.code), newCoupon);
     } catch (error) {
-      console.error("Error adding coupon:", error);
+      handleFirestoreError(error, OperationType.WRITE, `coupons/${newCoupon.code}`);
     }
   };
 
@@ -347,7 +347,7 @@ export default function App() {
         await updateDoc(doc(db, 'coupons', code), { active: !coupon.active });
       }
     } catch (error) {
-      console.error("Error toggling coupon active status:", error);
+      handleFirestoreError(error, OperationType.UPDATE, `coupons/${code}`);
     }
   };
 
@@ -360,7 +360,7 @@ export default function App() {
         });
       }
     } catch (error) {
-      console.error("Error liking gallery post:", error);
+      handleFirestoreError(error, OperationType.UPDATE, `instagram_posts/${id}`);
     }
   };
 
@@ -375,7 +375,7 @@ export default function App() {
         });
       }
     } catch (error) {
-      console.error("Error commenting on gallery post:", error);
+      handleFirestoreError(error, OperationType.UPDATE, `instagram_posts/${postId}`);
     }
   };
 
@@ -383,7 +383,7 @@ export default function App() {
     try {
       await setDoc(doc(db, 'instagram_posts', newPost.id), newPost);
     } catch (error) {
-      console.error("Error adding gallery post:", error);
+      handleFirestoreError(error, OperationType.WRITE, `instagram_posts/${newPost.id}`);
     }
   };
 
@@ -391,7 +391,7 @@ export default function App() {
     try {
       await deleteDoc(doc(db, 'instagram_posts', id));
     } catch (error) {
-      console.error("Error deleting gallery post:", error);
+      handleFirestoreError(error, OperationType.DELETE, `instagram_posts/${id}`);
     }
   };
 
@@ -453,7 +453,7 @@ export default function App() {
         )}
 
         {currentTab === 'contact' && (
-          <ContactView />
+          <ContactView orders={ordersList} />
         )}
 
          {currentTab === 'admin' && (
