@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
+import { motion } from 'motion/react';
 
 interface ScrollRevealProps {
   children: React.ReactNode;
@@ -8,46 +9,15 @@ interface ScrollRevealProps {
 }
 
 export default function ScrollReveal({ children, className = '', delay = 0 }: ScrollRevealProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            setIsVisible(true);
-          }, delay);
-          // Once it's visible, we can unobserve
-          if (elementRef.current) {
-            observer.unobserve(elementRef.current);
-          }
-        }
-      },
-      {
-        threshold: 0.15, // trigger when 15% of element is in view
-        rootMargin: '0px 0px -50px 0px', // slightly offset trigger point for better feel
-      }
-    );
-
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
-    }
-
-    return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current);
-      }
-    };
-  }, [delay]);
-
   return (
-    <div
-      id={`reveal-${Math.random().toString(36).substr(2, 9)}`}
-      ref={elementRef}
-      className={`reveal-hidden ${isVisible ? 'reveal-visible' : ''} ${className}`}
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 28 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15, margin: '0px 0px -50px 0px' }}
+      transition={{ duration: 0.7, delay: delay / 1000, ease: [0.16, 1, 0.3, 1] }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

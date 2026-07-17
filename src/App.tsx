@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -412,6 +413,14 @@ export default function App() {
 
       {/* 2. MAIN SCROLLABLE CONTENT VIEW STAGE */}
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentTab}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
         {currentTab === 'home' && (
           <HomeView
             products={productsList}
@@ -478,6 +487,8 @@ export default function App() {
             <AdminLogin onLoginSuccess={() => setIsAdminLoggedIn(true)} />
           )
         )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* 3. PREMIUM PERSISTENT FOOTER */}

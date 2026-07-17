@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { Search, ArrowRight, Sparkles, Heart, Clock, Truck, ShieldCheck, Star, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from '../data';
 import { MenuItem, AtelierSettings, InstagramPost } from '../types';
 import { resolveCakeImage } from '../utils';
 import ScrollReveal from './ScrollReveal';
 import TextSplitter from './TextSplitter';
+import StatsStrip from './StatsStrip';
 
 interface HomeViewProps {
   products: MenuItem[];
@@ -28,6 +30,10 @@ export default function HomeView({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTrendingTab, setActiveTrendingTab] = useState<'trending' | 'new' | 'bestseller'>('trending');
   const [reviewIndex, setReviewIndex] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 60]);
+  const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   const reviews = [
     {
@@ -92,7 +98,7 @@ export default function HomeView({
   return (
     <div className="space-y-24 pb-20 animate-fadeIn">
       {/* 1. HERO SECTION WITH BACKGROUND BANNER */}
-      <section className="relative bg-[#FFF5F8] py-20 lg:py-28 overflow-hidden rounded-b-[40px] border-b border-[#F6B8C8]/30">
+      <section ref={heroRef} className="relative bg-[#FFF5F8] py-20 lg:py-28 overflow-hidden rounded-b-[40px] border-b border-[#F6B8C8]/30">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 bg-[radial-gradient(#D63384_1px,transparent_1px)] [background-size:16px_16px]" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -153,10 +159,11 @@ export default function HomeView({
             {/* Right Large Image */}
             <div className="lg:col-span-6 relative">
               <div className="relative mx-auto w-full max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-[0_20px_50px_rgba(214,51,132,0.08)] bg-[#FFF5F8]">
-                <img 
-                  src={resolveCakeImage(settings.bannerImage || "/src/assets/images/cakeasy_hero_banner_1784021815776.jpg")} 
-                  alt="Stunning Wedding Cake" 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                <motion.img
+                  style={{ y: heroImageY, scale: heroImageScale }}
+                  src={resolveCakeImage(settings.bannerImage || "/src/assets/images/cakeasy_hero_banner_1784021815776.jpg")}
+                  alt="Stunning Wedding Cake"
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#FFF5F8]">
                   <p className="text-[10px] text-[#D63384] font-bold tracking-wider uppercase">Chef Recommendation</p>
@@ -168,6 +175,9 @@ export default function HomeView({
           </div>
         </div>
       </section>
+
+      {/* 1B. STATS STRIP */}
+      <StatsStrip />
 
       {/* 2. FEATURED CATEGORIES SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
