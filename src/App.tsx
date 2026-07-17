@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -9,24 +9,19 @@ import CustomBuilderView from './components/CustomBuilderView';
 import GalleryView from './components/GalleryView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
-import AdminDashboard from './components/AdminDashboard';
-import AdminLogin from './components/AdminLogin';
 import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
 import PageMeta from './components/PageMeta';
 
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
-import { MenuItem, CustomCakeState, AtelierSettings, PromoCoupon, InstagramPost } from './types';
+import { MenuItem, CustomCakeState, AtelierSettings, InstagramPost } from './types';
 import { ShieldCheck, Sparkles, X, Heart, ShoppingBag } from 'lucide-react';
 
 import { 
   collection, 
   getDocs, 
-  setDoc, 
   doc, 
-  deleteDoc, 
-  updateDoc, 
   onSnapshot 
 } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from './firebase';
@@ -53,16 +48,13 @@ export default function App() {
 
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   // Core application states lifted
   const [productsList, setProductsList] = useState<MenuItem[]>([]);
   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customInquiries, setCustomInquiries] = useState<{ cake: CustomCakeState; date: string; notes: string }[]>([]);
-  const [ordersList, setOrdersList] = useState<any[]>([]);
   const [galleryPosts, setGalleryPosts] = useState<InstagramPost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Dynamic configuration states
   const [atelierSettings, setAtelierSettings] = useState<AtelierSettings>({
@@ -78,20 +70,14 @@ export default function App() {
     base3Tiers: 4999,
     deliveryFeePerKm: 45
   });
-  const [couponsList, setCouponsList] = useState<PromoCoupon[]>([]);
 
-  // Sync Products, Orders, Settings, and Coupons
+  // A visitor may browse public content but must never seed or mutate Firestore.
   useEffect(() => {
-    // 1. Fetch & Seed Products
+    // Public catalogue read with a local fallback.
     const fetchProducts = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'products'));
         if (querySnapshot.empty) {
-          // Seed initial products if collection is empty
-          const seedPromises = ALL_PRODUCTS.map(async (p) => {
-            await setDoc(doc(db, 'products', p.id), p);
-          });
-          await Promise.all(seedPromises);
           setProductsList(ALL_PRODUCTS);
         } else {
           const loadedProducts: MenuItem[] = [];
@@ -107,38 +93,7 @@ export default function App() {
 
     fetchProducts();
 
-    // 2. Realtime listener for Orders
-    const unsubscribeOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
-      if (snapshot.empty) {
-        // If empty, seed default orders so dashboard has demo records
-        const defaultOrders = [
-          { id: 'CK-7790', customer: 'Priya Sharma', cake: 'Pastel Lavender Bento Cake', status: 'piping', eta: 'Today at 5:30 PM' },
-          { id: 'CK-8824', customer: 'Rohan Deshmukh', cake: 'Chilled White Chocolate Drip Cake', status: 'baking', eta: 'Tomorrow at 1:00 PM' },
-          { id: 'CK-5510', customer: 'Ananya Mehta', cake: 'Artisanal Pastel Rose Wedding Cake', status: 'received', eta: 'July 20th at 12:00 PM' },
-        ];
-        defaultOrders.forEach(async (order) => {
-          try {
-            await setDoc(doc(db, 'orders', order.id), order);
-          } catch (e) {
-            console.error("Error seeding default order:", e);
-          }
-        });
-        setOrdersList(defaultOrders);
-      } else {
-        const loadedOrders: any[] = [];
-        snapshot.forEach((doc) => {
-          loadedOrders.push(doc.data());
-        });
-        // Sort orders so newer ones appear higher
-        setOrdersList(loadedOrders);
-      }
-      setIsLoading(false);
-    }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, 'orders');
-    });
-
-    // 3. Realtime listener for Atelier Settings
-    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'atelier'), async (snapshot) => {
+    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'atelier'), (snapshot) => {
       if (!snapshot.exists()) {
         const defaultSettings: AtelierSettings = {
           instagramUrl: 'https://www.instagram.com/cakeasy99/',
@@ -153,12 +108,7 @@ export default function App() {
           base3Tiers: 4999,
           deliveryFeePerKm: 45
         };
-        try {
-          await setDoc(doc(db, 'settings', 'atelier'), defaultSettings);
-          setAtelierSettings(defaultSettings);
-        } catch (e) {
-          console.error("Error seeding default settings:", e);
-        }
+        setAtelierSettings(defaultSettings);
       } else {
         setAtelierSettings(snapshot.data() as AtelierSettings);
       }
@@ -166,60 +116,24 @@ export default function App() {
       console.error("Error fetching settings:", error);
     });
 
-    // 4. Realtime listener for Coupons
-    const unsubscribeCoupons = onSnapshot(collection(db, 'coupons'), async (snapshot) => {
+    // Realtime listener for approved Instagram/gallery posts.
+    const unsubscribeGallery = onSnapshot(collection(db, 'instagram_posts'), (snapshot) => {
       if (snapshot.empty) {
-        const defaultCoupons: PromoCoupon[] = [
-          { code: 'CAKEASY10', discount: '10% OFF', type: 'percentage', active: true },
-          { code: 'BENTOLOVER', discount: '₹100 OFF', type: 'fixed', active: true },
-          { code: 'WEDDINGMASTER', discount: 'Free Transit Delivery', type: 'shipping', active: false },
-        ];
-        defaultCoupons.forEach(async (coupon) => {
-          try {
-            await setDoc(doc(db, 'coupons', coupon.code), coupon);
-          } catch (e) {
-            console.error("Error seeding default coupon:", e);
-          }
-        });
-        setCouponsList(defaultCoupons);
-      } else {
-        const loadedCoupons: PromoCoupon[] = [];
-        snapshot.forEach((doc) => {
-          loadedCoupons.push(doc.data() as PromoCoupon);
-        });
-        setCouponsList(loadedCoupons);
-      }
-    }, (error) => {
-      console.error("Error fetching coupons:", error);
-    });
-
-    // 5. Realtime listener for Instagram posts
-    const unsubscribeGallery = onSnapshot(collection(db, 'instagram_posts'), async (snapshot) => {
-      if (snapshot.empty) {
-        const seedPromises = INSTAGRAM_POSTS.map(async (post) => {
-          try {
-            await setDoc(doc(db, 'instagram_posts', post.id), post);
-          } catch (e) {
-            console.error("Error seeding default instagram post:", e);
-          }
-        });
-        await Promise.all(seedPromises);
         setGalleryPosts(INSTAGRAM_POSTS);
       } else {
         const loadedPosts: InstagramPost[] = [];
         snapshot.forEach((doc) => {
           loadedPosts.push(doc.data() as InstagramPost);
         });
-        setGalleryPosts(loadedPosts);
+        const approvedPosts = loadedPosts.filter((post) => !post.imageUrl.includes('unsplash.com'));
+        setGalleryPosts(approvedPosts.length ? approvedPosts : INSTAGRAM_POSTS);
       }
     }, (error) => {
       console.error("Error fetching instagram posts:", error);
     });
 
     return () => {
-      unsubscribeOrders();
       unsubscribeSettings();
-      unsubscribeCoupons();
       unsubscribeGallery();
     };
   }, []);
@@ -247,46 +161,13 @@ export default function App() {
   };
 
   // Custom cake inquiries list
-  const handleAddCustomInquiry = async (cake: CustomCakeState, date: string, notes: string) => {
+  const handleAddCustomInquiry = (cake: CustomCakeState, date: string, notes: string) => {
     setCustomInquiries(prev => [...prev, { cake, date, notes }]);
-    
-    // Auto-append custom inquiry as a simulated trackable order!
-    const mockId = `CK-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newOrder = {
-      id: mockId,
-      customer: 'You (Website Guest)',
-      cake: `Bespoke ${cake.tiers} Tier ${cake.shape} Cake`,
-      status: 'received',
-      eta: date ? `${date} at 4:00 PM` : 'Scheduled TBD',
-    };
-
-    try {
-      await setDoc(doc(db, 'orders', mockId), newOrder);
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `orders/${mockId}`);
-    }
   };
 
-  // Standard cart order submissions
-  const handleCheckoutOrders = async (items: CartItem[]) => {
-    const promises = items.map(async (item) => {
-      const mockId = `CK-${Math.floor(1000 + Math.random() * 9000)}`;
-      const newOrder = {
-        id: mockId,
-        customer: 'You (Website Guest)',
-        cake: `${item.product.name} (${item.weight}, ${item.flavor})`,
-        status: 'received',
-        eta: 'Scheduled in 48 hours',
-      };
-      await setDoc(doc(db, 'orders', mockId), newOrder);
-    });
-
-    try {
-      await Promise.all(promises);
-      setCartItems([]); // Clear cart items after successful checkout
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'orders');
-    }
+  const handleCheckoutOrders = () => {
+    // WhatsApp is the current handoff. No visitor data is written to Firestore.
+    setCartItems([]);
   };
 
   const handleRemoveInquiry = (index: number) => {
@@ -300,112 +181,6 @@ export default function App() {
         ? prev.filter(id => id !== product.id) 
         : [...prev, product.id]
     );
-  };
-
-  // Admin CMS actions
-  const handleAddProductCatalog = async (newProduct: MenuItem) => {
-    try {
-      await setDoc(doc(db, 'products', newProduct.id), newProduct);
-      setProductsList(prev => [...prev, newProduct]);
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `products/${newProduct.id}`);
-    }
-  };
-
-  const handleDeleteProductCatalog = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, 'products', id));
-      setProductsList(prev => prev.filter(p => p.id !== id));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.DELETE, `products/${id}`);
-    }
-  };
-
-  const handleUpdateOrderStatus = async (orderId: string, nextStatus: string) => {
-    try {
-      await updateDoc(doc(db, 'orders', orderId), { status: nextStatus });
-      setOrdersList(prev => prev.map(o => {
-        if (o.id === orderId) {
-          return { ...o, status: nextStatus };
-        }
-        return o;
-      }));
-    } catch (error) {
-      handleFirestoreError(error, OperationType.UPDATE, `orders/${orderId}`);
-    }
-  };
-
-  // Save studio operations config to Firestore
-  const handleUpdateAtelierSettings = async (nextSettings: AtelierSettings) => {
-    try {
-      await setDoc(doc(db, 'settings', 'atelier'), nextSettings);
-      setAtelierSettings(nextSettings);
-    } catch (error) {
-      console.error("Error saving settings to Firestore:", error);
-    }
-  };
-
-  const handleAddPromoCoupon = async (newCoupon: PromoCoupon) => {
-    try {
-      await setDoc(doc(db, 'coupons', newCoupon.code), newCoupon);
-    } catch (error) {
-      console.error("Error adding coupon:", error);
-    }
-  };
-
-  const handleTogglePromoCoupon = async (code: string) => {
-    try {
-      const coupon = couponsList.find(c => c.code === code);
-      if (coupon) {
-        await updateDoc(doc(db, 'coupons', code), { active: !coupon.active });
-      }
-    } catch (error) {
-      console.error("Error toggling coupon active status:", error);
-    }
-  };
-
-  const handleLikeGalleryPost = async (id: string) => {
-    try {
-      const post = galleryPosts.find(p => p.id === id);
-      if (post) {
-        await updateDoc(doc(db, 'instagram_posts', id), {
-          likes: post.likes + 1
-        });
-      }
-    } catch (error) {
-      console.error("Error liking gallery post:", error);
-    }
-  };
-
-  const handleCommentGalleryPost = async (postId: string, comment: { username: string; text: string }) => {
-    try {
-      const post = galleryPosts.find(p => p.id === postId);
-      if (post) {
-        const updatedComments = [...post.comments, comment];
-        await updateDoc(doc(db, 'instagram_posts', postId), {
-          comments: updatedComments,
-          commentsCount: updatedComments.length
-        });
-      }
-    } catch (error) {
-      console.error("Error commenting on gallery post:", error);
-    }
-  };
-
-  const handleAddGalleryPost = async (newPost: InstagramPost) => {
-    try {
-      await setDoc(doc(db, 'instagram_posts', newPost.id), newPost);
-    } catch (error) {
-      console.error("Error adding gallery post:", error);
-    }
-  };
-
-  const handleDeleteGalleryPost = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, 'instagram_posts', id));
-    } catch (error) {
-      console.error("Error deleting gallery post:", error);
-    }
   };
 
   return (
@@ -499,8 +274,6 @@ export default function App() {
                     />
                     <GalleryView
                       posts={galleryPosts}
-                      onLikePost={handleLikeGalleryPost}
-                      onAddComment={handleCommentGalleryPost}
                     />
                   </>
                 }
@@ -532,34 +305,7 @@ export default function App() {
                 }
               />
 
-              <Route
-                path="/admin"
-                element={
-                  <>
-                    <PageMeta title="Bake Station | Cakeasy Admin" description="Cakeasy admin dashboard." />
-                    {isAdminLoggedIn ? (
-                      <AdminDashboard
-                        products={productsList}
-                        onAddProduct={handleAddProductCatalog}
-                        onDeleteProduct={handleDeleteProductCatalog}
-                        orders={ordersList}
-                        onUpdateOrderStatus={handleUpdateOrderStatus}
-                        settings={atelierSettings}
-                        onUpdateSettings={handleUpdateAtelierSettings}
-                        coupons={couponsList}
-                        onAddCoupon={handleAddPromoCoupon}
-                        onToggleCoupon={handleTogglePromoCoupon}
-                        galleryPosts={galleryPosts}
-                        onAddGalleryPost={handleAddGalleryPost}
-                        onDeleteGalleryPost={handleDeleteGalleryPost}
-                        onLogout={() => setIsAdminLoggedIn(false)}
-                      />
-                    ) : (
-                      <AdminLogin onLoginSuccess={() => setIsAdminLoggedIn(true)} />
-                    )}
-                  </>
-                }
-              />
+              <Route path="/admin" element={<Navigate to="/" replace />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
@@ -623,34 +369,20 @@ export default function App() {
             <div className="space-y-4 text-xs text-gray-500 leading-relaxed font-sans">
               {activePolicy === 'privacy' && (
                 <>
-                  <p className="font-semibold text-gray-800">1. Information We Gather</p>
-                  <p>When you place customized design inquiries on Cakeasy.in, we capture your preferences, shape selections, uploaded inspiration assets, and contact details (name, email, phone) to personalize your baking experience.</p>
-                  <p className="font-semibold text-gray-800">2. Storage & Cookie Guidelines</p>
-                  <p>To ensure a flawless checkout experience, custom orders are saved locally in standard secure client cookies. We never resell, rent, or lease your private coordinates to third-party databases.</p>
-                  <p className="font-semibold text-gray-800">3. Contact Hotline</p>
-                  <p>For inquiries regarding GDPR compliance or erasing data logs, reach our Bandra Atelier via hello@cakeasy.in.</p>
+                  <p>Cakeasy currently uses WhatsApp to receive and confirm enquiries. The website does not offer customer accounts or online payment.</p>
+                  <p>For privacy questions about an enquiry, please contact Cakeasy on WhatsApp.</p>
                 </>
               )}
 
               {activePolicy === 'terms' && (
                 <>
-                  <p className="font-semibold text-gray-800">1. Acceptance of Custom Rules</p>
-                  <p>By browsing Cakeasy.in or submitting inspiration boards to our head bakers, you authorize our design teams to adapt details based on available ingredients and culinary safety guidelines.</p>
-                  <p className="font-semibold text-gray-800">2. Digital Visual Approvals</p>
-                  <p>All finished bespoke cakes are photographed and approved by the customer on WhatsApp prior to temperature-controlled transit. Once approved, shape modifications are suspended.</p>
-                  <p className="font-semibold text-gray-800">3. Local Jurisdiction</p>
-                  <p>These guidelines are governed under standard metropolitan retail policies in Bandra West, Mumbai, India.</p>
+                  <p>Cake designs, availability, pricing, delivery, and pickup details are confirmed directly with Cakeasy before an order is accepted.</p>
                 </>
               )}
 
               {activePolicy === 'refund' && (
                 <>
-                  <p className="font-semibold text-gray-800">1. Cancellation Timelines</p>
-                  <p>As all milestones are custom-designed from scratch, cancellation requests must be processed 48 hours prior to delivery to qualify for 100% store credit refunds.</p>
-                  <p className="font-semibold text-gray-800">2. Extreme Weather & Transit Failures</p>
-                  <p>If a custom cake falls out of shape or gets physically compromised in transit due to temperature failures in our chilled vehicles, we will provide a full refund or express-bake a replacement on priority.</p>
-                  <p className="font-semibold text-gray-800">3. Taste Preferences</p>
-                  <p>We pride ourselves on consistent quality. Surcharges cannot be waived post-consumption based on subjective taste preferences.</p>
+                  <p>Cancellation and refund terms for a custom order are confirmed directly with Cakeasy before the order is accepted.</p>
                 </>
               )}
             </div>

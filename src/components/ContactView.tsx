@@ -38,6 +38,15 @@ export default function ContactView() {
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !message) return;
+
+    const inquiry = [
+      'Hello Cakeasy, I would like to make an enquiry.',
+      '',
+      `Name: ${name}`,
+      `Email: ${email}`,
+      `Message: ${message}`,
+    ].join('\n');
+    window.open(`https://wa.me/918810795004?text=${encodeURIComponent(inquiry)}`, '_blank', 'noopener,noreferrer');
     setSubmittedMessage(true);
     setTimeout(() => {
       setName('');
@@ -61,7 +70,7 @@ export default function ContactView() {
 
   return (
     <div className="space-y-24 pb-20 animate-fadeIn">
-      {/* 1. ORDER STATUS TRACKER PORTAL (HIGHLY DETAILED SIMULATION) */}
+      {false && (
       <section className="bg-gradient-to-br from-[#FFF5F8] to-white rounded-[40px] p-8 sm:p-12 border border-[#F6B8C8]/20 shadow-sm">
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="text-center space-y-2">
@@ -166,8 +175,9 @@ export default function ContactView() {
           )}
         </div>
       </section>
+      )}
 
-      {/* 2. CONTACT CARDS & INQUIRY FORM */}
+      {/* Contact cards and enquiry form */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         {/* Left Column: Coordinates & Map representation (5/12) */}
         <div className="lg:col-span-5 space-y-8">
@@ -221,8 +231,8 @@ export default function ContactView() {
         {/* Right Column: Contact Inquiry Form (7/12) */}
         <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-[#FFF5F8] shadow-sm space-y-6">
           <div className="space-y-1.5">
-            <h3 className="font-serif font-bold text-xl text-[#1E1E1E]">Leave a Message to our Bakers</h3>
-            <p className="text-xs text-gray-500">Have a custom catering query or corporate event? Fill the form, and our lead chef will reply within 4 hours.</p>
+            <h3 className="font-serif font-bold text-xl text-[#1E1E1E]">Contact Cakeasy</h3>
+            <p className="text-xs text-gray-500">Send the details of your celebration and continue the conversation on WhatsApp.</p>
           </div>
 
           <form onSubmit={handleContactSubmit} className="space-y-4">
@@ -274,11 +284,11 @@ export default function ContactView() {
             >
               {submittedMessage ? (
                 <>
-                  <Check className="h-4 w-4 animate-scaleIn" /> Inquiry Transmitted!
+                  <Check className="h-4 w-4 animate-scaleIn" /> WhatsApp opened
                 </>
               ) : (
                 <>
-                  Transmit Message <Send className="h-3.5 w-3.5" />
+                  Continue on WhatsApp <Send className="h-3.5 w-3.5" />
                 </>
               )}
             </button>
@@ -287,7 +297,7 @@ export default function ContactView() {
       </section>
 
       {/* 3. FREQUENTLY ASKED QUESTIONS ACCORDION */}
-      <section className="space-y-8 max-w-4xl mx-auto">
+      {false && <section className="space-y-8 max-w-4xl mx-auto">
         <div className="text-center space-y-2">
           <HelpCircle className="h-8 w-8 text-[#D63384] mx-auto" />
           <h3 className="font-serif font-bold text-2xl text-[#1E1E1E]">Bespoke Baking FAQs</h3>
@@ -318,7 +328,7 @@ export default function ContactView() {
             );
           })}
         </div>
-      </section>
+      </section>}
     </div>
   );
 }

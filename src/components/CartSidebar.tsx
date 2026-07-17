@@ -77,7 +77,7 @@ export default function CartSidebar({
     text += `*📍 CONTACT DETAILS:*\n`;
     text += `- Please contact me to finalize flavor layers, transit coordinates, and billing options. Thank you!`;
 
-    // Persist standard orders to Firestore before redirecting to WhatsApp
+    // WhatsApp is the current order-enquiry handoff.
     if (cartItems.length > 0 && onCheckoutOrders) {
       onCheckoutOrders(cartItems);
     }

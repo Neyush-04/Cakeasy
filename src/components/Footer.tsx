@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Instagram, Facebook, Globe, Sparkles, ShieldCheck } from 'lucide-react';
+import { MapPin, Instagram, Globe, Sparkles } from 'lucide-react';
 import { AtelierSettings } from '../types';
 
 interface FooterProps {
@@ -42,15 +42,6 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
                 <Instagram className="h-4 w-4" />
               </a>
               <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noreferrer"
-                className="h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all"
-                aria-label="Facebook Link"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a 
                 href="https://cakeasy.in" 
                 target="_blank" 
                 rel="noreferrer"
@@ -73,7 +64,7 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               </li>
               <li>
                 <button onClick={() => handleNavigation('catalog')} className="text-gray-400 hover:text-white transition-colors">
-                  Our Cakes (Filters)
+                  Our Cakes
                 </button>
               </li>
               <li>
@@ -83,12 +74,12 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               </li>
               <li>
                 <button onClick={() => handleNavigation('gallery')} className="text-gray-400 hover:text-white transition-colors">
-                  Social Masonry Gallery
+                  Cake Gallery
                 </button>
               </li>
               <li>
                 <button onClick={() => handleNavigation('about')} className="text-gray-400 hover:text-white transition-colors">
-                  Our Paris-Trained Story
+                  Our Story
                 </button>
               </li>
             </ul>
@@ -135,16 +126,7 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               </li>
               <li>
                 <button onClick={() => handleNavigation('contact')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
-                  Track Custom Order Status
-                </button>
-              </li>
-              <li className="pt-2">
-                <button 
-                  onClick={() => handleNavigation('admin')} 
-                  className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-[#F6B8C8] transition-colors group"
-                >
-                  <ShieldCheck className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
-                  <span>Admin Order Terminal</span>
+                  Contact Cakeasy
                 </button>
               </li>
             </ul>
@@ -155,7 +137,7 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
         <div className="pt-8 mt-8 border-t border-neutral-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} Cakeasy. Crafted Sweet Memories. All rights reserved.</p>
           <div className="flex gap-4">
-            <span>SEO Optimized for Mumbai & Global Confectionaries</span>
+            <span>Custom cakes by Cakeasy</span>
             <span className="text-[#D63384]">•</span>
             <span>Made with Love & Passion</span>
           </div>
