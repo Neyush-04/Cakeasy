@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, ShoppingBag, Heart, ShieldAlert, Sparkles } from 'lucide-react';
-import logo from '../assets/images/cakeasy_logo_mark.svg';
+import logo from '../assets/images/cakeasy_logo_icon.png';
 
 interface NavbarProps {
   currentTab: string;
@@ -45,8 +45,8 @@ export default function Navbar({
             onClick={() => handleTabSelect('home')}
             className="flex items-center gap-2 cursor-pointer group"
           >
-            <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center border border-[#F6B8C8]/40 group-hover:scale-105 transition-transform duration-300 bg-white">
-              <img src={logo} alt="Cakeasy Logo" className="h-full w-full object-cover" />
+            <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center border border-[#F6B8C8]/40 group-hover:scale-105 transition-transform duration-300 bg-white p-1">
+              <img src={logo} alt="Cakeasy Logo" className="h-full w-full object-contain" />
             </div>
             <div>
               <span className="font-serif text-2xl font-bold tracking-tight text-[#1E1E1E] group-hover:text-[#D63384] transition-colors">
