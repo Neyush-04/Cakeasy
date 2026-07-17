@@ -1,0 +1,27 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="100" fill="#FFF5F8"/>
+
+  <!-- Cake stand shadow -->
+  <ellipse cx="100" cy="152" rx="52" ry="6" fill="#F6B8C8" opacity="0.35"/>
+
+  <!-- Bottom tier -->
+  <rect x="52" y="118" width="96" height="30" rx="6" fill="#D63384"/>
+  <rect x="52" y="118" width="96" height="10" rx="5" fill="#EF7FAE"/>
+
+  <!-- Top tier -->
+  <rect x="68" y="92" width="64" height="28" rx="6" fill="#F291B8"/>
+  <rect x="68" y="92" width="64" height="10" rx="5" fill="#FBC4DA"/>
+
+  <!-- Drip details -->
+  <path d="M52 128 q6 10 0 18 q-6 -8 0 -18 Z" fill="#EF7FAE"/>
+  <path d="M100 128 q6 12 0 20 q-6 -8 0 -20 Z" fill="#EF7FAE"/>
+  <path d="M148 128 q-6 10 0 18 q6 -8 0 -18 Z" fill="#EF7FAE"/>
+
+  <!-- Candle -->
+  <rect x="96" y="66" width="8" height="26" rx="3" fill="#FBC4DA"/>
+  <path d="M100 50 c6 6 6 12 0 16 c-6 -4 -6 -10 0 -16 Z" fill="#D63384"/>
+
+  <!-- Cherry on top tier -->
+  <circle cx="82" cy="88" r="5" fill="#D63384"/>
+  <circle cx="118" cy="88" r="5" fill="#D63384"/>
+</svg>

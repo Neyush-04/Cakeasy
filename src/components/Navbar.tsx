@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, ShoppingBag, Heart, ShieldAlert, Sparkles } from 'lucide-react';
-import logo from '../assets/images/cakeasy_logo_1784034642737.jpg';
+import logo from '../assets/images/cakeasy_logo_mark.svg';
 
 interface NavbarProps {
   currentTab: string;
