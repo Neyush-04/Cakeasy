@@ -15,7 +15,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
   const selectedImages = selectedPost?.images?.length
     ? selectedPost.images
     : selectedPost ? [selectedPost.imageUrl] : [];
-  const displayCaption = (caption: string) => caption.includes('(Edit this caption') ? 'Cakeasy creation' : caption;
+  const displayCaption = (caption: string) => caption.includes('(Edit this caption') ? 'Cakeasy creation from our photo gallery.' : caption;
 
   const openPost = (id: string) => {
     setActiveImageIndex(0);

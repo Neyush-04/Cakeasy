@@ -2,9 +2,8 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 1. Global Safety Net
-    match /{document=**} {
-      allow read, write: if false;
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
     }
 
     // Reusable primitive validators
@@ -61,38 +60,41 @@ service cloud.firestore {
     // Products Catalog Match Rules
     match /products/{productId} {
       allow read: if true;
-      allow create, update: if isValidId(productId) && isValidMenuItem(incoming());
-      allow delete: if isValidId(productId);
+      allow create, update: if isAdmin() && isValidId(productId) && isValidMenuItem(incoming());
+      allow delete: if isAdmin() && isValidId(productId);
     }
 
     // Order Tracking Match Rules
     match /orders/{orderId} {
-      allow read: if true;
-      allow create: if isValidId(orderId) && isValidOrder(incoming());
-      allow update: if isValidId(orderId) && isValidOrder(incoming()) && (
+      allow read: if isAdmin();
+      allow create: if false;
+      allow update: if isAdmin() && isValidId(orderId) && isValidOrder(incoming()) && (
         incoming().diff(existing()).affectedKeys().hasOnly(['status']) ||
         incoming().diff(existing()).affectedKeys().hasOnly(['id', 'customer', 'cake', 'status', 'eta'])
       );
-      allow delete: if isValidId(orderId);
+      allow delete: if isAdmin() && isValidId(orderId);
     }
 
     // General Studio Operations Settings Match Rules
     match /settings/{settingsId} {
       allow read: if true;
-      allow write: if isValidId(settingsId);
+      allow write: if isAdmin() && isValidId(settingsId);
     }
 
     // Promo Coupons Match Rules
     match /coupons/{couponId} {
-      allow read: if true;
-      allow write: if isValidId(couponId);
+      allow read, write: if isAdmin() && isValidId(couponId);
     }
 
     // Instagram Posts Match Rules
     match /instagram_posts/{postId} {
       allow read: if true;
-      allow write: if isValidId(postId) && isValidInstagramPost(incoming());
-      allow delete: if isValidId(postId);
+      allow write: if isAdmin() && isValidId(postId) && isValidInstagramPost(incoming());
+      allow delete: if isAdmin() && isValidId(postId);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

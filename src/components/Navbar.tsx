@@ -27,7 +27,7 @@ export default function Navbar({
     { id: 'custom', label: 'Custom Cakes' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'about', label: 'Our Story' },
-    { id: 'contact', label: 'Contact & Track' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   const handleTabSelect = (tabId: string) => {

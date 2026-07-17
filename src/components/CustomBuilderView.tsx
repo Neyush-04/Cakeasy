@@ -602,7 +602,6 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
               <button
                 onClick={() => {
                   setShowSuccessModal(false);
-                  // Redirect to Contact / Track order tab
                   const trigger = document.getElementById('whatsapp-floating-trigger');
                   if (trigger) trigger.click();
                 }}

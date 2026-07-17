@@ -16,15 +16,7 @@ import PageMeta from './components/PageMeta';
 
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
 import { MenuItem, CustomCakeState, AtelierSettings, InstagramPost } from './types';
-import { ShieldCheck, Sparkles, X, Heart, ShoppingBag } from 'lucide-react';
-
-import { 
-  collection, 
-  getDocs, 
-  doc, 
-  onSnapshot 
-} from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from './firebase';
+import { Sparkles, X } from 'lucide-react';
 
 interface CartItem {
   product: MenuItem;
@@ -49,15 +41,13 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
-  // Core application states lifted
-  const [productsList, setProductsList] = useState<MenuItem[]>([]);
+  const productsList = ALL_PRODUCTS;
   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customInquiries, setCustomInquiries] = useState<{ cake: CustomCakeState; date: string; notes: string }[]>([]);
-  const [galleryPosts, setGalleryPosts] = useState<InstagramPost[]>([]);
+  const galleryPosts: InstagramPost[] = INSTAGRAM_POSTS;
 
-  // Dynamic configuration states
-  const [atelierSettings, setAtelierSettings] = useState<AtelierSettings>({
+  const atelierSettings: AtelierSettings = {
     instagramUrl: 'https://www.instagram.com/cakeasy99/',
     instagramHandle: '@cakeasy99',
     whatsappNumber: '918810795004',
@@ -69,74 +59,7 @@ export default function App() {
     base2Tiers: 2499,
     base3Tiers: 4999,
     deliveryFeePerKm: 45
-  });
-
-  // A visitor may browse public content but must never seed or mutate Firestore.
-  useEffect(() => {
-    // Public catalogue read with a local fallback.
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        if (querySnapshot.empty) {
-          setProductsList(ALL_PRODUCTS);
-        } else {
-          const loadedProducts: MenuItem[] = [];
-          querySnapshot.forEach((doc) => {
-            loadedProducts.push(doc.data() as MenuItem);
-          });
-          setProductsList(loadedProducts);
-        }
-      } catch (error) {
-        handleFirestoreError(error, OperationType.LIST, 'products');
-      }
-    };
-
-    fetchProducts();
-
-    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'atelier'), (snapshot) => {
-      if (!snapshot.exists()) {
-        const defaultSettings: AtelierSettings = {
-          instagramUrl: 'https://www.instagram.com/cakeasy99/',
-          instagramHandle: '@cakeasy99',
-          whatsappNumber: '918810795004',
-          address: 'Cakeasy, 4C-601, AWHO, Gr. Noida, Delhi NCR, 201310',
-          email: 'cakeasy94@gmail.com',
-          bannerImage: '/gallery/1/img1.jpg',
-          egglessPremium: 100,
-          base1Tier: 999,
-          base2Tiers: 2499,
-          base3Tiers: 4999,
-          deliveryFeePerKm: 45
-        };
-        setAtelierSettings(defaultSettings);
-      } else {
-        setAtelierSettings(snapshot.data() as AtelierSettings);
-      }
-    }, (error) => {
-      console.error("Error fetching settings:", error);
-    });
-
-    // Realtime listener for approved Instagram/gallery posts.
-    const unsubscribeGallery = onSnapshot(collection(db, 'instagram_posts'), (snapshot) => {
-      if (snapshot.empty) {
-        setGalleryPosts(INSTAGRAM_POSTS);
-      } else {
-        const loadedPosts: InstagramPost[] = [];
-        snapshot.forEach((doc) => {
-          loadedPosts.push(doc.data() as InstagramPost);
-        });
-        const approvedPosts = loadedPosts.filter((post) => !post.imageUrl.includes('unsplash.com'));
-        setGalleryPosts(approvedPosts.length ? approvedPosts : INSTAGRAM_POSTS);
-      }
-    }, (error) => {
-      console.error("Error fetching instagram posts:", error);
-    });
-
-    return () => {
-      unsubscribeSettings();
-      unsubscribeGallery();
-    };
-  }, []);
+  };
 
   // Policy Modal States
   const [activePolicy, setActivePolicy] = useState<string | null>(null);
@@ -297,8 +220,8 @@ export default function App() {
                 element={
                   <>
                     <PageMeta
-                      title="Contact & Track Order | Cakeasy"
-                      description="Contact Cakeasy via WhatsApp or Instagram DM, find our Greater Noida address, or track your custom cake order."
+                      title="Contact Cakeasy | WhatsApp Orders"
+                      description="Contact Cakeasy via WhatsApp or Instagram DM, find our Greater Noida address, and share custom cake enquiries directly."
                     />
                     <ContactView />
                   </>

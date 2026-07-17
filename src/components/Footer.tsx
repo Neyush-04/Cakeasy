@@ -1,4 +1,3 @@
-import React from 'react';
 import { MapPin, Instagram, Globe, Sparkles } from 'lucide-react';
 import { AtelierSettings } from '../types';
 
@@ -18,7 +17,6 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
     <footer className="bg-[#1E1E1E] text-white pt-16 pb-12 overflow-hidden border-t border-[#D63384]/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Brand Col */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="h-9 w-9 rounded-full bg-[#D63384]/20 flex items-center justify-center border border-[#D63384]/40">
@@ -29,21 +27,21 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Crafting premium, customized artisanal cakes for every milestone. Freshly baked with care, right here in Greater Noida.
+              Custom cakes and celebration designs by Cakeasy in Greater Noida. Orders and availability are confirmed directly.
             </p>
             <div className="flex items-center gap-3 pt-2">
-              <a 
-                href={settings?.instagramUrl || "https://instagram.com/cakeasy.in"} 
-                target="_blank" 
+              <a
+                href={settings?.instagramUrl || 'https://www.instagram.com/cakeasy99/'}
+                target="_blank"
                 rel="noreferrer"
                 className="h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all"
                 aria-label="Instagram Link"
               >
                 <Instagram className="h-4 w-4" />
               </a>
-              <a 
-                href="https://cakeasy.in" 
-                target="_blank" 
+              <a
+                href="https://cakeasy.in"
+                target="_blank"
                 rel="noreferrer"
                 className="h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all"
                 aria-label="Website Link"
@@ -53,61 +51,49 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
             </div>
           </div>
 
-          {/* Quick Navigation */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Bake Boutique</h3>
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Browse</h3>
             <ul className="space-y-2.5 text-sm">
-              <li>
-                <button onClick={() => handleNavigation('home')} className="text-gray-400 hover:text-white transition-colors">
-                  Home
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleNavigation('catalog')} className="text-gray-400 hover:text-white transition-colors">
-                  Our Cakes
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleNavigation('custom')} className="text-gray-400 hover:text-[#F6B8C8] transition-colors flex items-center gap-1.5">
-                  Custom Cake Builder <span className="bg-[#D63384] text-[10px] font-bold px-1.5 py-0.5 rounded text-white scale-95">NEW</span>
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleNavigation('gallery')} className="text-gray-400 hover:text-white transition-colors">
-                  Cake Gallery
-                </button>
-              </li>
-              <li>
-                <button onClick={() => handleNavigation('about')} className="text-gray-400 hover:text-white transition-colors">
-                  Our Story
-                </button>
-              </li>
+              {[
+                ['home', 'Home'],
+                ['catalog', 'Our Cakes'],
+                ['custom', 'Custom Cakes'],
+                ['gallery', 'Cake Gallery'],
+                ['about', 'Our Story'],
+              ].map(([id, label]) => (
+                <li key={id}>
+                  <button onClick={() => handleNavigation(id)} className="text-gray-400 hover:text-white transition-colors">
+                    {label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Location & Schedule */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Boutique Studio</h3>
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Studio</h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-[#F6B8C8] shrink-0 mt-0.5" />
-                <span>
-                  {settings?.address || "Cakeasy, 4C-601, AWHO, Gr. Noida, Delhi NCR, 201310"}
-                </span>
+                <span>{settings?.address || 'Cakeasy, 4C-601, AWHO, Gr. Noida, Delhi NCR, 201310'}</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Globe className="h-4 w-4 text-[#F6B8C8] shrink-0" />
-                <span>Official Web: <a href="https://cakeasy.in" target="_blank" rel="noreferrer" className="underline hover:text-white">cakeasy.in</a></span>
+                <span>
+                  Official Web:{' '}
+                  <a href="https://cakeasy.in" target="_blank" rel="noreferrer" className="underline hover:text-white">
+                    cakeasy.in
+                  </a>
+                </span>
               </li>
               <li className="pt-2 text-xs text-neutral-500 border-t border-neutral-800">
-                <span className="font-semibold text-neutral-400">Hours:</span> Tues - Sun: 10:00 AM - 9:00 PM (Monday Closed)
+                Please confirm pickup, delivery, and hours before visiting.
               </li>
             </ul>
           </div>
 
-          {/* Custom SEO Details & Policy links */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Policies & Trust</h3>
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Policies</h3>
             <ul className="space-y-2.5 text-sm">
               <li>
                 <button onClick={() => openPolicyModal('privacy')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
@@ -133,7 +119,6 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
           </div>
         </div>
 
-        {/* SEO Structured Info Footer Row */}
         <div className="pt-8 mt-8 border-t border-neutral-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
           <p>© {new Date().getFullYear()} Cakeasy. Crafted Sweet Memories. All rights reserved.</p>
           <div className="flex gap-4">

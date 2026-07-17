@@ -67,6 +67,8 @@ export default function HomeView({
 
   const handleNextReview = () => undefined;
   const handlePrevReview = () => undefined;
+  const cleanCaption = (caption: string) =>
+    caption.includes('(Edit this caption') ? 'Cakeasy creation from our photo gallery.' : caption;
 
   return (
     <div className="space-y-24 pb-20 animate-fadeIn">
@@ -296,7 +298,7 @@ export default function HomeView({
             </div>
             <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Bespoke Express Schedule</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Need a same-day custom cake? Our collection of signature bento cakes can be custom-piped and hand-delivered within 4 to 6 hours!
+              Share your preferred date on WhatsApp and Cakeasy will confirm availability before accepting the order.
             </p>
           </div>
         </ScrollReveal>
@@ -308,7 +310,7 @@ export default function HomeView({
             </div>
             <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Temperature-Controlled Transit</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Delivered in specialized, chilled boutique containers to prevent delicate custom toppings and intricate ganaches from losing form.
+              Pickup, delivery, and packaging details are confirmed directly before the cake is finalized.
             </p>
           </div>
         </ScrollReveal>
@@ -320,7 +322,7 @@ export default function HomeView({
             </div>
             <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Allergen & Eggless Distinction</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Our kitchen runs a strict clean-workspace policy. All recipes can be ordered 100% eggless with organic, premium dairy alternatives.
+              Eggless and dietary requests can be discussed before ordering and confirmed directly by Cakeasy.
             </p>
           </div>
         </ScrollReveal>
@@ -409,7 +411,7 @@ export default function HomeView({
                   <span>💬 {post.comments?.length || 0} comments</span>
                 </div>
                 <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
-                  {post.caption}
+                  {cleanCaption(post.caption)}
                 </p>
               </div>
             </div>
