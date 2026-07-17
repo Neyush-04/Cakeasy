@@ -1,70 +1,65 @@
-import React from 'react';
-import { Sparkles, Heart, Award, ShieldCheck, Flame, Coffee } from 'lucide-react';
+import { Award, ShieldCheck, Flame, Coffee } from 'lucide-react';
 import { MEET_THE_TEAM } from '../data';
 
 export default function AboutView() {
   return (
     <div className="space-y-24 pb-20 animate-fadeIn">
-      {/* Magazine Cover Hero Style */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-[#FFF5F8]/70 rounded-[40px] p-8 sm:p-16 border border-[#F6B8C8]/20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 bg-[radial-gradient(#D63384_1px,transparent_1px)] [background-size:16px_16px]" />
-        
-        {/* Left Column Text */}
+
         <div className="lg:col-span-7 space-y-6">
           <div className="inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#F6B8C8]/30 shadow-sm text-xs font-bold uppercase tracking-widest text-[#D63384]">
-            <Award className="h-4 w-4" /> Handcrafted With Love Since Day One
+            <Award className="h-4 w-4" /> Handcrafted with care
           </div>
-          
+
           <div className="space-y-4">
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1E1E1E] leading-tight">
-              Bespoke Confectionery Born From <span className="text-[#D63384] italic">Passion</span>.
+              Custom Cakes Born From <span className="text-[#D63384] italic">Celebration</span>.
             </h1>
             <p className="text-gray-600 text-sm leading-relaxed max-w-xl">
-              Cakeasy was founded in Greater Noida with a simple, uncompromising vision: that a cake should look like a work of contemporary art, and taste even more spectacular than it looks.
+              Cakeasy is a Greater Noida cake studio focused on custom celebration cakes, bento cakes, and designs made around real moments.
             </p>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xl">
-              Every sponge we bake is slowly aerated to perfection, layered with hand-whipped vanilla bean buttercream, and sculpted using meticulous French pastry techniques. We refuse to use commercial presets, pre-mixes, or artificial stabilizers.
+              Each enquiry is handled directly so the flavour, size, finish, message, timing, and pickup or delivery plan are confirmed before baking begins.
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-6 pt-6 border-t border-pink-100">
             <div>
-              <span className="font-serif text-3xl font-bold text-[#D63384]">100%</span>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Scratch Baked</p>
+              <span className="font-serif text-3xl font-bold text-[#D63384]">30</span>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Gallery Sets</p>
             </div>
             <div>
-              <span className="font-serif text-3xl font-bold text-[#D63384]">5k+</span>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Memories Crafted</p>
+              <span className="font-serif text-3xl font-bold text-[#D63384]">1:1</span>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Order Planning</p>
             </div>
             <div>
-              <span className="font-serif text-3xl font-bold text-[#D63384]">18+</span>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Signature Fillings</p>
+              <span className="font-serif text-3xl font-bold text-[#D63384]">WA</span>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">WhatsApp Orders</p>
             </div>
           </div>
         </div>
 
-        {/* Right Column Grid Images */}
         <div className="lg:col-span-5 relative aspect-square rounded-[32px] overflow-hidden border-8 border-white shadow-xl">
           <img
             src="/gallery/4/img1.jpg"
-            alt="Artisanal kitchen baking studio"
+            alt="Cakeasy cake creation"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end p-6 text-white">
             <div className="space-y-1">
-              <span className="text-[9px] uppercase tracking-widest text-[#F6B8C8] font-bold">Cakeasy Atelier</span>
-              <h3 className="font-serif font-bold text-base">Greater Noida Home Kitchen</h3>
+              <span className="text-[9px] uppercase tracking-widest text-[#F6B8C8] font-bold">Cakeasy Studio</span>
+              <h3 className="font-serif font-bold text-base">Greater Noida</h3>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Philosophy Pillars Section */}
       <section className="space-y-12">
         <div className="text-center max-w-xl mx-auto space-y-2">
           <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Our Principles</span>
           <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">What Makes Cakeasy Different</h2>
-          <p className="text-gray-500 text-xs">We design beyond expectations, honoring your milestones with custom luxury.</p>
+          <p className="text-gray-500 text-xs">Clear planning, custom designs, and cakes made around your occasion.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -72,9 +67,9 @@ export default function AboutView() {
             <div className="h-12 w-12 rounded-2xl bg-pink-50 text-[#D63384] flex items-center justify-center mx-auto">
               <Flame className="h-5 w-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">French Patisserie Rigor</h3>
+            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Made To Order</h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              We leverage classic French temperature methods, curing buttercreams and using high-fat European-style butter to ensure rich texture without heavy grease.
+              Cakeasy confirms each design, flavour, size, and schedule directly before accepting a custom cake order.
             </p>
           </div>
 
@@ -82,9 +77,9 @@ export default function AboutView() {
             <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto">
               <Coffee className="h-5 w-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Finest Natural Ingredients</h3>
+            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Flavour Led</h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              From real Madagascar vanilla pods to premium Belgian Callebaut chocolate chips and hand-picked fresh organic berries. Taste nature’s honest sweetness.
+              The menu is built around familiar celebration flavours, with final ingredients and availability confirmed for each order.
             </p>
           </div>
 
@@ -92,20 +87,19 @@ export default function AboutView() {
             <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto">
               <ShieldCheck className="h-5 w-5" />
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Allergen Clean Standards</h3>
+            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Clear Confirmation</h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              We separate eggless batters, utilize organic oat milks for vegan-safe client orders, and wash our stand-mixers thoroughly to ensure zero cross-contamination.
+              Dietary requests, eggless options, pickup, delivery, and pricing are discussed before the cake is finalized.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Meet the Master Bakers Section */}
       <section className="space-y-12">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">The Patissiers</span>
-          <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">Our Creative Studio Artists</h2>
-          <p className="text-gray-500 text-xs">The skilled pastry chefs who turn flour, sugar, and organic blooms into memories.</p>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">The Kitchen</span>
+          <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">The Cakeasy Studio</h2>
+          <p className="text-gray-500 text-xs">The kitchen behind the cakes, designs, and celebration details.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
@@ -124,9 +118,7 @@ export default function AboutView() {
                   {baker.role}
                 </span>
                 <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">{baker.name}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {baker.bio}
-                </p>
+                <p className="text-xs text-gray-500 leading-relaxed">{baker.bio}</p>
               </div>
             </div>
           ))}

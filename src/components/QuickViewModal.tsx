@@ -193,7 +193,7 @@ export default function QuickViewModal({
               {/* Eggless note */}
               <div className="bg-[#FFF5F8]/40 border border-pink-50 p-2.5 rounded-xl text-[10px] text-gray-500 flex gap-1.5 flex-grow mt-4.5">
                 <Info className="h-4 w-4 text-[#D63384] shrink-0" />
-                <span>Default: 100% eggless compatible with clean-workspace baking rules.</span>
+                <span>Eggless and dietary requests are confirmed directly before the order is accepted.</span>
               </div>
             </div>
           </div>

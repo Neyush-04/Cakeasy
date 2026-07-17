@@ -52,8 +52,7 @@ export default function CatalogView({
       const startingPrice = getStartingPrice(product.priceRange);
       const matchesPrice = startingPrice <= maxPrice;
 
-      // 5. Eggless constraint (Note: All Cakeasy cakes can be ordered eggless, but we add simulated indicator)
-      const matchesEggless = !isEgglessOnly || true; // Our mock states they are all eggless compatible
+      const matchesEggless = !isEgglessOnly || true;
 
       return matchesSearch && matchesCategory && matchesFlavor && matchesPrice && matchesEggless;
     }).sort((a, b) => {
@@ -208,8 +207,8 @@ export default function CatalogView({
                 className="rounded text-[#D63384] focus:ring-[#D63384] border-gray-300 h-4.5 w-4.5 accent-[#D63384]"
               />
               <div>
-                <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">100% Eggless Only</span>
-                <p className="text-[10px] text-gray-400">Strict vegan-safe kitchen work surfaces</p>
+                <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">Ask About Eggless</span>
+                <p className="text-[10px] text-gray-400">Availability is confirmed before baking.</p>
               </div>
             </label>
           </div>
@@ -217,7 +216,7 @@ export default function CatalogView({
           {/* Kitchen info badge */}
           <div className="bg-[#FFF5F8]/40 border border-pink-50 rounded-2xl p-4 text-xs text-gray-500 flex gap-2">
             <Info className="h-4 w-4 text-[#D63384] shrink-0 mt-0.5" />
-            <p>Our studio specializes in temperature-safe packaging to ensure flawless shape delivery.</p>
+            <p>Pickup, delivery, and packaging details are confirmed directly before the order is accepted.</p>
           </div>
         </aside>
 

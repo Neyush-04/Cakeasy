@@ -1,6 +1,0 @@
-{
-  "name": "Cakeasy",
-  "description": "An exquisite interactive website for Cakeasy—artisanal cakes & confections—featuring an interactive 3D-style custom cake builder, dynamic flavor explorer, and a curated Instagram showcase.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

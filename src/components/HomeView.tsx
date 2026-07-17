@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { Search, ArrowRight, Sparkles, Heart, Clock, Truck, ShieldCheck, Star, Instagram, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ArrowRight, Sparkles, Heart, Instagram, Star, ChevronLeft, ChevronRight, Clock, Truck, ShieldCheck } from 'lucide-react';
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from '../data';
 import { MenuItem, AtelierSettings, InstagramPost } from '../types';
 import { resolveCakeImage } from '../utils';
 import ScrollReveal from './ScrollReveal';
 import TextSplitter from './TextSplitter';
-import StatsStrip from './StatsStrip';
+import heroImage from '../assets/images/cakeasy_hero_banner_1784021815776.jpg';
 
 interface HomeViewProps {
   products: MenuItem[];
@@ -29,43 +29,13 @@ export default function HomeView({
 }: HomeViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTrendingTab, setActiveTrendingTab] = useState<'trending' | 'new' | 'bestseller'>('trending');
-  const [reviewIndex, setReviewIndex] = useState(0);
+  const hiddenReviews = [{ name: '', role: '', stars: 0, text: '', date: '' }];
+  const reviews = hiddenReviews;
+  const reviewIndex = 0;
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 60]);
   const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
-
-  const reviews = [
-    {
-      name: 'Pooja Singhania',
-      role: 'Bride',
-      stars: 5,
-      text: 'The 3-tier pastel rose cake we ordered for our wedding was absolutely stunning! It became the centerpiece of our reception. Guests kept talking about the Rose Water & Pistachio layers!',
-      date: 'July 2026',
-    },
-    {
-      name: 'Rohan Deshmukh',
-      role: 'Tech Lead',
-      stars: 5,
-      text: 'Order process was flawless. I customized a bento cake with their 3D style options for my partner. Hand-delivered in a perfect cold box. Tastes like heaven.',
-      date: 'June 2026',
-    },
-    {
-      name: 'Meera Kapoor',
-      role: 'Parent',
-      stars: 5,
-      text: 'Cakeasy makes the best cupcakes in town. They custom-made a dairy-free Belgian chocolate option for my daughters birthday party. Pure artistry!',
-      date: 'May 2026',
-    }
-  ];
-
-  const handleNextReview = () => {
-    setReviewIndex((prev) => (prev + 1) % reviews.length);
-  };
-
-  const handlePrevReview = () => {
-    setReviewIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
-  };
 
   const categories = [
     { id: 'bento', label: 'Bento Cakes', icon: '🧁', count: '12+ Designs', color: 'bg-pink-50 text-pink-700 hover:border-pink-200' },
@@ -94,6 +64,11 @@ export default function HomeView({
       // Pass query in a stateful way if needed, for simplicity it transitions to the catalog.
     }
   };
+
+  const handleNextReview = () => undefined;
+  const handlePrevReview = () => undefined;
+  const cleanCaption = (caption: string) =>
+    caption.includes('(Edit this caption') ? 'Cakeasy creation from our photo gallery.' : caption;
 
   return (
     <div className="space-y-24 pb-20 animate-fadeIn">
@@ -161,23 +136,20 @@ export default function HomeView({
               <div className="relative mx-auto w-full max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-[0_20px_50px_rgba(214,51,132,0.08)] bg-[#FFF5F8]">
                 <motion.img
                   style={{ y: heroImageY, scale: heroImageScale }}
-                  src={resolveCakeImage(settings.bannerImage || "/src/assets/images/cakeasy_hero_banner_1784021815776.jpg")}
-                  alt="Stunning Wedding Cake"
+                  src={heroImage}
+                  alt="Cakeasy cake creation"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#FFF5F8]">
-                  <p className="text-[10px] text-[#D63384] font-bold tracking-wider uppercase">Chef Recommendation</p>
-                  <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Pastel Rose Masterpiece</h3>
-                  <p className="text-xs text-gray-500">Perfect for weddings & golden anniversaries</p>
+                  <p className="text-[10px] text-[#D63384] font-bold tracking-wider uppercase">Cakeasy creation</p>
+                  <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Custom celebration cake</h3>
+                  <p className="text-xs text-gray-500">Explore the Cakeasy gallery for more inspiration.</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* 1B. STATS STRIP */}
-      <StatsStrip />
 
       {/* 2. FEATURED CATEGORIES SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -200,7 +172,6 @@ export default function HomeView({
                   {cat.icon}
                 </div>
                 <h3 className="font-serif font-bold text-base text-[#1E1E1E] group-hover:text-[#D63384] transition-colors">{cat.label}</h3>
-                <p className="text-xs text-gray-400 mt-1">{cat.count}</p>
               </div>
             </ScrollReveal>
           ))}
@@ -318,7 +289,7 @@ export default function HomeView({
         </div>
       </section>
 
-      {/* 4. VALUE PROPOSITION SECTION */}
+      {false && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
         <ScrollReveal delay={0}>
           <div className="space-y-4 text-center">
@@ -327,7 +298,7 @@ export default function HomeView({
             </div>
             <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Bespoke Express Schedule</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Need a same-day custom cake? Our collection of signature bento cakes can be custom-piped and hand-delivered within 4 to 6 hours!
+              Share your preferred date on WhatsApp and Cakeasy will confirm availability before accepting the order.
             </p>
           </div>
         </ScrollReveal>
@@ -339,7 +310,7 @@ export default function HomeView({
             </div>
             <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Temperature-Controlled Transit</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Delivered in specialized, chilled boutique containers to prevent delicate custom toppings and intricate ganaches from losing form.
+              Pickup, delivery, and packaging details are confirmed directly before the cake is finalized.
             </p>
           </div>
         </ScrollReveal>
@@ -351,31 +322,32 @@ export default function HomeView({
             </div>
             <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Allergen & Eggless Distinction</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Our kitchen runs a strict clean-workspace policy. All recipes can be ordered 100% eggless with organic, premium dairy alternatives.
+              Eggless and dietary requests can be discussed before ordering and confirmed directly by Cakeasy.
             </p>
           </div>
         </ScrollReveal>
       </section>
+      )}
 
-      {/* 5. TESTIMONIALS SLIDER SECTION */}
+      {false && (
       <section className="bg-[#FFF5F8]/60 py-16 rounded-[40px] border border-[#FFF5F8] relative">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
           <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Bespoke Celebrations</span>
           
           <div className="space-y-4 max-w-3xl mx-auto">
             <div className="flex justify-center text-amber-400 gap-1">
-              {[...Array(reviews[reviewIndex].stars)].map((_, i) => (
+              {[...Array(hiddenReviews[reviewIndex].stars)].map((_, i) => (
                 <Star key={i} className="h-5 w-5 fill-amber-400 stroke-none" />
               ))}
             </div>
             
             <p className="font-serif text-xl sm:text-2xl text-gray-800 leading-relaxed italic">
-              "{reviews[reviewIndex].text}"
+              "{hiddenReviews[reviewIndex].text}"
             </p>
           </div>
 
           <div>
-            <p className="font-serif font-bold text-base text-[#1E1E1E]">{reviews[reviewIndex].name}</p>
+            <p className="font-serif font-bold text-base text-[#1E1E1E]">{hiddenReviews[reviewIndex].name}</p>
             <p className="text-xs text-[#D63384] font-medium mt-0.5">{reviews[reviewIndex].role} • {reviews[reviewIndex].date}</p>
           </div>
 
@@ -397,8 +369,9 @@ export default function HomeView({
           </div>
         </div>
       </section>
+      )}
 
-      {/* 6. INSTAGRAM LIVE SHOWCASE */}
+      {/* 6. Instagram showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="space-y-1 text-center sm:text-left">
@@ -433,12 +406,12 @@ export default function HomeView({
                 </div>
               </div>
               <div className="p-5 flex-grow space-y-2">
-                <div className="flex justify-between items-center text-xs text-gray-500 font-medium">
+                <div className="hidden">
                   <span>❤️ {post.likes} likes</span>
                   <span>💬 {post.comments?.length || 0} comments</span>
                 </div>
                 <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
-                  {post.caption}
+                  {cleanCaption(post.caption)}
                 </p>
               </div>
             </div>

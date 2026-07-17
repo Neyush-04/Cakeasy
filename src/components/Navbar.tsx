@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, X, ShoppingBag, Heart, ShieldAlert, Sparkles } from 'lucide-react';
-import logo from '../assets/images/cakeasy_logo_icon.png';
+import { Menu, X, ShoppingBag, Heart } from 'lucide-react';
+import logo from '../assets/brand/cakeasy-logo-web.webp';
 
 interface NavbarProps {
   currentTab: string;
@@ -27,7 +27,7 @@ export default function Navbar({
     { id: 'custom', label: 'Custom Cakes' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'about', label: 'Our Story' },
-    { id: 'contact', label: 'Contact & Track' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   const handleTabSelect = (tabId: string) => {
@@ -39,21 +39,17 @@ export default function Navbar({
   return (
     <nav className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-[#FFF5F8] transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
+        <div className="flex justify-between h-24 items-center">
           {/* Logo Section */}
           <div 
             onClick={() => handleTabSelect('home')}
-            className="flex items-center gap-2 cursor-pointer group"
+            className="flex items-center cursor-pointer group"
           >
-            <div className="h-12 w-12 rounded-full overflow-hidden flex items-center justify-center border border-[#F6B8C8]/40 group-hover:scale-105 transition-transform duration-300 bg-white p-1">
-              <img src={logo} alt="Cakeasy Logo" className="h-full w-full object-contain" />
-            </div>
-            <div>
-              <span className="font-serif text-2xl font-bold tracking-tight text-[#1E1E1E] group-hover:text-[#D63384] transition-colors">
-                Cakeasy<span className="text-[#D63384]">.</span>
-              </span>
-              <p className="text-[10px] uppercase tracking-widest text-[#F6B8C8] -mt-1 font-sans font-semibold">artisanal bakery</p>
-            </div>
+            <img
+              src={logo}
+              alt="Cakeasy Premium Cakes"
+              className="h-20 w-auto max-w-[180px] object-contain object-left transition-transform duration-300 group-hover:scale-[1.02] sm:max-w-[210px]"
+            />
           </div>
 
           {/* Desktop Nav Items */}
@@ -76,7 +72,7 @@ export default function Navbar({
             ))}
           </div>
 
-          {/* Action Items (Cart, Wishlist, Admin, Mobile Toggle) */}
+          {/* Action Items */}
           <div className="flex items-center gap-4">
             {/* Wishlist Button */}
             <button
@@ -104,20 +100,6 @@ export default function Navbar({
                   {cartCount}
                 </span>
               )}
-            </button>
-
-            {/* Secret Admin Button for Developer Review */}
-            <button
-              onClick={() => handleTabSelect('admin')}
-              className={`p-2 rounded-lg transition-colors hidden sm:flex items-center gap-1 text-xs font-semibold uppercase tracking-wider ${
-                currentTab === 'admin'
-                  ? 'bg-[#FFF5F8] text-[#D63384]'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
-              }`}
-              title="Admin CMS Station"
-            >
-              <ShieldAlert className="h-4 w-4" />
-              <span className="text-[10px] hidden lg:inline">Bake Station</span>
             </button>
 
             {/* Mobile Menu Button */}
@@ -149,17 +131,6 @@ export default function Navbar({
               {item.label}
             </button>
           ))}
-          <button
-            onClick={() => handleTabSelect('admin')}
-            className={`flex w-full items-center gap-2 px-4 py-3 rounded-xl text-base font-medium transition-colors uppercase tracking-wider ${
-              currentTab === 'admin'
-                ? 'bg-[#FFF5F8] text-[#D63384]'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-            }`}
-          >
-            <ShieldAlert className="h-5 w-5" />
-            Bake Station (Admin Dashboard)
-          </button>
         </div>
       )}
     </nav>
