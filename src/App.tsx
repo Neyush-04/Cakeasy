@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -9,6 +9,7 @@ import CustomBuilderView from './components/CustomBuilderView';
 import GalleryView from './components/GalleryView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
+import AdminView from './components/AdminView';
 import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -228,7 +229,18 @@ export default function App() {
                 }
               />
 
-              <Route path="/admin" element={<Navigate to="/" replace />} />
+              <Route
+                path="/admin"
+                element={
+                  <>
+                    <PageMeta
+                      title="Owner CMS | Cakeasy"
+                      description="Cakeasy owner CMS access and secure activation status."
+                    />
+                    <AdminView />
+                  </>
+                }
+              />
             </Routes>
           </motion.div>
         </AnimatePresence>

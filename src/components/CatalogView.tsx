@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, SlidersHorizontal, Heart, Sparkles, Check, Info, ArrowUpDown } from 'lucide-react';
-import { ALL_PRODUCTS, CAKE_CATEGORIES, POPULAR_FLAVORS } from '../data';
+import { Search, SlidersHorizontal, Heart, Check, Info, ArrowUpDown } from 'lucide-react';
+import { CAKE_CATEGORIES, POPULAR_FLAVORS } from '../data';
 import { MenuItem } from '../types';
 import { resolveCakeImage } from '../utils';
 

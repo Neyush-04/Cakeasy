@@ -27,7 +27,7 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Custom cakes and celebration designs by Cakeasy in Greater Noida. Orders and availability are confirmed directly.
+              Neha Chaudhary's custom cake studio in Greater Noida. Orders and availability are confirmed directly on WhatsApp.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a
@@ -113,6 +113,11 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               <li>
                 <button onClick={() => handleNavigation('contact')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
                   Contact Cakeasy
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handleNavigation('admin')} className="text-neutral-500 hover:text-[#F6B8C8] transition-colors text-left w-full">
+                  Owner CMS
                 </button>
               </li>
             </ul>

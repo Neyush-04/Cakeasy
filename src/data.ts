@@ -403,9 +403,9 @@ export const FAQS = [
 
 export const MEET_THE_TEAM = [
   {
-    name: 'Cakeasy',
-    role: 'Home Baker & Founder',
-    bio: 'Cakeasy is a home-baked cake studio crafting custom cakes for birthdays, weddings, and everyday celebrations.',
+    name: 'Neha Chaudhary',
+    role: 'Main Baker & Founder',
+    bio: 'Neha started Cakeasy from Lucknow in 2021 and carried that home-baker warmth into Delhi NCR and Greater Noida, crafting custom cakes for birthdays, weddings, and everyday celebrations.',
     image: '/gallery/1/img1.jpg'
   }
 ];

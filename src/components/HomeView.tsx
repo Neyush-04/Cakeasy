@@ -1,12 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Search, ArrowRight, Sparkles, Heart, Instagram, Star, ChevronLeft, ChevronRight, Clock, Truck, ShieldCheck } from 'lucide-react';
-import { ALL_PRODUCTS, INSTAGRAM_POSTS } from '../data';
 import { MenuItem, AtelierSettings, InstagramPost } from '../types';
 import { resolveCakeImage } from '../utils';
 import ScrollReveal from './ScrollReveal';
 import TextSplitter from './TextSplitter';
-import heroImage from '../assets/images/cakeasy_hero_banner_1784021815776.jpg';
 
 interface HomeViewProps {
   products: MenuItem[];
@@ -136,14 +134,14 @@ export default function HomeView({
               <div className="relative mx-auto w-full max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-[0_20px_50px_rgba(214,51,132,0.08)] bg-[#FFF5F8]">
                 <motion.img
                   style={{ y: heroImageY, scale: heroImageScale }}
-                  src={heroImage}
-                  alt="Cakeasy cake creation"
+                  src="/gallery/1/img1.jpg"
+                  alt="Neha Chaudhary, the baker behind Cakeasy"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#FFF5F8]">
-                  <p className="text-[10px] text-[#D63384] font-bold tracking-wider uppercase">Cakeasy creation</p>
-                  <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Custom celebration cake</h3>
-                  <p className="text-xs text-gray-500">Explore the Cakeasy gallery for more inspiration.</p>
+                  <p className="text-[10px] text-[#D63384] font-bold tracking-wider uppercase">Founder & baker</p>
+                  <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Neha Chaudhary</h3>
+                  <p className="text-xs text-gray-500">The face and hands behind Cakeasy's custom cakes.</p>
                 </div>
               </div>
             </div>

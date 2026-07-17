@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, ShoppingBag, Heart } from 'lucide-react';
+import { Menu, X, ShoppingBag, Heart, Instagram, Mail, Globe, MessageCircle } from 'lucide-react';
 import logo from '../assets/brand/cakeasy-logo-web.webp';
 
 interface NavbarProps {
@@ -37,7 +37,50 @@ export default function Navbar({
   };
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-[#FFF5F8] transition-all duration-300">
+    <nav className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-[#FFF5F8] transition-all duration-300">
+      <div className="border-b border-[#FFF5F8] bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3">
+          <span className="hidden sm:inline text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">
+            Neha Chaudhary's Cakeasy Studio
+          </span>
+          <div className="flex items-center gap-2 ml-auto">
+            <a
+              href="https://wa.me/918810795004"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-xs font-black uppercase tracking-wider text-white shadow-[0_6px_18px_rgba(37,211,102,0.28)] hover:bg-[#20ba59] transition-colors"
+              aria-label="WhatsApp Cakeasy"
+            >
+              <MessageCircle className="h-4 w-4 fill-white stroke-white" /> WhatsApp
+            </a>
+            <a
+              href="https://www.instagram.com/cakeasy99/"
+              target="_blank"
+              rel="noreferrer"
+              className="h-9 w-9 rounded-full border border-pink-100 bg-[#FFF5F8] text-[#D63384] flex items-center justify-center hover:bg-[#D63384] hover:text-white transition-colors"
+              aria-label="Cakeasy Instagram"
+            >
+              <Instagram className="h-4 w-4" />
+            </a>
+            <a
+              href="mailto:cakeasy94@gmail.com"
+              className="h-9 w-9 rounded-full border border-pink-100 bg-white text-gray-500 flex items-center justify-center hover:text-[#D63384] hover:border-[#F6B8C8] transition-colors"
+              aria-label="Email Cakeasy"
+            >
+              <Mail className="h-4 w-4" />
+            </a>
+            <a
+              href="https://cakeasy.in"
+              target="_blank"
+              rel="noreferrer"
+              className="h-9 w-9 rounded-full border border-pink-100 bg-white text-gray-500 flex items-center justify-center hover:text-[#D63384] hover:border-[#F6B8C8] transition-colors"
+              aria-label="Cakeasy website"
+            >
+              <Globe className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-24 items-center">
           {/* Logo Section */}

@@ -1,105 +1,106 @@
-import { Award, ShieldCheck, Flame, Coffee } from 'lucide-react';
+import { Award, MapPin, MessageCircle, Sparkles } from 'lucide-react';
 import { MEET_THE_TEAM } from '../data';
+
+const journey = [
+  {
+    year: '2021',
+    title: 'Lucknow beginnings',
+    text: 'Neha Chaudhary began Cakeasy as a home-baker story in Lucknow, taking small celebration orders and building confidence one cake at a time.',
+  },
+  {
+    year: '2022-2023',
+    title: 'A recognisable cake style',
+    text: 'Themes, florals, character cakes, bento cakes, and party tables helped shape Cakeasy into a personal, occasion-first brand.',
+  },
+  {
+    year: '2024 onward',
+    title: 'From Lucknow to Delhi NCR',
+    text: 'The journey moved toward Delhi and Greater Noida, bringing the same handmade warmth into a wider set of celebrations.',
+  },
+];
 
 export default function AboutView() {
   return (
-    <div className="space-y-24 pb-20 animate-fadeIn">
+    <div className="space-y-20 pb-20 animate-fadeIn">
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-[#FFF5F8]/70 rounded-[40px] p-8 sm:p-16 border border-[#F6B8C8]/20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/4 h-full opacity-5 bg-[radial-gradient(#D63384_1px,transparent_1px)] [background-size:16px_16px]" />
 
         <div className="lg:col-span-7 space-y-6">
           <div className="inline-flex items-center gap-2 bg-white px-3.5 py-1.5 rounded-full border border-[#F6B8C8]/30 shadow-sm text-xs font-bold uppercase tracking-widest text-[#D63384]">
-            <Award className="h-4 w-4" /> Handcrafted with care
+            <Award className="h-4 w-4" /> Main baker & founder
           </div>
 
           <div className="space-y-4">
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1E1E1E] leading-tight">
-              Custom Cakes Born From <span className="text-[#D63384] italic">Celebration</span>.
+              Meet <span className="text-[#D63384] italic">Neha Chaudhary</span>, the heart of Cakeasy.
             </h1>
             <p className="text-gray-600 text-sm leading-relaxed max-w-xl">
-              Cakeasy is a Greater Noida cake studio focused on custom celebration cakes, bento cakes, and designs made around real moments.
+              Neha is the face, baker, and creative force behind Cakeasy. Her journey began in Lucknow in 2021 and grew into a Greater Noida cake studio serving Delhi NCR celebrations.
             </p>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xl">
-              Each enquiry is handled directly so the flavour, size, finish, message, timing, and pickup or delivery plan are confirmed before baking begins.
+              Cakeasy is built around direct conversations: the occasion, the design, the flavour, the date, and the small emotional details that make a cake feel personal.
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 pt-6 border-t border-pink-100">
-            <div>
-              <span className="font-serif text-3xl font-bold text-[#D63384]">30</span>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Gallery Sets</p>
-            </div>
-            <div>
-              <span className="font-serif text-3xl font-bold text-[#D63384]">1:1</span>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Order Planning</p>
-            </div>
-            <div>
-              <span className="font-serif text-3xl font-bold text-[#D63384]">WA</span>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">WhatsApp Orders</p>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="https://wa.me/918810795004"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-xs font-black uppercase tracking-wider text-white hover:bg-[#20ba59] transition-colors"
+            >
+              <MessageCircle className="h-4 w-4 fill-white stroke-white" /> WhatsApp Neha
+            </a>
+            <a
+              href="https://www.instagram.com/cakeasy99/"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#D63384] border border-[#F6B8C8] hover:bg-[#FFF5F8] transition-colors"
+            >
+              View Instagram Journey
+            </a>
           </div>
         </div>
 
-        <div className="lg:col-span-5 relative aspect-square rounded-[32px] overflow-hidden border-8 border-white shadow-xl">
+        <div className="lg:col-span-5 relative aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-xl">
           <img
-            src="/gallery/4/img1.jpg"
-            alt="Cakeasy cake creation"
+            src="/gallery/1/img1.jpg"
+            alt="Neha Chaudhary, founder and baker of Cakeasy"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end p-6 text-white">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent flex items-end p-6 text-white">
             <div className="space-y-1">
-              <span className="text-[9px] uppercase tracking-widest text-[#F6B8C8] font-bold">Cakeasy Studio</span>
-              <h3 className="font-serif font-bold text-base">Greater Noida</h3>
+              <span className="text-[9px] uppercase tracking-widest text-[#F6B8C8] font-bold">Cakeasy Founder</span>
+              <h2 className="font-serif font-bold text-xl">Neha Chaudhary</h2>
+              <p className="text-xs text-white/80">Lucknow to Delhi NCR, one celebration at a time.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="space-y-12">
+      <section className="space-y-10">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Our Principles</span>
-          <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">What Makes Cakeasy Different</h2>
-          <p className="text-gray-500 text-xs">Clear planning, custom designs, and cakes made around your occasion.</p>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">The Journey</span>
+          <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">From Lucknow beginnings to Greater Noida</h2>
+          <p className="text-gray-500 text-xs">A founder-led story, not a faceless bakery catalogue.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white border border-[#FFF5F8] p-8 rounded-[28px] shadow-sm hover:shadow-md transition-all text-center space-y-4">
-            <div className="h-12 w-12 rounded-2xl bg-pink-50 text-[#D63384] flex items-center justify-center mx-auto">
-              <Flame className="h-5 w-5" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {journey.map((item) => (
+            <div key={item.year} className="bg-white border border-[#FFF5F8] p-6 rounded-[24px] shadow-sm space-y-3">
+              <span className="font-serif text-3xl font-bold text-[#D63384]">{item.year}</span>
+              <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">{item.title}</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">{item.text}</p>
             </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Made To Order</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Cakeasy confirms each design, flavour, size, and schedule directly before accepting a custom cake order.
-            </p>
-          </div>
-
-          <div className="bg-white border border-[#FFF5F8] p-8 rounded-[28px] shadow-sm hover:shadow-md transition-all text-center space-y-4">
-            <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto">
-              <Coffee className="h-5 w-5" />
-            </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Flavour Led</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              The menu is built around familiar celebration flavours, with final ingredients and availability confirmed for each order.
-            </p>
-          </div>
-
-          <div className="bg-white border border-[#FFF5F8] p-8 rounded-[28px] shadow-sm hover:shadow-md transition-all text-center space-y-4">
-            <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Clear Confirmation</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Dietary requests, eggless options, pickup, delivery, and pricing are discussed before the cake is finalized.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 
-      <section className="space-y-12">
+      <section className="space-y-10">
         <div className="text-center max-w-xl mx-auto space-y-2">
           <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">The Kitchen</span>
           <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">The Cakeasy Studio</h2>
-          <p className="text-gray-500 text-xs">The kitchen behind the cakes, designs, and celebration details.</p>
+          <p className="text-gray-500 text-xs">The person behind the cakes, designs, and celebration details.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
@@ -119,9 +120,22 @@ export default function AboutView() {
                 </span>
                 <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">{baker.name}</h3>
                 <p className="text-xs text-gray-500 leading-relaxed">{baker.bio}</p>
+                <p className="text-[10px] text-gray-400 flex items-center justify-center sm:justify-start gap-1">
+                  <MapPin className="h-3 w-3" /> Lucknow roots, now Greater Noida.
+                </p>
               </div>
             </div>
           ))}
+
+          <div className="bg-[#FFF5F8] rounded-[32px] overflow-hidden border border-[#F6B8C8]/30 p-6 flex flex-col justify-between gap-6 shadow-sm">
+            <Sparkles className="h-7 w-7 text-[#D63384]" />
+            <div className="space-y-2">
+              <h3 className="font-serif font-bold text-xl text-[#1E1E1E]">A story told through cakes</h3>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                The gallery is arranged as a visual archive so visitors see the growth of Cakeasy, not just isolated product photos.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </div>
