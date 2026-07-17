@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -13,6 +14,7 @@ import AdminLogin from './components/AdminLogin';
 import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
+import PageMeta from './components/PageMeta';
 
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
 import { MenuItem, CustomCakeState, AtelierSettings, PromoCoupon, InstagramPost } from './types';
@@ -38,7 +40,17 @@ interface CartItem {
 }
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState('home');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentTab = location.pathname === '/' ? 'home' : location.pathname.replace(/^\//, '');
+  const setCurrentTab = (tab: string) => {
+    navigate(tab === 'home' ? '/' : `/${tab}`);
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -415,78 +427,140 @@ export default function App() {
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentTab}
+            key={location.pathname}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
-        {currentTab === 'home' && (
-          <HomeView
-            products={productsList}
-            setCurrentTab={setCurrentTab}
-            setSelectedProduct={setSelectedProduct}
-            toggleWishlist={handleToggleWishlist}
-            wishlistedIds={wishlistedIds}
-            settings={atelierSettings}
-            galleryPosts={galleryPosts}
-          />
-        )}
+            <Routes location={location}>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <PageMeta
+                      title="Cakeasy | Custom Cakes in Greater Noida & Delhi NCR"
+                      description="Cakeasy is a home bakery in Greater Noida crafting custom bento cakes, wedding cakes, celebration cakes, and cupcakes. Order fresh, handcrafted cakes for your next milestone via WhatsApp."
+                    />
+                    <HomeView
+                      products={productsList}
+                      setCurrentTab={setCurrentTab}
+                      setSelectedProduct={setSelectedProduct}
+                      toggleWishlist={handleToggleWishlist}
+                      wishlistedIds={wishlistedIds}
+                      settings={atelierSettings}
+                      galleryPosts={galleryPosts}
+                    />
+                  </>
+                }
+              />
 
-        {currentTab === 'catalog' && (
-          <CatalogView
-            products={productsList}
-            setSelectedProduct={setSelectedProduct}
-            toggleWishlist={handleToggleWishlist}
-            wishlistedIds={wishlistedIds}
-          />
-        )}
+              <Route
+                path="/catalog"
+                element={
+                  <>
+                    <PageMeta
+                      title="Our Cakes | Cakeasy Catalog — Bento, Wedding & Celebration Cakes"
+                      description="Browse Cakeasy's full menu of bento cakes, wedding cakes, celebration cakes, and cupcakes. Custom flavors and designs, handcrafted to order in Greater Noida."
+                    />
+                    <CatalogView
+                      products={productsList}
+                      setSelectedProduct={setSelectedProduct}
+                      toggleWishlist={handleToggleWishlist}
+                      wishlistedIds={wishlistedIds}
+                    />
+                  </>
+                }
+              />
 
-        {currentTab === 'custom' && (
-          <CustomBuilderView
-            onAddCustomInquiry={handleAddCustomInquiry}
-            settings={atelierSettings}
-          />
-        )}
+              <Route
+                path="/custom"
+                element={
+                  <>
+                    <PageMeta
+                      title="Custom Cake Builder | Cakeasy"
+                      description="Design your own custom cake with Cakeasy — choose shape, size, flavor, and upload inspiration photos. We'll bring your vision to life."
+                    />
+                    <CustomBuilderView
+                      onAddCustomInquiry={handleAddCustomInquiry}
+                      settings={atelierSettings}
+                    />
+                  </>
+                }
+              />
 
-        {currentTab === 'gallery' && (
-          <GalleryView
-            posts={galleryPosts}
-            onLikePost={handleLikeGalleryPost}
-            onAddComment={handleCommentGalleryPost}
-          />
-        )}
+              <Route
+                path="/gallery"
+                element={
+                  <>
+                    <PageMeta
+                      title="Cake Gallery | Cakeasy Instagram Showcase"
+                      description="See real cakes handcrafted by Cakeasy — browse our Instagram-style gallery of bento cakes, wedding cakes, and celebration cakes from Greater Noida."
+                    />
+                    <GalleryView
+                      posts={galleryPosts}
+                      onLikePost={handleLikeGalleryPost}
+                      onAddComment={handleCommentGalleryPost}
+                    />
+                  </>
+                }
+              />
 
-        {currentTab === 'about' && (
-          <AboutView />
-        )}
+              <Route
+                path="/about"
+                element={
+                  <>
+                    <PageMeta
+                      title="Our Story | About Cakeasy"
+                      description="Meet the home baker behind Cakeasy — a Greater Noida cake studio crafting custom, handmade cakes for every celebration."
+                    />
+                    <AboutView />
+                  </>
+                }
+              />
 
-        {currentTab === 'contact' && (
-          <ContactView />
-        )}
+              <Route
+                path="/contact"
+                element={
+                  <>
+                    <PageMeta
+                      title="Contact & Track Order | Cakeasy"
+                      description="Contact Cakeasy via WhatsApp or Instagram DM, find our Greater Noida address, or track your custom cake order."
+                    />
+                    <ContactView />
+                  </>
+                }
+              />
 
-         {currentTab === 'admin' && (
-          isAdminLoggedIn ? (
-            <AdminDashboard
-              products={productsList}
-              onAddProduct={handleAddProductCatalog}
-              onDeleteProduct={handleDeleteProductCatalog}
-              orders={ordersList}
-              onUpdateOrderStatus={handleUpdateOrderStatus}
-              settings={atelierSettings}
-              onUpdateSettings={handleUpdateAtelierSettings}
-              coupons={couponsList}
-              onAddCoupon={handleAddPromoCoupon}
-              onToggleCoupon={handleTogglePromoCoupon}
-              galleryPosts={galleryPosts}
-              onAddGalleryPost={handleAddGalleryPost}
-              onDeleteGalleryPost={handleDeleteGalleryPost}
-              onLogout={() => setIsAdminLoggedIn(false)}
-            />
-          ) : (
-            <AdminLogin onLoginSuccess={() => setIsAdminLoggedIn(true)} />
-          )
-        )}
+              <Route
+                path="/admin"
+                element={
+                  <>
+                    <PageMeta title="Bake Station | Cakeasy Admin" description="Cakeasy admin dashboard." />
+                    {isAdminLoggedIn ? (
+                      <AdminDashboard
+                        products={productsList}
+                        onAddProduct={handleAddProductCatalog}
+                        onDeleteProduct={handleDeleteProductCatalog}
+                        orders={ordersList}
+                        onUpdateOrderStatus={handleUpdateOrderStatus}
+                        settings={atelierSettings}
+                        onUpdateSettings={handleUpdateAtelierSettings}
+                        coupons={couponsList}
+                        onAddCoupon={handleAddPromoCoupon}
+                        onToggleCoupon={handleTogglePromoCoupon}
+                        galleryPosts={galleryPosts}
+                        onAddGalleryPost={handleAddGalleryPost}
+                        onDeleteGalleryPost={handleDeleteGalleryPost}
+                        onLogout={() => setIsAdminLoggedIn(false)}
+                      />
+                    ) : (
+                      <AdminLogin onLoginSuccess={() => setIsAdminLoggedIn(true)} />
+                    )}
+                  </>
+                }
+              />
+            </Routes>
           </motion.div>
         </AnimatePresence>
       </main>
