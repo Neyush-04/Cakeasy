@@ -47,9 +47,10 @@ service cloud.firestore {
     // Validation Blueprint for Instagram Posts
     function isValidInstagramPost(data) {
       return data.keys().hasAll(['id', 'imageUrl', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
-        && data.keys().size() == 7
+        && data.keys().hasOnly(['id', 'imageUrl', 'images', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
         && data.id is string && data.id.size() <= 128
         && data.imageUrl is string && data.imageUrl.size() <= 1000
+        && (!('images' in data.keys()) || (data.images is list && data.images.size() <= 20))
         && data.caption is string && data.caption.size() <= 1000
         && data.likes is number
         && data.commentsCount is number
