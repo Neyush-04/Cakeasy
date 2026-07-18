@@ -21,6 +21,7 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
   const [specialInstructions, setSpecialInstructions] = useState<string>('');
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImageName, setUploadedImageName] = useState<string>('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   
   const frostingColors = [
@@ -66,6 +67,7 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setUploadedImageName(file.name);
       const reader = new FileReader();
       reader.onloadend = () => {
         setUploadedImage(reader.result as string);
@@ -83,9 +85,42 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
       frostingStyle,
       toppings: selectedToppings.map(t => toppingsOptions.find(opt => opt.id === t)?.name || t),
       message: cakeMessage,
+      referenceImageName: uploadedImageName || undefined,
+      referenceAttached: Boolean(uploadedImage),
     };
     onAddCustomInquiry(customCake, deliveryDate, specialInstructions);
     setShowSuccessModal(true);
+  };
+
+  const buildCustomInquiryText = () => {
+    const toppings = selectedToppings
+      .map(t => toppingsOptions.find(opt => opt.id === t)?.name || t)
+      .join(', ') || 'Standard / baker recommended';
+
+    return [
+      '*New Custom Cake Inquiry from Cakeasy.in*',
+      '',
+      `*Shape & tiers:* ${tiers} Tier ${shape} cake`,
+      `*Weight:* ${weight}`,
+      `*Flavor:* ${flavor}`,
+      `*Frosting:* ${frostingStyle}, ${frostingColor}`,
+      `*Toppings:* ${toppings}`,
+      `*Cake message:* ${cakeMessage || 'None'}`,
+      `*Target date:* ${deliveryDate || 'TBD'}`,
+      `*Estimated quote:* Rs. ${calculateEstPrice().toLocaleString()} approx.`,
+      `*Baker notes:* ${specialInstructions || 'None'}`,
+      '',
+      uploadedImage
+        ? `I selected a reference image on the website (${uploadedImageName || 'reference image'}). I will attach it in this WhatsApp chat now.`
+        : 'No reference image selected.',
+      '',
+      'Please contact me to finalize the design, price, pickup/delivery, and payment.'
+    ].join('\n');
+  };
+
+  const openWhatsAppInquiry = () => {
+    const phoneNumber = settings.whatsappNumber || '918810795004';
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(buildCustomInquiryText())}`, '_blank', 'noopener,noreferrer');
   };
 
   const resetBuilder = () => {
@@ -101,6 +136,7 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
     setSpecialInstructions('');
     setDeliveryDate('');
     setUploadedImage(null);
+    setUploadedImageName('');
     setShowSuccessModal(false);
   };
 
@@ -367,7 +403,11 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
                   {uploadedImage ? (
                     <div className="space-y-2">
                       <img src={uploadedImage} alt="Uploaded reference preview" className="h-20 mx-auto rounded-lg object-cover" />
-                      <p className="text-xs text-emerald-600 font-semibold">Reference image captured successfully!</p>
+                      <p className="text-xs text-emerald-600 font-semibold">Reference image saved for this inquiry.</p>
+                      <p className="text-[10px] text-gray-400 truncate max-w-xs mx-auto">{uploadedImageName}</p>
+                      <p className="text-[10px] text-gray-500 max-w-sm mx-auto">
+                        When WhatsApp opens, please attach this same image in the chat so Neha can review the exact design.
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -440,7 +480,7 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
-                Submit Custom Design Inquiry <Sparkles className="h-4 w-4" />
+                Save Design & WhatsApp Neha <Sparkles className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -583,13 +623,19 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
             <div className="space-y-2">
               <h3 className="font-serif font-bold text-2xl text-[#1E1E1E]">Bake Inquiry Submitted!</h3>
               <p className="text-sm text-gray-500">
-                Your custom cake design configuration has been successfully saved to your inquiry list.
+                Your custom cake design has been saved in this session. Send it on WhatsApp now so Cakeasy can confirm the final design and quote.
               </p>
             </div>
             <div className="bg-[#FFF5F8] p-4 rounded-2xl text-xs text-left text-gray-600 space-y-1.5 border border-pink-50">
               <p><span className="font-bold">Base Shape:</span> {shape} base ({tiers} tiers)</p>
               <p><span className="font-bold">Flavor Chosen:</span> {flavor}</p>
               <p><span className="font-bold">Message:</span> {cakeMessage || 'No Message'}</p>
+              <p><span className="font-bold">Reference Image:</span> {uploadedImage ? `Selected (${uploadedImageName || 'image'})` : 'Not selected'}</p>
+              {uploadedImage && (
+                <p className="text-[#D63384] font-semibold pt-1">
+                  WhatsApp cannot auto-attach private browser files. Please attach this reference image after the chat opens.
+                </p>
+              )}
               <p><span className="font-bold">Est. Price:</span> ₹{calculateEstPrice().toLocaleString()}</p>
             </div>
             <div className="flex gap-4">
@@ -602,12 +648,11 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
               <button
                 onClick={() => {
                   setShowSuccessModal(false);
-                  const trigger = document.getElementById('whatsapp-floating-trigger');
-                  if (trigger) trigger.click();
+                  openWhatsAppInquiry();
                 }}
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold uppercase rounded-xl"
               >
-                WhatsApp Inquiry
+                Open WhatsApp
               </button>
             </div>
           </div>

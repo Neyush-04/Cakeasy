@@ -65,6 +65,7 @@ export default function CartSidebar({
         text += `   - Flavor: ${item.cake.flavor}\n`;
         text += `   - Toppings: ${item.cake.toppings.join(', ') || 'Standard'}\n`;
         text += `   - Message: "${item.cake.message || 'None'}"\n`;
+        text += `   - Reference Image: ${item.cake.referenceAttached ? `Selected on website (${item.cake.referenceImageName || 'reference image'}). Customer should attach it in WhatsApp.` : 'Not selected'}\n`;
         text += `   - Target Date: ${item.date || 'TBD'}\n`;
         text += `   - Notes: ${item.notes || 'None'}\n\n`;
       });
@@ -174,6 +175,9 @@ export default function CartSidebar({
                         <p className="text-[10px] text-gray-500">Flavor: {inquiry.cake.flavor}</p>
                         <p className="text-[10px] text-gray-500">Color: {inquiry.cake.frostingColor}</p>
                         <p className="text-[10px] text-gray-500">Toppings: {inquiry.cake.toppings.slice(0, 2).join(', ') || 'Classic'}</p>
+                        {inquiry.cake.referenceAttached && (
+                          <p className="text-[10px] font-semibold text-emerald-600">Reference image selected</p>
+                        )}
                         {inquiry.date && <p className="text-[10px] font-semibold text-[#D63384] mt-1">Target date: {inquiry.date}</p>}
                       </div>
 

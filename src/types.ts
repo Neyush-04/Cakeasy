@@ -27,6 +27,8 @@ export interface CustomCakeState {
   frostingStyle: 'smooth' | 'rustic' | 'textured';
   toppings: string[];
   message: string;
+  referenceImageName?: string;
+  referenceAttached?: boolean;
 }
 
 export interface CakeInquiry {
