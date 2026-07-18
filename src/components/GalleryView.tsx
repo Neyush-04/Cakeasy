@@ -104,11 +104,11 @@ export default function GalleryView({ posts }: GalleryViewProps) {
               onClick={() => openPost(post.id)}
               className="block w-full text-left bg-white rounded-[24px] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-md transition-all duration-300 group"
             >
-              <div className="relative aspect-square overflow-hidden bg-gray-50">
+              <div className="relative aspect-square overflow-hidden bg-[#FFF5F8]/45">
                 <img
                   src={resolveCakeImage(post.imageUrl)}
                   alt={post.caption || 'Cakeasy cake creation'}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain p-2 group-hover:scale-[1.02] transition-transform duration-500"
                   loading="lazy"
                 />
                 {post.images?.length > 1 && (
@@ -135,7 +135,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
                 <img
                   src={resolveCakeImage(selectedImages[activeImageIndex])}
                   alt={selectedPost.caption || 'Cakeasy cake creation'}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
                 {selectedImages.length > 1 && (
                   <>
@@ -161,14 +161,14 @@ export default function GalleryView({ posts }: GalleryViewProps) {
                       }`}
                       aria-label={`View pose ${index + 1}`}
                     >
-                      <img src={resolveCakeImage(image)} alt="" className="h-full w-full object-cover" />
+                      <img src={resolveCakeImage(image)} alt="" className="h-full w-full object-contain bg-neutral-900" />
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            <div className="p-6 sm:p-8 flex flex-col justify-between gap-6 overflow-y-auto">
+            <div className="p-6 sm:p-8 flex flex-col gap-6 overflow-y-auto">
               <div className="flex justify-between items-center pb-4 border-b border-gray-50">
                 <div>
                   <h2 className="text-sm font-bold text-[#1E1E1E]">Cakeasy by Neha Chaudhary</h2>
@@ -181,7 +181,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
               <div className="bg-[#FFF5F8]/40 p-4 rounded-2xl border border-pink-50/50">
                 <p className="text-xs text-gray-700 leading-relaxed font-sans">{selectedPost.caption}</p>
               </div>
-              <div className="flex items-center justify-between gap-4 text-xs text-gray-400 font-medium">
+              <div className="mt-auto flex items-center justify-between gap-4 text-xs text-gray-400 font-medium">
                 <span>{selectedPost.date}</span>
                 <span className="inline-flex items-center gap-1 text-[#D63384] font-bold">
                   <Sparkles className="h-3.5 w-3.5" /> {selectedImages.length} photo{selectedImages.length === 1 ? '' : 's'}
