@@ -15,7 +15,7 @@ export default function AdminView() {
         </div>
 
         <p className="text-sm text-gray-500 leading-relaxed">
-          The previous admin panel was removed because it was a browser-only mock with unsafe write access. This page marks the safe owner route while the real CMS is rebuilt with Firebase Auth, an admin role, and server-side Instagram sync.
+          The previous admin panel was removed because it was a browser-only mock with unsafe write access. The live site now has server-side Instagram gallery sync ready, while the full editing CMS is being rebuilt with Firebase Auth and an owner-only admin role.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -26,14 +26,21 @@ export default function AdminView() {
           </div>
           <div className="rounded-2xl border border-pink-50 bg-[#FFF5F8]/40 p-4 space-y-2">
             <Instagram className="h-5 w-5 text-[#D63384]" />
-            <h2 className="font-bold text-sm text-[#1E1E1E]">Instagram sync</h2>
-            <p className="text-xs text-gray-500">Meta API sync from a secure server token.</p>
+            <h2 className="font-bold text-sm text-[#1E1E1E]">Instagram sync ready</h2>
+            <p className="text-xs text-gray-500">Uses the Vercel server variable INSTAGRAM_ACCESS_TOKEN.</p>
           </div>
           <div className="rounded-2xl border border-pink-50 bg-[#FFF5F8]/40 p-4 space-y-2">
             <Database className="h-5 w-5 text-[#D63384]" />
             <h2 className="font-bold text-sm text-[#1E1E1E]">Safe content edits</h2>
             <p className="text-xs text-gray-500">Products, gallery, policies, and contact details.</p>
           </div>
+        </div>
+
+        <div className="rounded-3xl border border-pink-100 bg-[#FFF5F8]/40 p-5">
+          <p className="text-[10px] uppercase tracking-widest font-bold text-[#D63384] mb-2">Production setup</p>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Add a fresh Meta Instagram token in Vercel as <span className="font-bold text-[#1E1E1E]">INSTAGRAM_ACCESS_TOKEN</span>. Do not put the token in frontend code or in any public repository. Until that variable is added, Cakeasy keeps showing the curated local gallery archive.
+          </p>
         </div>
 
         <a

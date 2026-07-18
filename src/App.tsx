@@ -46,7 +46,35 @@ export default function App() {
   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customInquiries, setCustomInquiries] = useState<{ cake: CustomCakeState; date: string; notes: string }[]>([]);
-  const galleryPosts: InstagramPost[] = INSTAGRAM_POSTS;
+  const [galleryPosts, setGalleryPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadInstagramGallery() {
+      try {
+        const response = await fetch('/api/instagram', {
+          signal: controller.signal,
+          headers: { Accept: 'application/json' }
+        });
+
+        if (!response.ok) return;
+
+        const payload = await response.json();
+        const syncedPosts = Array.isArray(payload?.posts) ? payload.posts : [];
+
+        if (syncedPosts.length > 0) {
+          setGalleryPosts(syncedPosts);
+        }
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+      }
+    }
+
+    loadInstagramGallery();
+
+    return () => controller.abort();
+  }, []);
 
   const atelierSettings: AtelierSettings = {
     instagramUrl: 'https://www.instagram.com/cakeasy99/',
