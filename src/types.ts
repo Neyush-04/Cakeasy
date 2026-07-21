@@ -22,6 +22,7 @@ export interface PromoCoupon {
 export interface CustomCakeState {
   tiers: 1 | 2 | 3;
   shape: 'round' | 'square' | 'heart';
+  weight?: string;
   flavor: string;
   frostingColor: string; // hex or tailwind color
   frostingStyle: 'smooth' | 'rustic' | 'textured';

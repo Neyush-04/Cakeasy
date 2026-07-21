@@ -60,12 +60,110 @@ html {
   animation: floatSoft 3.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
+.animate-cake-layer-rise {
+  animation: cakeLayerRise 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-frosting-sweep {
+  animation: frostingSweep 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-palette-sweep {
+  animation: paletteSweep 3.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.animate-piping-bag {
+  animation: pipingBag 2.7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.animate-decor-pop {
+  animation: decorPop 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-drip-drop {
+  animation: dripDrop 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes floatSoft {
   0%, 100% {
     transform: translateY(0);
   }
   50% {
     transform: translateY(-8px);
+  }
+}
+
+@keyframes cakeLayerRise {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes frostingSweep {
+  from {
+    transform: scaleX(0);
+    opacity: 0.1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes paletteSweep {
+  0%, 100% {
+    transform: translate(0, 0) rotate(28deg);
+  }
+  50% {
+    transform: translate(-26px, 42px) rotate(18deg);
+  }
+}
+
+@keyframes pipingBag {
+  0%, 100% {
+    transform: translateY(0) rotate(-12deg);
+  }
+  50% {
+    transform: translate(-10px, 18px) rotate(-4deg);
+  }
+}
+
+@keyframes decorPop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dripDrop {
+  from {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  to {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-soft,
+  .animate-cake-layer-rise,
+  .animate-frosting-sweep,
+  .animate-palette-sweep,
+  .animate-piping-bag,
+  .animate-decor-pop,
+  .animate-drip-drop {
+    animation: none;
   }
 }
 

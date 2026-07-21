@@ -60,6 +60,7 @@ export default function CartSidebar({
       text += '*CUSTOM CAKE DESIGNS:*\n';
       customInquiries.forEach((item, index) => {
         text += `${index + 1}. *${item.cake.tiers} Tier ${item.cake.shape} Cake*\n`;
+        text += `   - Weight: ${item.cake.weight || 'TBD'}\n`;
         text += `   - Frosting Color: ${item.cake.frostingColor}\n`;
         text += `   - Style: ${item.cake.frostingStyle}\n`;
         text += `   - Flavor: ${item.cake.flavor}\n`;
@@ -173,6 +174,7 @@ export default function CartSidebar({
                           {inquiry.cake.tiers} Tier {inquiry.cake.shape} Base
                         </h5>
                         <p className="text-[10px] text-gray-500">Flavor: {inquiry.cake.flavor}</p>
+                        {inquiry.cake.weight && <p className="text-[10px] text-gray-500">Weight: {inquiry.cake.weight}</p>}
                         <p className="text-[10px] text-gray-500">Color: {inquiry.cake.frostingColor}</p>
                         <p className="text-[10px] text-gray-500">Toppings: {inquiry.cake.toppings.slice(0, 2).join(', ') || 'Classic'}</p>
                         {inquiry.cake.referenceAttached && (
