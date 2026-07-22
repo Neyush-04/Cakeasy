@@ -10,6 +10,8 @@ import GalleryView from './components/GalleryView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
 import AdminView from './components/AdminView';
+import WeddingView from './components/WeddingView';
+import ConsultationView from './components/ConsultationView';
 import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -166,8 +168,8 @@ export default function App() {
                 element={
                   <>
                     <PageMeta
-                      title="Cakeasy | Custom Cakes in Greater Noida & Delhi NCR"
-                      description="Cakeasy is a home bakery in Greater Noida crafting custom bento cakes, wedding cakes, celebration cakes, and cupcakes. Order fresh, handcrafted cakes for your next milestone via WhatsApp."
+                      title="Cakeasy | Bespoke Wedding & Celebration Cake Studio"
+                      description="Cakeasy designs bespoke wedding and celebration cakes around your colours, décor, outfits and story. Serving Delhi NCR from Greater Noida."
                     />
                     <HomeView
                       products={productsList}
@@ -178,6 +180,19 @@ export default function App() {
                       settings={atelierSettings}
                       galleryPosts={galleryPosts}
                     />
+                  </>
+                }
+              />
+
+              <Route
+                path="/weddings"
+                element={
+                  <>
+                    <PageMeta
+                      title="Bespoke Wedding Cakes | Cakeasy"
+                      description="Explore Cakeasy's bespoke wedding cake studio: multi-tier, floral, traditional, minimal luxury and theme-led designs, quoted around your celebration."
+                    />
+                    <WeddingView setCurrentTab={setCurrentTab} />
                   </>
                 }
               />
@@ -240,6 +255,19 @@ export default function App() {
                       description="Meet the home baker behind Cakeasy — a Greater Noida cake studio crafting custom, handmade cakes for every celebration."
                     />
                     <AboutView />
+                  </>
+                }
+              />
+
+              <Route
+                path="/consultation"
+                element={
+                  <>
+                    <PageMeta
+                      title="Book a Cake Consultation | Cakeasy"
+                      description="Share your event date, venue, servings, palette, outfits and inspiration with Cakeasy's wedding cake design studio."
+                    />
+                    <ConsultationView whatsappNumber={atelierSettings.whatsappNumber} />
                   </>
                 }
               />

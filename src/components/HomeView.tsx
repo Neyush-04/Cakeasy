@@ -80,16 +80,16 @@ export default function HomeView({
             <div className="lg:col-span-6 space-y-8">
               <div className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-[#F6B8C8]/30 shadow-sm">
                 <Sparkles className="h-4 w-4 text-[#D63384]" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#D63384]">Bespoke Confectionery</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#D63384]">Bespoke wedding & celebration cake studio</span>
               </div>
               
               <div className="space-y-4">
                 <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1E1E1E] leading-tight">
-                  <TextSplitter text="Crafting Sweet Memories." className="text-[#1E1E1E]" />
+                  <TextSplitter text="Your story, designed in cake." className="text-[#1E1E1E]" />
                 </h1>
                 <ScrollReveal delay={300}>
                   <p className="text-gray-600 text-lg leading-relaxed max-w-xl">
-                    Artisanal customized cakes baked fresh to order. Premium ingredients and beautiful designs tailored for your milestones.
+                    From your colours and décor to your outfits and story, Neha Chaudhary designs every Cakeasy creation around the celebration it belongs to.
                   </p>
                 </ScrollReveal>
               </div>
@@ -97,16 +97,16 @@ export default function HomeView({
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => setCurrentTab('catalog')}
+                  onClick={() => setCurrentTab('consultation')}
                   className="bg-[#D63384] hover:bg-[#b02266] text-white font-medium px-8 py-4 rounded-full shadow-[0_4px_14px_rgba(214,51,132,0.3)] hover:shadow-[0_6px_20px_rgba(214,51,132,0.4)] transition-all duration-300 flex items-center justify-center gap-2"
                 >
-                  Order Now <ArrowRight className="h-4 w-4" />
+                  Book a Cake Consultation <ArrowRight className="h-4 w-4" />
                 </button>
                 <button
-                  onClick={() => setCurrentTab('custom')}
+                  onClick={() => setCurrentTab('weddings')}
                   className="bg-white hover:bg-neutral-50 text-[#1E1E1E] border border-[#F6B8C8] font-medium px-8 py-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2"
                 >
-                  Customize Cake <Sparkles className="h-4 w-4 text-[#D63384]" />
+                  View Our Cake Portfolio <Sparkles className="h-4 w-4 text-[#D63384]" />
                 </button>
               </div>
 
@@ -114,7 +114,7 @@ export default function HomeView({
               <form onSubmit={handleSearchSubmit} className="relative max-w-md">
                 <input
                   type="text"
-                  placeholder="Search flavors, wedding or bento designs..."
+                  placeholder="Search wedding, floral, theme or bento designs..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-white border border-[#F6B8C8]/50 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:border-[#D63384] focus:ring-1 focus:ring-[#D63384] transition-all text-[#1E1E1E] placeholder:text-gray-400"
@@ -153,9 +153,9 @@ export default function HomeView({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="text-center max-w-xl mx-auto space-y-3 mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Bespoke Categories</span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E1E1E]">Explore Our Sweet Creations</h2>
-            <p className="text-gray-500 text-sm">Select a curated theme designed to add exquisite flair to your sweet celebration.</p>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Designed in layers of meaning</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E1E1E]">Choose the celebration you are imagining</h2>
+            <p className="text-gray-500 text-sm">Lead with the centrepiece, then explore the smaller favourites that make every milestone sweeter.</p>
           </div>
         </ScrollReveal>
 
@@ -163,7 +163,7 @@ export default function HomeView({
           {categories.map((cat, index) => (
             <ScrollReveal key={cat.id} delay={index * 100}>
               <div
-                onClick={() => setCurrentTab('catalog')}
+                onClick={() => setCurrentTab(cat.id === 'wedding' ? 'weddings' : cat.id)}
                 className={`cursor-pointer border border-[#FFF5F8] rounded-[24px] p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1 bg-white h-full`}
               >
                 <div className="h-16 w-16 mx-auto rounded-full bg-[#FFF5F8] flex items-center justify-center text-3xl group-hover:scale-110 transition-transform mb-4">
@@ -176,7 +176,24 @@ export default function HomeView({
         </div>
       </section>
 
-      {/* 3. TRENDING CAKES SECTION */}
+      {/* 3. PREMIUM CONSULTATION PATH */}
+      <section className="rounded-[36px] bg-[#251b21] py-14 text-white sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center">
+            <div className="space-y-4 lg:col-span-5">
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f7c5d8]">The Cakeasy difference</span>
+              <h2 className="font-serif text-3xl font-bold sm:text-4xl">Not just customised with a name — designed from the ground up.</h2>
+              <p className="text-sm leading-7 text-white/65">A premium cake starts with a conversation. Share the moodboard, guest count, palette and story; Neha shapes the structure, flavour and finish around it.</p>
+              <button onClick={() => setCurrentTab('consultation')} className="inline-flex items-center gap-2 rounded-full bg-[#d63384] px-5 py-3 text-xs font-bold uppercase tracking-wider hover:bg-[#b02266]">Start with a consultation <ArrowRight className="h-4 w-4" /></button>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:col-span-7">
+              {[['01', 'Tell us the story', 'Date, venue, people and the feeling you want guests to remember.'], ['02', 'Design the centrepiece', 'Colours, décor, outfits, flavour and tiers become one considered proposal.'], ['03', 'Create the moment', 'Cakeasy bakes, finishes, delivers and sets up with care.']].map(([number, title, copy]) => <div key={number} className="rounded-2xl border border-white/10 bg-white/5 p-5"><span className="text-xs font-bold text-[#f5c178]">{number}</span><h3 className="mt-6 font-serif text-lg font-bold">{title}</h3><p className="mt-2 text-xs leading-6 text-white/55">{copy}</p></div>)}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. TRENDING CAKES SECTION */}
       <section className="bg-neutral-50 py-16 rounded-[40px] border border-neutral-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">

@@ -23,11 +23,11 @@ export default function Navbar({
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'catalog', label: 'Our Cakes' },
+    { id: 'weddings', label: 'Wedding Cakes' },
     { id: 'custom', label: 'Custom Cakes' },
-    { id: 'gallery', label: 'Gallery' },
+    { id: 'gallery', label: 'Our Work' },
     { id: 'about', label: 'Our Story' },
-    { id: 'contact', label: 'Contact' },
+    { id: 'consultation', label: 'Book Consultation' },
   ];
 
   const handleTabSelect = (tabId: string) => {
