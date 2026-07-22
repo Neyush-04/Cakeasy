@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -10,14 +10,15 @@ import GalleryView from './components/GalleryView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
 import AdminView from './components/AdminView';
-import WeddingView from './components/WeddingView';
 import ConsultationView from './components/ConsultationView';
+import CategoryView from './components/CategoryView';
 import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
 import PageMeta from './components/PageMeta';
 
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
+import { CAKE_CATEGORY_DATA } from './data/categoryData';
 import { MenuItem, CustomCakeState, AtelierSettings, InstagramPost } from './types';
 import { Sparkles, X } from 'lucide-react';
 
@@ -189,11 +190,18 @@ export default function App() {
                 element={
                   <>
                     <PageMeta
-                      title="Bespoke Wedding Cakes | Cakeasy"
-                      description="Explore Cakeasy's bespoke wedding cake studio: multi-tier, floral, traditional, minimal luxury and theme-led designs, quoted around your celebration."
+                      title="Wedding & Milestone Cakes | Cakeasy"
+                      description="Bespoke cakes for engagements, weddings and anniversaries, designed around your venue, palette, outfits, flowers and story."
                     />
-                    <WeddingView setCurrentTab={setCurrentTab} />
+                    <CategoryView config={CAKE_CATEGORY_DATA.wedding} setCurrentTab={setCurrentTab} />
                   </>
+                }
+              />
+
+              <Route
+                path="/cakes/:slug"
+                element={
+                  <CategoryRoute setCurrentTab={setCurrentTab} />
                 }
               />
 
@@ -391,4 +399,15 @@ export default function App() {
       )}
     </div>
   );
+}
+
+function CategoryRoute({ setCurrentTab }: { setCurrentTab: (tab: string) => void }) {
+  const { slug } = useParams<{ slug: string }>();
+  const config = slug ? CAKE_CATEGORY_DATA[slug as keyof typeof CAKE_CATEGORY_DATA] : undefined;
+
+  if (!config) {
+    return <div className="rounded-3xl border border-[#EDE3E2] bg-[#FFF7FA] p-12 text-center"><h1 className="font-serif text-3xl font-bold text-[#251B21]">We are still shaping this collection.</h1><p className="mt-3 text-sm text-gray-500">Start with a direct consultation and we will help you find the right direction.</p><button onClick={() => setCurrentTab('consultation')} className="mt-6 rounded-full bg-[#D63384] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Book a consultation</button></div>;
+  }
+
+  return <><PageMeta title={`${config.navLabel} | Cakeasy`} description={config.description} /><CategoryView config={config} setCurrentTab={setCurrentTab} /></>;
 }

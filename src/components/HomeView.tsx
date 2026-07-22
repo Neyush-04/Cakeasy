@@ -1,10 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
-import { Search, ArrowRight, Sparkles, Heart, Instagram, Star, ChevronLeft, ChevronRight, Clock, Truck, ShieldCheck } from 'lucide-react';
+import React from 'react';
+import { ArrowRight, Check, Heart, Instagram, MessageCircle, Sparkles } from 'lucide-react';
 import { MenuItem, AtelierSettings, InstagramPost } from '../types';
-import { resolveCakeImage } from '../utils';
+import { CAKE_CATEGORY_DATA, PRIMARY_CATEGORIES } from '../data/categoryData';
 import ScrollReveal from './ScrollReveal';
-import TextSplitter from './TextSplitter';
 
 interface HomeViewProps {
   products: MenuItem[];
@@ -16,423 +14,58 @@ interface HomeViewProps {
   galleryPosts: InstagramPost[];
 }
 
-export default function HomeView({
-  products,
-  setCurrentTab,
-  setSelectedProduct,
-  toggleWishlist,
-  wishlistedIds,
-  settings,
-  galleryPosts,
-}: HomeViewProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTrendingTab, setActiveTrendingTab] = useState<'trending' | 'new' | 'bestseller'>('trending');
-  const hiddenReviews = [{ name: '', role: '', stars: 0, text: '', date: '' }];
-  const reviews = hiddenReviews;
-  const reviewIndex = 0;
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+const designerHighlights = [
+  { image: '/gallery/26/img1.jpg', label: 'Kids and character themes', slug: 'designer' },
+  { image: '/gallery/15/img1.jpg', label: 'Profession and hobby stories', slug: 'designer' },
+  { image: '/gallery/11/img1.jpg', label: 'Floral and fashion-led detail', slug: 'designer' },
+  { image: '/gallery/19/img1.jpg', label: 'Story-based celebration cakes', slug: 'designer' },
+];
 
-  const categories = [
-    { id: 'bento', label: 'Bento Cakes', icon: '🧁', count: '12+ Designs', color: 'bg-pink-50 text-pink-700 hover:border-pink-200' },
-    { id: 'wedding', label: 'Wedding Cakes', icon: '💒', count: '8 Masterpieces', color: 'bg-amber-50 text-amber-700 hover:border-amber-200' },
-    { id: 'celebration', label: 'Celebrations', icon: '✨', count: '24+ Varieties', color: 'bg-purple-50 text-purple-700 hover:border-purple-200' },
-    { id: 'cupcakes', label: 'Cupcakes & More', icon: '🥯', count: '10+ Flavors', color: 'bg-emerald-50 text-emerald-700 hover:border-emerald-200' },
-  ];
+const celebrationJourneys = [
+  ['Wedding', 'A multi-tier centrepiece coordinated to the room.', 'wedding'],
+  ['Engagement', 'Elegant florals, rings, colours and couple details.', 'engagement'],
+  ['Anniversary', 'A memory, date or shared interest shaped in cake.', 'anniversary'],
+  ["Child's birthday", 'A designer theme with the reaction in mind.', 'birthday'],
+  ['Romantic surprise', 'A personal message and a smaller, thoughtful format.', 'anniversary'],
+  ['Intimate celebration', 'Bento cakes and giftable pairings for close circles.', 'bento'],
+];
 
-  // Filter products based on active home tab
-  const getFilteredTrending = () => {
-    if (activeTrendingTab === 'new') {
-      return products.slice().reverse();
-    }
-    if (activeTrendingTab === 'bestseller') {
-      return products.length >= 3 
-        ? [products[2], products[0], products[1]] 
-        : products.slice(0, 3);
-    }
-    return products.slice(0, 3);
-  };
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setCurrentTab('catalog');
-      // Pass query in a stateful way if needed, for simplicity it transitions to the catalog.
-    }
-  };
-
-  const handleNextReview = () => undefined;
-  const handlePrevReview = () => undefined;
-  const cleanCaption = (caption: string) =>
-    caption.includes('(Edit this caption') ? 'Cakeasy creation from our photo gallery.' : caption;
+export default function HomeView({ setCurrentTab, settings }: HomeViewProps) {
+  const openCategory = (slug: string) => setCurrentTab(`cakes/${slug}`);
+  const signatureTiles = PRIMARY_CATEGORIES.map((slug) => ({ ...CAKE_CATEGORY_DATA[slug], slug }));
 
   return (
     <div className="space-y-24 pb-20 animate-fadeIn">
-      {/* 1. HERO SECTION WITH BACKGROUND BANNER */}
-      <section ref={heroRef} className="relative bg-[#FFF5F8] py-20 lg:py-28 overflow-hidden rounded-b-[40px] border-b border-[#F6B8C8]/30">
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 bg-[radial-gradient(#D63384_1px,transparent_1px)] [background-size:16px_16px]" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Copy */}
-            <div className="lg:col-span-6 space-y-8">
-              <div className="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-[#F6B8C8]/30 shadow-sm">
-                <Sparkles className="h-4 w-4 text-[#D63384]" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#D63384]">Bespoke wedding & celebration cake studio</span>
-              </div>
-              
-              <div className="space-y-4">
-                <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#1E1E1E] leading-tight">
-                  <TextSplitter text="Your story, designed in cake." className="text-[#1E1E1E]" />
-                </h1>
-                <ScrollReveal delay={300}>
-                  <p className="text-gray-600 text-lg leading-relaxed max-w-xl">
-                    From your colours and décor to your outfits and story, Neha Chaudhary designs every Cakeasy creation around the celebration it belongs to.
-                  </p>
-                </ScrollReveal>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => setCurrentTab('consultation')}
-                  className="bg-[#D63384] hover:bg-[#b02266] text-white font-medium px-8 py-4 rounded-full shadow-[0_4px_14px_rgba(214,51,132,0.3)] hover:shadow-[0_6px_20px_rgba(214,51,132,0.4)] transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  Book a Cake Consultation <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => setCurrentTab('weddings')}
-                  className="bg-white hover:bg-neutral-50 text-[#1E1E1E] border border-[#F6B8C8] font-medium px-8 py-4 rounded-full transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  View Our Cake Portfolio <Sparkles className="h-4 w-4 text-[#D63384]" />
-                </button>
-              </div>
-
-              {/* Dynamic search bar inside Hero */}
-              <form onSubmit={handleSearchSubmit} className="relative max-w-md">
-                <input
-                  type="text"
-                  placeholder="Search wedding, floral, theme or bento designs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white border border-[#F6B8C8]/50 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:border-[#D63384] focus:ring-1 focus:ring-[#D63384] transition-all text-[#1E1E1E] placeholder:text-gray-400"
-                />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <button 
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#FFF5F8] text-[#D63384] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#F6B8C8]/20 hover:bg-[#D63384] hover:text-white transition-colors"
-                >
-                  Find
-                </button>
-              </form>
-            </div>
-
-            {/* Right Large Image */}
-            <div className="lg:col-span-6 relative">
-              <div className="relative mx-auto w-full max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border-8 border-white shadow-[0_20px_50px_rgba(214,51,132,0.08)] bg-[#FFF5F8]">
-                <motion.img
-                  style={{ y: heroImageY, scale: heroImageScale }}
-                  src="/gallery/1/img1.jpg"
-                  alt="Neha Chaudhary, the baker behind Cakeasy"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-[#FFF5F8]">
-                  <p className="text-[10px] text-[#D63384] font-bold tracking-wider uppercase">Founder & baker</p>
-                  <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Neha Chaudhary</h3>
-                  <p className="text-xs text-gray-500">The face and hands behind Cakeasy's custom cakes.</p>
-                </div>
-              </div>
-            </div>
+      <section className="relative overflow-hidden rounded-[38px] bg-[#251B21] text-white">
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:min-h-[620px]">
+          <div className="order-2 flex flex-col justify-center space-y-8 p-8 sm:p-12 lg:order-1 lg:col-span-5 lg:p-16">
+            <span className="text-xs font-bold uppercase tracking-[0.22em] text-[#F5C178]">Cakeasy by Neha Chaudhary</span>
+            <h1 className="font-serif text-5xl font-bold leading-[1.04] sm:text-6xl">Bespoke cakes designed around your celebration.</h1>
+            <p className="max-w-xl text-base leading-8 text-white/70">From wedding decor and outfits to birthdays, milestones and personal stories, Cakeasy creates cakes that are designed uniquely for your occasion.</p>
+            <div className="flex flex-col gap-3 sm:flex-row"><button onClick={() => setCurrentTab('catalog')} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D63384] px-6 py-4 text-xs font-bold uppercase tracking-wider hover:bg-[#B02266]">Explore our cakes <ArrowRight className="h-4 w-4" /></button><button onClick={() => setCurrentTab('consultation')} className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-4 text-xs font-bold uppercase tracking-wider text-white hover:bg-white/10">Book a consultation</button></div>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold uppercase tracking-wider text-white/45"><span>Lucknow roots</span><span>Greater Noida studio</span><span>Delhi NCR service</span></div>
           </div>
+          <div className="order-1 relative min-h-[460px] lg:order-2 lg:col-span-7 lg:min-h-0"><img src="/gallery/1/img1.jpg" alt="Neha Chaudhary, founder and baker behind Cakeasy" className="h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-[#251B21] via-transparent to-transparent lg:w-2/3" /><div className="absolute bottom-7 left-7 rounded-2xl border border-white/20 bg-black/35 p-4 backdrop-blur-md"><p className="text-[10px] font-bold uppercase tracking-widest text-[#F5C178]">The face behind Cakeasy</p><p className="mt-1 font-serif text-xl">Neha Chaudhary</p><p className="mt-1 text-xs text-white/60">Founder and baker - Lucknow roots, Greater Noida studio</p></div></div>
         </div>
       </section>
 
-      {/* 2. FEATURED CATEGORIES SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal>
-          <div className="text-center max-w-xl mx-auto space-y-3 mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Designed in layers of meaning</span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#1E1E1E]">Choose the celebration you are imagining</h2>
-            <p className="text-gray-500 text-sm">Lead with the centrepiece, then explore the smaller favourites that make every milestone sweeter.</p>
-          </div>
-        </ScrollReveal>
+      <section className="space-y-10"><div className="max-w-2xl space-y-3"><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#D63384]">Start with the occasion</span><h2 className="font-serif text-4xl font-bold text-[#251B21]">Choose the kind of celebration you are designing.</h2><p className="text-sm leading-7 text-gray-500">The category tells you what belongs in the brief - scale, mood, design language and the kind of conversation you can have with Cakeasy.</p></div><div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">{signatureTiles.map((tile, index) => <ScrollReveal key={tile.slug} delay={index * 60}><button onClick={() => openCategory(tile.slug)} className="group w-full text-left"><div className="relative aspect-[4/3] overflow-hidden rounded-[26px] bg-[#F7F2EF]"><img src={tile.hero} alt={tile.navLabel} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" /><div className="absolute bottom-5 left-5 right-5 text-white"><p className="text-[10px] font-bold uppercase tracking-widest text-[#F5C178]">{tile.eyebrow}</p><h3 className="mt-1 font-serif text-2xl font-bold">{tile.navLabel}</h3><p className="mt-1 text-xs text-white/70">{tile.isSmall ? 'Small, personal and giftable' : tile.styles[0]}</p></div></div></button></ScrollReveal>)}</div></section>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat, index) => (
-            <ScrollReveal key={cat.id} delay={index * 100}>
-              <div
-                onClick={() => setCurrentTab(cat.id === 'wedding' ? 'weddings' : cat.id)}
-                className={`cursor-pointer border border-[#FFF5F8] rounded-[24px] p-6 text-center shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1 bg-white h-full`}
-              >
-                <div className="h-16 w-16 mx-auto rounded-full bg-[#FFF5F8] flex items-center justify-center text-3xl group-hover:scale-110 transition-transform mb-4">
-                  {cat.icon}
-                </div>
-                <h3 className="font-serif font-bold text-base text-[#1E1E1E] group-hover:text-[#D63384] transition-colors">{cat.label}</h3>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </section>
+      <section className="border-y border-[#EDE3E2] py-16"><div className="grid grid-cols-1 gap-8 md:grid-cols-4">{[['Designed around your celebration', 'Your palette, decor, outfits, interests or story become part of the design.'], ['Wedding and multi-tier expertise', 'Real multi-tier Cakeasy work for weddings, engagements and anniversaries.'], ['A personal design conversation', 'Neha helps you choose the right scale, flavour, finish and timeline.'], ['Delivery and setup planning', 'We discuss transport, venue access and setup requirements before confirmation.']].map(([title, body]) => <div key={title} className="space-y-3"><Check className="h-5 w-5 text-[#D63384]" /><h3 className="font-serif text-xl font-bold text-[#251B21]">{title}</h3><p className="text-sm leading-6 text-gray-500">{body}</p></div>)}</div></section>
 
-      {/* 3. PREMIUM CONSULTATION PATH */}
-      <section className="rounded-[36px] bg-[#251b21] py-14 text-white sm:py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center">
-            <div className="space-y-4 lg:col-span-5">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f7c5d8]">The Cakeasy difference</span>
-              <h2 className="font-serif text-3xl font-bold sm:text-4xl">Not just customised with a name — designed from the ground up.</h2>
-              <p className="text-sm leading-7 text-white/65">A premium cake starts with a conversation. Share the moodboard, guest count, palette and story; Neha shapes the structure, flavour and finish around it.</p>
-              <button onClick={() => setCurrentTab('consultation')} className="inline-flex items-center gap-2 rounded-full bg-[#d63384] px-5 py-3 text-xs font-bold uppercase tracking-wider hover:bg-[#b02266]">Start with a consultation <ArrowRight className="h-4 w-4" /></button>
-            </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:col-span-7">
-              {[['01', 'Tell us the story', 'Date, venue, people and the feeling you want guests to remember.'], ['02', 'Design the centrepiece', 'Colours, décor, outfits, flavour and tiers become one considered proposal.'], ['03', 'Create the moment', 'Cakeasy bakes, finishes, delivers and sets up with care.']].map(([number, title, copy]) => <div key={number} className="rounded-2xl border border-white/10 bg-white/5 p-5"><span className="text-xs font-bold text-[#f5c178]">{number}</span><h3 className="mt-6 font-serif text-lg font-bold">{title}</h3><p className="mt-2 text-xs leading-6 text-white/55">{copy}</p></div>)}
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="grid grid-cols-1 gap-10 rounded-[36px] bg-[#F7F2EF] p-8 sm:p-12 lg:grid-cols-12 lg:items-center"><div className="lg:col-span-5"><img src="/gallery/10/img1.jpg" alt="Cakeasy white floral anniversary cake" className="aspect-[4/5] w-full rounded-[26px] object-cover" /></div><div className="space-y-6 lg:col-span-7 lg:pl-6"><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#D63384]">For the big yes, the new chapter, the milestone</span><h2 className="font-serif text-4xl font-bold text-[#251B21]">A wedding and celebration cake studio that thinks beyond the sponge.</h2><p className="text-sm leading-7 text-gray-600">Cakeasy can coordinate the cake with a wedding invitation, stage decor, floral arrangement, lehenga, venue palette or a private memory. Tasting, servings, delivery and setup are part of the conversation.</p><div className="flex flex-wrap gap-3"><button onClick={() => openCategory('wedding')} className="inline-flex items-center gap-2 rounded-full bg-[#251B21] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Wedding portfolio <ArrowRight className="h-4 w-4" /></button><button onClick={() => setCurrentTab('consultation')} className="inline-flex items-center gap-2 rounded-full border border-[#D8B4B7] px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#43242F]">Wedding enquiry</button></div></div></section>
 
-      {/* 4. TRENDING CAKES SECTION */}
-      <section className="bg-neutral-50 py-16 rounded-[40px] border border-neutral-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
-            <div className="space-y-2 text-center md:text-left">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Daily Fresh Highlights</span>
-              <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">Trending At Cakeasy Studio</h2>
-            </div>
-            
-            {/* Filter Tabs */}
-            <div className="flex bg-white rounded-xl p-1 border border-[#FFF5F8] shadow-sm">
-              {[
-                { id: 'trending', label: 'Trending' },
-                { id: 'new', label: 'New Arrivals' },
-                { id: 'bestseller', label: 'Best Sellers' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTrendingTab(tab.id as any)}
-                  className={`px-5 py-2 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all ${
-                    activeTrendingTab === tab.id
-                      ? 'bg-[#D63384] text-white shadow-sm'
-                      : 'text-gray-500 hover:text-[#1E1E1E]'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      <section className="space-y-10"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#D63384]">Designer cake studio</span><h2 className="mt-2 font-serif text-4xl font-bold text-[#251B21]">The brief can be a theme, a hobby, a person or a feeling.</h2></div><button onClick={() => openCategory('designer')} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#D63384]">Explore designer cakes <ArrowRight className="h-4 w-4" /></button></div><div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">{designerHighlights.map((item) => <button key={item.image} onClick={() => openCategory(item.slug)} className="group overflow-hidden rounded-3xl border border-neutral-100 bg-white text-left"><div className="aspect-[4/5] overflow-hidden bg-[#F7F2EF]"><img src={item.image} alt={item.label} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /></div><div className="p-4"><p className="text-[10px] font-bold uppercase tracking-wider text-[#D63384]">Designer direction</p><p className="mt-1 text-sm font-semibold text-[#43242F]">{item.label}</p></div></button>)}</div></section>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {getFilteredTrending().map((product, index) => {
-              const isWishlisted = wishlistedIds.includes(product.id);
-              return (
-                <ScrollReveal key={product.id} delay={index * 150} className="h-full">
-                  <div
-                    className="bg-white rounded-[24px] overflow-hidden border border-neutral-100 shadow-sm hover:shadow-md transition-all group relative flex flex-col h-full"
-                  >
-                    {/* Image container */}
-                    <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
-                      <img
-                        src={resolveCakeImage(product.image)}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      {/* Badge */}
-                      <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm text-[#D63384] text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-[#FFF5F8]">
-                        {product.category === 'bento' ? 'Personal Bento' : product.category === 'wedding' ? 'Artisanal Wedding' : 'Celebration Special'}
-                      </span>
-                      {/* Wishlist Button */}
-                      <button
-                        onClick={() => toggleWishlist(product)}
-                        className="absolute top-4 right-4 h-9 w-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-400 hover:text-[#D63384] transition-colors shadow-sm"
-                      >
-                        <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-[#D63384] stroke-[#D63384]' : ''}`} />
-                      </button>
-                    </div>
+      <section className="space-y-8"><div className="max-w-xl space-y-3"><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#D63384]">Shop by feeling</span><h2 className="font-serif text-4xl font-bold text-[#251B21]">When you know the moment, not the exact design.</h2></div><div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">{celebrationJourneys.map(([title, body, slug]) => <button key={title} onClick={() => openCategory(slug)} className="group flex items-start justify-between gap-5 rounded-2xl border border-[#EDE3E2] bg-white p-5 text-left transition hover:-translate-y-0.5 hover:border-[#D8B4B7]"><span><span className="text-[10px] font-bold uppercase tracking-wider text-[#D63384]">Cakeasy occasion</span><span className="mt-2 block font-serif text-xl font-bold text-[#251B21]">{title}</span><span className="mt-1 block text-xs leading-5 text-gray-500">{body}</span></span><ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#D63384] transition group-hover:translate-x-1" /></button>)}</div></section>
 
-                    {/* Content */}
-                    <div className="p-6 flex flex-col flex-grow space-y-4">
-                      <div className="space-y-1">
-                        <h3 className="font-serif font-bold text-lg text-[#1E1E1E] leading-snug group-hover:text-[#D63384] transition-colors">
-                          {product.name}
-                        </h3>
-                        <p className="text-xs text-gray-500 line-clamp-2">
-                          {product.description}
-                        </p>
-                      </div>
+      <section className="grid grid-cols-1 gap-8 border-t border-[#EDE3E2] pt-16 lg:grid-cols-12 lg:items-center"><div className="lg:col-span-5"><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#D63384]">Small celebrations, beautifully handled</span><h2 className="mt-3 font-serif text-3xl font-bold text-[#251B21]">Bento cakes, cupcakes, pastries and dessert boxes support the studio.</h2><p className="mt-4 text-sm leading-7 text-gray-500">Start small, gift thoughtfully or build a dessert table. These products are easy to order, but still designed to feel like Cakeasy.</p><button onClick={() => openCategory('bento')} className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#F0B7C9] px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#D63384]">See the small-format range <ArrowRight className="h-4 w-4" /></button></div><div className="grid grid-cols-3 gap-3 lg:col-span-7"><button onClick={() => openCategory('bento')} className="group"><img src="/gallery/5/img1.jpg" alt="Small Cakeasy bento cake" className="aspect-square w-full rounded-2xl object-cover transition group-hover:scale-[1.02]" /><span className="mt-2 block text-xs font-bold text-[#43242F]">Bento</span></button><button onClick={() => openCategory('cupcakes')} className="group"><img src="/catalog/product5.jpg" alt="Cakeasy cupcakes" className="aspect-square w-full rounded-2xl object-cover transition group-hover:scale-[1.02]" /><span className="mt-2 block text-xs font-bold text-[#43242F]">Cupcakes</span></button><button onClick={() => openCategory('dessert-boxes')} className="group"><img src="/catalog/product6.jpg" alt="Cakeasy dessert box" className="aspect-square w-full rounded-2xl object-cover transition group-hover:scale-[1.02]" /><span className="mt-2 block text-xs font-bold text-[#43242F]">Dessert boxes</span></button></div></section>
 
-                      {/* Flavors bar */}
-                      <div className="flex flex-wrap gap-1">
-                        {product.popularFlavors.slice(0, 2).map((flavor, index) => (
-                          <span key={index} className="bg-[#FFF5F8] text-[#D63384] text-[10px] px-2 py-0.5 rounded font-medium">
-                            {flavor}
-                          </span>
-                        ))}
-                      </div>
+      <section className="rounded-[36px] bg-[#251B21] p-8 text-white sm:p-12"><div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end"><div className="lg:col-span-7"><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#F5C178]">The Cakeasy custom cake journey</span><h2 className="mt-4 font-serif text-4xl font-bold">A design process that makes the important details feel easy.</h2></div><div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:col-span-5">{['Share your event details', 'Send your inspiration, theme or story', 'Finalise design, flavour, servings and budget', 'Receive the proposal and quotation', 'Confirm with advance payment', 'Cakeasy creates and delivers'].map((step, index) => <div key={step} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-xs font-semibold text-white/80"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#D63384] text-white">{index + 1}</span>{step}</div>)}</div></div></section>
 
-                      {/* Pricing & CTA */}
-                      <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-widest">Starting at</p>
-                          <p className="font-serif font-bold text-base text-[#1E1E1E]">{product.priceRange.split(' - ')[0]}</p>
-                        </div>
-                        <button
-                          onClick={() => setSelectedProduct(product)}
-                          className="bg-[#FFF5F8] hover:bg-[#D63384] text-[#D63384] hover:text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5"
-                        >
-                          Details & Baker Options
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </ScrollReveal>
-              );
-            })}
-          </div>
+      <section className="space-y-8"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><span className="text-xs font-bold uppercase tracking-[0.22em] text-[#D63384]">Real Cakeasy work</span><h2 className="mt-2 font-serif text-4xl font-bold text-[#251B21]">A curated archive, not a photo dump.</h2></div><a href={settings.instagramUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#D63384]"><Instagram className="h-4 w-4" /> Follow {settings.instagramHandle}</a></div><div className="grid grid-cols-2 gap-4 md:grid-cols-4"><img src="/gallery/8/img1.jpg" alt="Cakeasy floral cake" className="aspect-[3/4] rounded-2xl object-cover" /><img src="/gallery/15/img1.jpg" alt="Cakeasy designer cake" className="aspect-square rounded-2xl object-cover md:mt-8" /><img src="/gallery/23/img1.jpg" alt="Cakeasy anniversary cake" className="aspect-[3/4] rounded-2xl object-cover" /><img src="/gallery/13/img1.jpg" alt="Cakeasy character cake" className="aspect-square rounded-2xl object-cover md:mt-8" /></div><button onClick={() => setCurrentTab('gallery')} className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#F0B7C9] px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#D63384]">View all curated work <ArrowRight className="h-4 w-4" /></button></section>
 
-          <div className="text-center mt-12">
-            <button
-              onClick={() => setCurrentTab('catalog')}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#D63384] hover:text-[#b02266] transition-colors group"
-            >
-              Browse complete boutique menu <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {false && (
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <ScrollReveal delay={0}>
-          <div className="space-y-4 text-center">
-            <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20 animate-pulse">
-              <Clock className="h-6 w-6" />
-            </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Bespoke Express Schedule</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Share your preferred date on WhatsApp and Cakeasy will confirm availability before accepting the order.
-            </p>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal delay={150}>
-          <div className="space-y-4 text-center">
-            <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
-              <Truck className="h-6 w-6" />
-            </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Temperature-Controlled Transit</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Pickup, delivery, and packaging details are confirmed directly before the cake is finalized.
-            </p>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal delay={300}>
-          <div className="space-y-4 text-center">
-            <div className="h-14 w-14 bg-[#FFF5F8] text-[#D63384] rounded-2xl flex items-center justify-center mx-auto border border-[#F6B8C8]/20">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <h3 className="font-serif font-bold text-lg text-[#1E1E1E]">Allergen & Eggless Distinction</h3>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              Eggless and dietary requests can be discussed before ordering and confirmed directly by Cakeasy.
-            </p>
-          </div>
-        </ScrollReveal>
-      </section>
-      )}
-
-      {false && (
-      <section className="bg-[#FFF5F8]/60 py-16 rounded-[40px] border border-[#FFF5F8] relative">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Bespoke Celebrations</span>
-          
-          <div className="space-y-4 max-w-3xl mx-auto">
-            <div className="flex justify-center text-amber-400 gap-1">
-              {[...Array(hiddenReviews[reviewIndex].stars)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-amber-400 stroke-none" />
-              ))}
-            </div>
-            
-            <p className="font-serif text-xl sm:text-2xl text-gray-800 leading-relaxed italic">
-              "{hiddenReviews[reviewIndex].text}"
-            </p>
-          </div>
-
-          <div>
-            <p className="font-serif font-bold text-base text-[#1E1E1E]">{hiddenReviews[reviewIndex].name}</p>
-            <p className="text-xs text-[#D63384] font-medium mt-0.5">{reviews[reviewIndex].role} • {reviews[reviewIndex].date}</p>
-          </div>
-
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={handlePrevReview}
-              className="h-10 w-10 bg-white hover:bg-[#D63384] text-gray-600 hover:text-white rounded-full flex items-center justify-center border border-pink-100 shadow-sm transition-all"
-              aria-label="Previous review"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={handleNextReview}
-              className="h-10 w-10 bg-white hover:bg-[#D63384] text-gray-600 hover:text-white rounded-full flex items-center justify-center border border-pink-100 shadow-sm transition-all"
-              aria-label="Next review"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {/* 6. Instagram showcase */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">Join {settings.instagramHandle || "@cakeasy.in"}</span>
-            <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">Follow Our Instagram Journey</h2>
-          </div>
-          <a
-            href={settings.instagramUrl || "https://instagram.com/cakeasy.in"}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 bg-white hover:bg-[#FFF5F8] border border-[#F6B8C8] text-[#D63384] font-semibold text-xs uppercase tracking-wider px-5 py-3 rounded-xl transition-all"
-          >
-            <Instagram className="h-4 w-4" /> Visit Instagram
-          </a>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-          {(galleryPosts || []).slice(0, 3).map((post) => (
-            <div
-              key={post.id}
-              onClick={() => setCurrentTab('gallery')}
-              className="bg-white rounded-3xl overflow-hidden border border-neutral-100 group cursor-pointer shadow-sm hover:shadow-md transition-all flex flex-col"
-            >
-              <div className="relative aspect-square overflow-hidden bg-gray-50">
-                <img
-                  src={resolveCakeImage(post.imageUrl)}
-                  alt={post.caption}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-[#D63384]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-semibold text-sm gap-2">
-                  <Instagram className="h-5 w-5" /> View Social Post
-                </div>
-              </div>
-              <div className="p-5 flex-grow space-y-2">
-                <div className="hidden">
-                  <span>❤️ {post.likes} likes</span>
-                  <span>💬 {post.comments?.length || 0} comments</span>
-                </div>
-                <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
-                  {cleanCaption(post.caption)}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <section className="rounded-[34px] border border-[#EDE3E2] bg-[#FFF7FA] p-8 text-center sm:p-12"><Heart className="mx-auto h-6 w-6 text-[#D63384]" /><h2 className="mt-4 font-serif text-4xl font-bold text-[#251B21]">Tell us what you are celebrating.</h2><p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-gray-600">We will help turn it into a cake that feels truly yours - and make the next step easy.</p><div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row"><button onClick={() => setCurrentTab('consultation')} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D63384] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#B02266]">Start your cake consultation <ArrowRight className="h-4 w-4" /></button><a href="https://wa.me/918810795004" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full border border-[#F0B7C9] px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-[#D63384]"><MessageCircle className="h-4 w-4" /> Chat on WhatsApp</a></div></section>
     </div>
   );
 }

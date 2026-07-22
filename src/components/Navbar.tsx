@@ -23,10 +23,9 @@ export default function Navbar({
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'weddings', label: 'Wedding Cakes' },
-    { id: 'custom', label: 'Custom Cakes' },
+    { id: 'weddings', label: 'Wedding & Milestone Cakes' },
+    { id: 'cakes/designer', label: 'Designer Cakes' },
     { id: 'gallery', label: 'Our Work' },
-    { id: 'about', label: 'Our Story' },
     { id: 'consultation', label: 'Book Consultation' },
   ];
 

@@ -2,7 +2,7 @@ import { MenuItem, InstagramPost } from './types';
 
 export const CAKE_CATEGORIES = [
   { id: 'bento', label: 'Bento Cakes', icon: 'Box', desc: 'Cute, minimalist 250g personal cakes' },
-  { id: 'wedding', label: 'Wedding Cakes', icon: 'Heart', desc: 'Exquisite, multi-tiered artisanal masterpieces' },
+  { id: 'wedding', label: 'Wedding & Milestone Cakes', icon: 'Heart', desc: 'Bespoke cakes for engagements, weddings and anniversaries' },
   { id: 'celebration', label: 'Celebration Cakes', icon: 'Sparkles', desc: 'Perfect for birthdays, anniversaries, & baby showers' },
   { id: 'cupcakes', label: 'Cupcakes & Pastries', icon: 'Cupcake', desc: 'Bite-sized indulgence made with love' },
 ];

@@ -31,13 +31,22 @@ WHITE = colors.white
 
 LOGO = ROOT / "src" / "assets" / "brand" / "cakeasy-logo-web.webp"
 BAKER = ROOT / "public" / "gallery" / "1" / "img1.jpg"
+WEDDING_HERO = ROOT / "public" / "gallery" / "9" / "img1.jpg"
+ANNIVERSARY_HERO = ROOT / "public" / "gallery" / "10" / "img1.jpg"
+DESIGNER_HERO = ROOT / "public" / "gallery" / "26" / "img1.jpg"
+BENTO_HERO = ROOT / "public" / "gallery" / "5" / "img1.jpg"
 CAKES = [
-    ROOT / "public" / "catalog" / "product2.jpg",
-    ROOT / "public" / "catalog" / "product3.jpg",
-    ROOT / "public" / "catalog" / "product4.jpg",
-    ROOT / "public" / "catalog" / "product1.jpg",
-    ROOT / "public" / "catalog" / "product5.jpg",
-    ROOT / "public" / "catalog" / "product6.jpg",
+    WEDDING_HERO,
+    ANNIVERSARY_HERO,
+    ROOT / "public" / "gallery" / "8" / "img1.jpg",
+    DESIGNER_HERO,
+    ROOT / "public" / "gallery" / "28" / "img1.jpg",
+    BENTO_HERO,
+    ROOT / "public" / "gallery" / "11" / "img1.jpg",
+    ROOT / "public" / "gallery" / "12" / "img1.jpg",
+    ROOT / "public" / "gallery" / "23" / "img1.jpg",
+    ROOT / "public" / "gallery" / "15" / "img1.jpg",
+    ROOT / "public" / "gallery" / "30" / "img1.jpg",
 ]
 
 styles = getSampleStyleSheet()
@@ -143,7 +152,7 @@ def make_lookbook():
     W, H = A4
     # Cover: baker is present, but the cake remains the visual anchor.
     c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0)
-    cover_image(c, BAKER, W * .58, 0, W * .42, H)
+    cover_image(c, WEDDING_HERO, W * .58, 0, W * .42, H)
     c.setFillColor(INK); c.rect(0, 0, W * .62, H, fill=1, stroke=0)
     logo(c, 18 * mm, H - 38 * mm, 58 * mm)
     c.setFillColor(CHAMPAGNE); c.setFont("Helvetica-Bold", 8); c.drawString(18 * mm, H - 55 * mm, "CAKEASY WEDDING & CUSTOM CAKE LOOKBOOK")
@@ -203,7 +212,7 @@ def make_brochure():
     path = OUT / "Cakeasy_Premium_Wedding_Brochure_A4.pdf"
     c = canvas.Canvas(str(path), pagesize=A4); W, H = A4
     # Front
-    c.setFillColor(BLUSH); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, CAKES[0], W * .46, 0, W * .54, H); c.setFillColor(BLUSH); c.rect(0, 0, W * .5, H, fill=1, stroke=0); logo(c, 18 * mm, H - 38 * mm, 56 * mm); para(c, "Your wedding.<br/><font color='#D63384'>Your story.</font><br/>Your cake.", ParagraphStyle("brochurecover", parent=H2, fontSize=33, leading=35), 18 * mm, H - 78 * mm, W * .35); para(c, "Bespoke wedding cakes by Cakeasy", ParagraphStyle("brochuretag", parent=H3, textColor=PLUM, fontSize=13), 18 * mm, H - 167 * mm, W * .35); para(c, "A design-led studio for multi-tier cakes, floral detail and celebrations that feel entirely yours.", BODY, 18 * mm, H - 188 * mm, W * .35); footer(c, W, 1); c.showPage()
+    c.setFillColor(BLUSH); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, WEDDING_HERO, W * .46, 0, W * .54, H); c.setFillColor(BLUSH); c.rect(0, 0, W * .5, H, fill=1, stroke=0); logo(c, 18 * mm, H - 38 * mm, 56 * mm); para(c, "Your wedding.<br/><font color='#D63384'>Your story.</font><br/>Your cake.", ParagraphStyle("brochurecover", parent=H2, fontSize=33, leading=35), 18 * mm, H - 78 * mm, W * .35); para(c, "Bespoke wedding cakes by Cakeasy", ParagraphStyle("brochuretag", parent=H3, textColor=PLUM, fontSize=13), 18 * mm, H - 167 * mm, W * .35); para(c, "A design-led studio for multi-tier cakes, floral detail and celebrations that feel entirely yours.", BODY, 18 * mm, H - 188 * mm, W * .35); footer(c, W, 1); c.showPage()
     # Process
     c.setFillColor(WHITE); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 36 * mm); title_block(c, "Inside the studio", "A cake design process made for real celebrations.", "The more context we have, the more personal the final cake can become.", 18 * mm, H - 52 * mm, W - 36 * mm)
     for i, (num, h, b) in enumerate([("01", "Brief", "Date, venue, guests, palette and inspiration."), ("02", "Design", "Tiers, structure, finish, flavour and handmade elements."), ("03", "Quotation", "A clear proposal with delivery, setup and payment terms."), ("04", "Creation", "Baked, finished, delivered and set up with care.")]): info_card(c, 18 * mm + (i % 2) * 87 * mm, H - 154 * mm - (i // 2) * 48 * mm, 79 * mm, 39 * mm, num, h, b)
@@ -257,19 +266,20 @@ def make_small_cards():
     ]
     for filename, title, kicker, body, end in cards:
         path = OUT / filename; c = canvas.Canvas(str(path), pagesize=A6); W, H = A6
-        c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, BAKER, W * .55, 0, W * .45, H); c.setFillColor(INK); c.rect(0, 0, W * .64, H, fill=1, stroke=0); logo(c, 12 * mm, H - 27 * mm, 39 * mm); para(c, kicker.upper(), ParagraphStyle("cardk", parent=LABEL, textColor=CHAMPAGNE), 12 * mm, H - 43 * mm, W * .48); para(c, title, ParagraphStyle("cardh", parent=H2, fontSize=22, leading=24, textColor=WHITE), 12 * mm, H - 58 * mm, W * .46); para(c, body, ParagraphStyle("cardbody", parent=WHITE_BODY, fontSize=8.5, leading=13), 12 * mm, H - 105 * mm, W * .44); rule(c, 12 * mm, 25 * mm, W * .46, CHAMPAGNE); para(c, end, ParagraphStyle("cardend", parent=WHITE_BODY, fontSize=6.5, leading=8), 12 * mm, 19 * mm, W * .44); c.showPage(); c.save(); results.append(path)
+        image = [ANNIVERSARY_HERO, WEDDING_HERO, BENTO_HERO][len(results)]
+        c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, image, W * .55, 0, W * .45, H); c.setFillColor(INK); c.rect(0, 0, W * .64, H, fill=1, stroke=0); logo(c, 12 * mm, H - 27 * mm, 39 * mm); para(c, kicker.upper(), ParagraphStyle("cardk", parent=LABEL, textColor=CHAMPAGNE), 12 * mm, H - 43 * mm, W * .48); para(c, title, ParagraphStyle("cardh", parent=H2, fontSize=22, leading=24, textColor=WHITE), 12 * mm, H - 58 * mm, W * .46); para(c, body, ParagraphStyle("cardbody", parent=WHITE_BODY, fontSize=8.5, leading=13), 12 * mm, H - 105 * mm, W * .44); rule(c, 12 * mm, 25 * mm, W * .46, CHAMPAGNE); para(c, end, ParagraphStyle("cardend", parent=WHITE_BODY, fontSize=6.5, leading=8), 12 * mm, 19 * mm, W * .44); c.showPage(); c.save(); results.append(path)
     return results
 
 
 def make_posters():
     results = []
     # A3 design journey poster
-    path = OUT / "Cakeasy_Custom_Cake_Journey_Poster_A3.pdf"; c = canvas.Canvas(str(path), pagesize=A3); W, H = A3; c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, BAKER, W * .62, 0, W * .38, H); c.setFillColor(INK); c.rect(0, 0, W * .68, H, fill=1, stroke=0); logo(c, 24 * mm, H - 50 * mm, 80 * mm); para(c, "CAKEASY CUSTOM CAKE JOURNEY", ParagraphStyle("a3label", parent=LABEL, textColor=CHAMPAGNE, fontSize=11), 24 * mm, H - 74 * mm, W * .56); para(c, "You imagine it.<br/><font color='#F5C178'>We design it in cake.</font>", ParagraphStyle("a3h", parent=H2, fontSize=47, leading=50, textColor=WHITE), 24 * mm, H - 95 * mm, W * .54); para(c, "From your colours and decor to your outfits and story, every Cakeasy creation can be designed around your celebration.", ParagraphStyle("a3body", parent=WHITE_BODY, fontSize=13, leading=20), 24 * mm, H - 205 * mm, W * .5); steps = [("01", "Share your event details"), ("02", "Send your theme and inspiration"), ("03", "Discuss servings, flavour and budget"), ("04", "Receive a customised design proposal"), ("05", "Confirm with advance payment"), ("06", "Cakeasy creates, delivers and sets up")]; yy = H - 290 * mm
+    path = OUT / "Cakeasy_Custom_Cake_Journey_Poster_A3.pdf"; c = canvas.Canvas(str(path), pagesize=A3); W, H = A3; c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, WEDDING_HERO, W * .62, 0, W * .38, H); c.setFillColor(INK); c.rect(0, 0, W * .68, H, fill=1, stroke=0); logo(c, 24 * mm, H - 50 * mm, 80 * mm); para(c, "CAKEASY CUSTOM CAKE JOURNEY", ParagraphStyle("a3label", parent=LABEL, textColor=CHAMPAGNE, fontSize=11), 24 * mm, H - 74 * mm, W * .56); para(c, "You imagine it.<br/><font color='#F5C178'>We design it in cake.</font>", ParagraphStyle("a3h", parent=H2, fontSize=47, leading=50, textColor=WHITE), 24 * mm, H - 95 * mm, W * .54); para(c, "From your colours and decor to your outfits and story, every Cakeasy creation can be designed around your celebration.", ParagraphStyle("a3body", parent=WHITE_BODY, fontSize=13, leading=20), 24 * mm, H - 205 * mm, W * .5); steps = [("01", "Share your event details"), ("02", "Send your theme and inspiration"), ("03", "Discuss servings, flavour and budget"), ("04", "Receive a customised design proposal"), ("05", "Confirm with advance payment"), ("06", "Cakeasy creates, delivers and sets up")]; yy = H - 290 * mm
     for num, text in steps:
         c.setFillColor(ROSE); c.roundRect(24 * mm, yy, 18 * mm, 12 * mm, 6 * mm, fill=1, stroke=0); c.setFillColor(WHITE); c.setFont("Helvetica-Bold", 9); c.drawCentredString(33 * mm, yy + 4 * mm, num); c.setFont("Helvetica-Bold", 13); c.drawString(50 * mm, yy + 3 * mm, text); yy -= 19 * mm
     c.setFillColor(WHITE); c.roundRect(24 * mm, 25 * mm, 142 * mm, 26 * mm, 6 * mm, fill=1, stroke=0); para(c, "BOOK A CONSULTATION  |  +91 88107 95004  |  cakeasy.in", ParagraphStyle("a3cta", parent=H3, fontSize=13, textColor=PLUM), 32 * mm, 42 * mm, 126 * mm); footer(c, W, dark=True); c.showPage(); c.save(); results.append(path)
     # A3 QR tabletop / partner stand
-    path = OUT / "Cakeasy_QR_Consultation_Tabletop_Stand_A3.pdf"; c = canvas.Canvas(str(path), pagesize=A3); W, H = A3; c.setFillColor(BLUSH); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 30 * mm, H - 55 * mm, 90 * mm); para(c, "BESPOKE WEDDING & CELEBRATION CAKE STUDIO", LABEL, 30 * mm, H - 77 * mm, W - 60 * mm); para(c, "Your story deserves a centrepiece.", ParagraphStyle("qrh", parent=H2, fontSize=38, leading=42), 30 * mm, H - 100 * mm, W - 60 * mm); para(c, "Scan to book a Cakeasy cake consultation. Share your date, venue, palette, outfits and inspiration with Neha.", ParagraphStyle("qrbody", parent=BODY, fontSize=14, leading=22), 30 * mm, H - 160 * mm, W * .52); c.setFillColor(WHITE); c.roundRect(W * .62, H * .25, W * .25, W * .25, 8 * mm, fill=1, stroke=0); draw_qr(c, W * .66, H * .25 + 16 * mm, W * .17); c.setFillColor(PLUM); c.setFont("Helvetica-Bold", 10); c.drawCentredString(W * .745, H * .25 + 11 * mm, "SCAN TO CONSULT"); cover_image(c, BAKER, 30 * mm, 28 * mm, 74 * mm, 74 * mm); c.setFillColor(PLUM); c.setFont("Helvetica-Bold", 13); c.drawString(112 * mm, 74 * mm, "Neha Chaudhary / Founder & Baker"); c.setFont("Helvetica", 10); c.drawString(112 * mm, 64 * mm, "Greater Noida - Delhi NCR | @cakeasy99 | +91 88107 95004"); footer(c, W); c.showPage(); c.save(); results.append(path); return results
+    path = OUT / "Cakeasy_QR_Consultation_Tabletop_Stand_A3.pdf"; c = canvas.Canvas(str(path), pagesize=A3); W, H = A3; c.setFillColor(BLUSH); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 30 * mm, H - 55 * mm, 90 * mm); para(c, "BESPOKE WEDDING & CELEBRATION CAKE STUDIO", LABEL, 30 * mm, H - 77 * mm, W - 60 * mm); para(c, "Your story deserves a centrepiece.", ParagraphStyle("qrh", parent=H2, fontSize=38, leading=42), 30 * mm, H - 100 * mm, W - 60 * mm); para(c, "Scan to book a Cakeasy cake consultation. Share your date, venue, palette, outfits and inspiration with Neha.", ParagraphStyle("qrbody", parent=BODY, fontSize=14, leading=22), 30 * mm, H - 160 * mm, W * .52); c.setFillColor(WHITE); c.roundRect(W * .62, H * .25, W * .25, W * .25, 8 * mm, fill=1, stroke=0); draw_qr(c, W * .66, H * .25 + 16 * mm, W * .17); c.setFillColor(PLUM); c.setFont("Helvetica-Bold", 10); c.drawCentredString(W * .745, H * .25 + 11 * mm, "SCAN TO CONSULT"); cover_image(c, ANNIVERSARY_HERO, 30 * mm, 28 * mm, 74 * mm, 74 * mm); c.setFillColor(PLUM); c.setFont("Helvetica-Bold", 13); c.drawString(112 * mm, 74 * mm, "Cakeasy / Designed around your story"); c.setFont("Helvetica", 10); c.drawString(112 * mm, 64 * mm, "Greater Noida - Delhi NCR | @cakeasy99 | +91 88107 95004"); footer(c, W); c.showPage(); c.save(); results.append(path); return results
 
 
 def make_partner_kit():
@@ -277,7 +287,7 @@ def make_partner_kit():
     pages = [("Partner with Cakeasy", "A design-led cake studio for celebrations with a point of view.", "For wedding planners, banquet halls, hotels, decorators, bridal boutiques, photographers, florists and invitation designers.", 0), ("A strong partner experience", "Give couples a cake conversation that starts before the price question.", "Cakeasy can create cakes that match a stage decoration, wedding invitation, bride's lehenga, floral arrangement or full colour theme.", 1), ("The partnership kit", "A simple referral path for a better client experience.", "Share a consultation QR, request a tasting box or introduce Cakeasy when your couple needs a centrepiece designed around the day.", 2)]
     for i, (kicker, heading, body, image_id) in enumerate(pages, start=1):
         c.setFillColor(INK if i == 1 else WHITE); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 36 * mm); title_block(c, kicker, heading, body, 18 * mm, H - 55 * mm, W * .56, dark=i == 1)
-        if i == 1: cover_image(c, BAKER, W * .62, 0, W * .38, H)
+        if i == 1: cover_image(c, WEDDING_HERO, W * .62, 0, W * .38, H)
         elif i == 2:
             for j, img in enumerate([0, 1, 2]): cover_image(c, CAKES[img], 18 * mm + j * 58 * mm, H - 182 * mm, 52 * mm, 60 * mm)
             para(c, "Design references welcome", H3, 18 * mm, H - 197 * mm, W - 36 * mm); para(c, "Outfits  |  Invitations  |  Stage decor  |  Flowers  |  Venue palette", BODY, 18 * mm, H - 211 * mm, W - 36 * mm)
@@ -287,7 +297,67 @@ def make_partner_kit():
     c.save(); return path
 
 
+def make_designer_lookbook():
+    """A separate creative portfolio for theme, sculpted and character cakes."""
+    path = OUT / "Cakeasy_Designer_Cake_Lookbook_A4.pdf"
+    c = canvas.Canvas(str(path), pagesize=A4); W, H = A4
+    c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, DESIGNER_HERO, W * .50, 0, W * .50, H)
+    c.setFillColor(INK); c.rect(0, 0, W * .56, H, fill=1, stroke=0); logo(c, 18 * mm, H - 38 * mm, 58 * mm)
+    para(c, "CAKEASY DESIGNER CAKES", ParagraphStyle("dlabel", parent=LABEL, textColor=CHAMPAGNE), 18 * mm, H - 58 * mm, W * .43)
+    para(c, "Make it unmistakably theirs.", ParagraphStyle("dh", parent=H2, fontSize=32, leading=35, textColor=WHITE), 18 * mm, H - 78 * mm, W * .43)
+    para(c, "Character, hobby, profession, travel, fashion and sculpted themes—designed as a centrepiece, not a template.", ParagraphStyle("db", parent=WHITE_BODY, fontSize=10, leading=15), 18 * mm, H - 142 * mm, W * .4)
+    para(c, "Neha Chaudhary / Cakeasy Studio", ParagraphStyle("df", parent=WHITE_BODY, fontSize=8, leading=12), 18 * mm, 45 * mm, W * .4); footer(c, W, 1, dark=True); c.showPage()
+    pages = [
+        ("Character & theme", "A cake can carry the whole visual language of a birthday.", [DESIGNER_HERO, CAKES[4], CAKES[10]], ["Kids' character worlds", "Milestone moments", "Colour-led themes"]),
+        ("Hobby, travel & personality", "For the collector, the traveller, the music lover and the one who has everything.", [CAKES[9], ROOT / "public" / "gallery" / "16" / "img1.jpg", ROOT / "public" / "gallery" / "19" / "img1.jpg"], ["Interests and professions", "Objects and stories", "Fashion and visual mood"]),
+        ("The brief", "Bring the detail that makes the cake personal.", [BAKER, CAKES[3], CAKES[5]], ["Reference image", "Colour palette", "Serving + date"]),
+    ]
+    for page_no, (heading, body, imgs, captions) in enumerate(pages, start=2):
+        c.setFillColor(BLUSH if page_no == 2 else WHITE); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 36 * mm)
+        title_block(c, "Cakeasy designer collection", heading, body, 18 * mm, H - 52 * mm, W - 36 * mm)
+        card_w = (W - 42 * mm) / 3
+        for i, img in enumerate(imgs):
+            x = 18 * mm + i * (card_w + 3 * mm); y = 72 * mm
+            c.setFillColor(MIST); c.roundRect(x, y, card_w, 92 * mm, 5 * mm, fill=1, stroke=0); cover_image(c, img, x, y + 31 * mm, card_w, 61 * mm)
+            para(c, captions[i], ParagraphStyle("dcap", parent=H3, fontSize=10, leading=12, textColor=PLUM), x + 5 * mm, y + 24 * mm, card_w - 10 * mm)
+            para(c, "Designed to brief", SMALL, x + 5 * mm, y + 12 * mm, card_w - 10 * mm)
+        c.setFillColor(WHITE if page_no == 2 else BLUSH); c.roundRect(18 * mm, 31 * mm, W - 36 * mm, 25 * mm, 5 * mm, fill=1, stroke=0); para(c, "Share the person, not only the reference picture. We will design the rest.", H3, 26 * mm, 49 * mm, W - 52 * mm); footer(c, W, page_no); c.showPage()
+    c.setFillColor(PLUM); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 38 * mm, 58 * mm); para(c, "Design a cake that could only belong to them.", ParagraphStyle("dback", parent=H2, fontSize=30, leading=34, textColor=WHITE), 18 * mm, H - 78 * mm, W * .65); para(c, "Book a consultation at cakeasy.in/consultation or WhatsApp +91 88107 95004.", ParagraphStyle("dbackp", parent=WHITE_BODY, fontSize=11, leading=17), 18 * mm, H - 130 * mm, W * .55); cover_image(c, CAKES[9], W * .58, 45 * mm, W * .3, 95 * mm); footer(c, W, 5, dark=True); c.showPage(); c.save(); return path
+
+
+def make_celebration_brochure():
+    path = OUT / "Cakeasy_Celebration_Cakes_Brochure_A4.pdf"
+    c = canvas.Canvas(str(path), pagesize=A4); W, H = A4
+    c.setFillColor(MIST); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, ANNIVERSARY_HERO, W * .47, 0, W * .53, H); c.setFillColor(MIST); c.rect(0, 0, W * .52, H, fill=1, stroke=0); logo(c, 18 * mm, H - 38 * mm, 58 * mm)
+    para(c, "BIRTHDAY · ANNIVERSARY · BENTO · DESSERTS", LABEL, 18 * mm, H - 62 * mm, W * .42); para(c, "A celebration, in their language.", ParagraphStyle("cbh", parent=H2, fontSize=31, leading=34), 18 * mm, H - 83 * mm, W * .4); para(c, "From a child's character cake to a quiet anniversary surprise, choose the scale, mood and story that fit the moment.", BODY, 18 * mm, H - 153 * mm, W * .38); footer(c, W, 1); c.showPage()
+    c.setFillColor(WHITE); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 36 * mm); title_block(c, "The celebration menu", "Choose the feeling first.", "Cakeasy can scale from a two-person bento to a multi-tier centrepiece without losing the handmade detail.", 18 * mm, H - 52 * mm, W - 36 * mm)
+    cards = [("Birthday", CAKES[4], "Characters, milestones and theme worlds"), ("Anniversary", ANNIVERSARY_HERO, "Floral, photo-led and quietly luxurious"), ("Bento", BENTO_HERO, "Small, personal and giftable"), ("Cupcakes & dessert boxes", CAKES[6], "A table of little moments")]
+    for i, (name, img, desc) in enumerate(cards):
+        x = 18 * mm + (i % 2) * 87 * mm; y = H - 182 * mm - (i // 2) * 68 * mm; cover_image(c, img, x, y, 79 * mm, 48 * mm); c.setFillColor(BLUSH); c.roundRect(x, y - 24 * mm, 79 * mm, 24 * mm, 3 * mm, fill=1, stroke=0); para(c, name, H3, x + 5 * mm, y - 5 * mm, 69 * mm); para(c, desc, SMALL, x + 5 * mm, y - 14 * mm, 69 * mm)
+    footer(c, W, 2); c.showPage(); c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 38 * mm, 56 * mm); para(c, "Tell us who it is for.", ParagraphStyle("cbback", parent=H2, fontSize=31, leading=35, textColor=WHITE), 18 * mm, H - 80 * mm, W * .55); para(c, "The age, the joke, the memory, the colour, the tiny detail. That is where the design begins.", ParagraphStyle("cbbackp", parent=WHITE_BODY, fontSize=11, leading=17), 18 * mm, H - 130 * mm, W * .5); draw_qr(c, W * .68, 75 * mm, 42 * mm); para(c, "BOOK A CONSULTATION", ParagraphStyle("cbqr", parent=LABEL, textColor=CHAMPAGNE), W * .65, 67 * mm, 70 * mm); footer(c, W, 3, dark=True); c.showPage(); c.save(); return path
+
+
+def make_review_card():
+    path = OUT / "Cakeasy_Review_Card_A6.pdf"; c = canvas.Canvas(str(path), pagesize=A6); W, H = A6
+    c.setFillColor(BLUSH); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 12 * mm, H - 28 * mm, 40 * mm); cover_image(c, CAKES[2], 0, 0, W, 20 * mm)
+    para(c, "YOUR CELEBRATION HELPED US GROW", LABEL, 12 * mm, H - 43 * mm, W - 24 * mm); para(c, "Would you share the feeling?", ParagraphStyle("reviewh", parent=H2, fontSize=18, leading=20), 12 * mm, H - 58 * mm, W - 24 * mm); para(c, "Leave a review on Google or Instagram and help another family find a cake studio that listens.", ParagraphStyle("reviewbody", parent=BODY, fontSize=7.2, leading=9), 12 * mm, H - 82 * mm, W - 24 * mm); c.setFillColor(WHITE); c.roundRect(12 * mm, 25 * mm, W - 24 * mm, 32 * mm, 4 * mm, fill=1, stroke=0); draw_qr(c, 18 * mm, 30 * mm, 22 * mm, "https://cakeasy.in/gallery"); para(c, "Scan to see the work and send your review.", SMALL, 48 * mm, 51 * mm, W - 60 * mm); para(c, "Thank you / Neha & the Cakeasy team", ParagraphStyle("reviewsig", parent=H3, fontSize=8.5, textColor=PLUM), 12 * mm, 22 * mm, W - 24 * mm); footer(c, W); c.showPage(); c.save(); return path
+
+
+def make_business_card():
+    path = OUT / "Cakeasy_Business_Card_A6.pdf"; c = canvas.Canvas(str(path), pagesize=landscape(A6)); W, H = landscape(A6)
+    c.setFillColor(INK); c.rect(0, 0, W, H, fill=1, stroke=0); cover_image(c, BAKER, W * .68, 0, W * .32, H); c.setFillColor(INK); c.rect(0, 0, W * .72, H, fill=1, stroke=0); logo(c, 12 * mm, H - 24 * mm, 42 * mm); para(c, "NEHA CHAUDHARY", ParagraphStyle("bcname", parent=H3, fontSize=15, textColor=WHITE), 12 * mm, H - 35 * mm, 60 * mm); para(c, "Founder & Baker / Cakeasy Studio", ParagraphStyle("bctitle", parent=WHITE_BODY, fontSize=8, leading=10), 12 * mm, H - 47 * mm, 70 * mm); rule(c, 12 * mm, 25 * mm, 72 * mm, CHAMPAGNE); para(c, "Bespoke wedding · designer · celebration cakes<br/>Greater Noida · Delhi NCR · Lucknow roots<br/>+91 88107 95004  ·  @cakeasy99  ·  cakeasy.in", ParagraphStyle("bcinfo", parent=WHITE_BODY, fontSize=7, leading=10), 12 * mm, 20 * mm, 72 * mm); c.showPage(); c.setFillColor(BLUSH); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 12 * mm, H - 24 * mm, 42 * mm); para(c, "CAKEASY", ParagraphStyle("bcbackh", parent=H2, fontSize=23, leading=25), 12 * mm, H - 45 * mm, 60 * mm); para(c, "Designed around your story.", H3, 12 * mm, H - 76 * mm, 70 * mm); draw_qr(c, W - 39 * mm, 16 * mm, 25 * mm); para(c, "BOOK A CONSULTATION", LABEL, W - 48 * mm, 12 * mm, 38 * mm); c.showPage(); c.save(); return path
+
+
+def make_sticker_sheet():
+    path = OUT / "Cakeasy_Packaging_Stickers_A4.pdf"; c = canvas.Canvas(str(path), pagesize=A4); W, H = A4
+    c.setFillColor(WHITE); c.rect(0, 0, W, H, fill=1, stroke=0); logo(c, 18 * mm, H - 36 * mm); title_block(c, "Packaging artwork", "Stickers for the final handoff.", "Print on matte or transparent adhesive stock. Keep the gold line and rose accent consistent across boxes, sleeves and tasting kits.", 18 * mm, H - 52 * mm, W - 36 * mm)
+    labels = [("MADE FOR YOUR MOMENT", "Cakeasy Studio"), ("KEEP CHILLED", "Handle with care"), ("DESIGNED BY NEHA", "cakeasy.in"), ("THANK YOU FOR CHOOSING CAKEASY", "@cakeasy99")]
+    for i, (headline, sub) in enumerate(labels):
+        x = 24 * mm + (i % 2) * 88 * mm; y = H - 155 * mm - (i // 2) * 52 * mm; c.setFillColor(BLUSH if i % 2 == 0 else INK); c.roundRect(x, y, 76 * mm, 34 * mm, 17 * mm, fill=1, stroke=0); c.setStrokeColor(CHAMPAGNE); c.setLineWidth(1); c.roundRect(x + 2 * mm, y + 2 * mm, 72 * mm, 30 * mm, 15 * mm, fill=0, stroke=1); para(c, headline, ParagraphStyle("stickerh", parent=LABEL, textColor=PLUM if i % 2 == 0 else CHAMPAGNE, fontSize=7), x + 8 * mm, y + 22 * mm, 60 * mm); para(c, sub, ParagraphStyle("stickersub", parent=BODY, textColor=PLUM if i % 2 == 0 else WHITE, fontSize=8), x + 8 * mm, y + 13 * mm, 60 * mm)
+    c.setFillColor(MIST); c.roundRect(18 * mm, 43 * mm, W - 36 * mm, 39 * mm, 5 * mm, fill=1, stroke=0); para(c, "Production note", LABEL, 26 * mm, 69 * mm, 60 * mm); para(c, "Use 50-60 mm finished stickers. For cake boxes, print the care sticker separately so the message is easy to find.", BODY, 26 * mm, 59 * mm, W - 52 * mm); footer(c, W); c.showPage(); c.save(); return path
+
+
 if __name__ == "__main__":
-    files = [make_lookbook(), make_brochure(), make_consultation_card(), make_quotation(), *make_small_cards(), *make_posters(), make_partner_kit()]
+    files = [make_lookbook(), make_brochure(), make_designer_lookbook(), make_celebration_brochure(), make_consultation_card(), make_quotation(), *make_small_cards(), make_review_card(), make_business_card(), make_sticker_sheet(), *make_posters(), make_partner_kit()]
     print("Generated:")
     for file in files: print(file)
