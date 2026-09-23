@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Instagram, Send, Check } from 'lucide-react';
+import { sendEnquiry } from '../lib/whatsapp';
+import { siteSettings } from '../lib/runtime';
 
 export default function ContactView() {
   const [name, setName] = useState('');
@@ -7,20 +9,22 @@ export default function ContactView() {
   const [message, setMessage] = useState('');
   const [submittedMessage, setSubmittedMessage] = useState(false);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message) return;
-
-    const inquiry = [
-      'Hello Cakeasy, I would like to make an enquiry.',
-      '',
-      `Name: ${name}`,
-      `Email: ${email}`,
-      `Message: ${message}`,
-    ].join('\n');
-
-    window.open(`https://wa.me/918810795004?text=${encodeURIComponent(inquiry)}`, '_blank', 'noopener,noreferrer');
+    if (!name || !email || !message || submittedMessage) return;
     setSubmittedMessage(true);
+
+    await sendEnquiry(
+      { kind: 'contact', name, email, details: { Message: message } },
+      (ref) => [
+        'Hello Cakeasy, I would like to make an enquiry.',
+        ref ? `Reference: ${ref}` : '',
+        '',
+        `Name: ${name}`,
+        `Email: ${email}`,
+        `Message: ${message}`,
+      ].filter((line, index) => index !== 1 || line).join('\n'),
+    );
     setTimeout(() => {
       setName('');
       setEmail('');
@@ -46,7 +50,7 @@ export default function ContactView() {
               <MapPin className="h-5 w-5 text-[#D63384] shrink-0 mt-0.5" />
               <div>
                 <h2 className="font-bold text-sm text-[#1E1E1E]">Studio Address</h2>
-                <p className="text-xs text-gray-500 mt-0.5">4C-601, AWHO, Gr. Noida, Delhi NCR, 201310</p>
+                <p className="text-xs text-gray-500 mt-0.5">{siteSettings.address.replace(/^Cakeasy,\s*/, '')}</p>
               </div>
             </div>
 
@@ -54,7 +58,7 @@ export default function ContactView() {
               <Phone className="h-5 w-5 text-[#D63384] shrink-0 mt-0.5" />
               <div>
                 <h2 className="font-bold text-sm text-[#1E1E1E]">WhatsApp & Calls</h2>
-                <p className="text-xs text-gray-500 mt-0.5">+91 88107 95004</p>
+                <p className="text-xs text-gray-500 mt-0.5">{siteSettings.phoneDisplay}</p>
               </div>
             </div>
 
@@ -62,12 +66,12 @@ export default function ContactView() {
               <Mail className="h-5 w-5 text-[#D63384] shrink-0 mt-0.5" />
               <div>
                 <h2 className="font-bold text-sm text-[#1E1E1E]">Email</h2>
-                <p className="text-xs text-gray-500 mt-0.5">cakeasy94@gmail.com</p>
+                <p className="text-xs text-gray-500 mt-0.5">{siteSettings.email}</p>
               </div>
             </div>
 
             <a
-              href="https://www.instagram.com/cakeasy99/"
+              href={siteSettings.instagramUrl}
               target="_blank"
               rel="noreferrer"
               className="flex items-start gap-4 p-5 bg-white border border-[#FFF5F8] rounded-2xl hover:border-[#F6B8C8] transition-colors"
@@ -75,7 +79,7 @@ export default function ContactView() {
               <Instagram className="h-5 w-5 text-[#D63384] shrink-0 mt-0.5" />
               <div>
                 <h2 className="font-bold text-sm text-[#1E1E1E]">Instagram</h2>
-                <p className="text-xs text-gray-500 mt-0.5">@cakeasy99</p>
+                <p className="text-xs text-gray-500 mt-0.5">{siteSettings.instagramHandle}</p>
               </div>
             </a>
           </div>
@@ -84,7 +88,7 @@ export default function ContactView() {
         <div className="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 border border-[#FFF5F8] shadow-sm space-y-6">
           <div className="space-y-1.5">
             <h2 className="font-serif font-bold text-xl text-[#1E1E1E]">Send an enquiry</h2>
-            <p className="text-xs text-gray-500">This opens WhatsApp with your message ready to send.</p>
+            <p className="text-xs text-gray-500">Your enquiry is saved for Cakeasy, then WhatsApp opens with your message ready to send.</p>
           </div>
 
           <form onSubmit={handleContactSubmit} className="space-y-4">

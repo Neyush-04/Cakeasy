@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { Menu, X, ShoppingBag, Heart, Instagram, Mail, Globe, MessageCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, X, ShoppingBag, Heart, Instagram, Mail, MessageCircle, Facebook, Youtube } from 'lucide-react';
 import logo from '../assets/brand/cakeasy-logo-web.webp';
+import { siteSettings } from '../lib/runtime';
+import { whatsappUrl } from '../lib/whatsapp';
+import { trackWhatsAppClick } from '../lib/analytics';
 
 interface NavbarProps {
   currentTab: string;
@@ -11,9 +15,10 @@ interface NavbarProps {
   toggleWishlist: () => void;
 }
 
+const iconLink = 'h-9 w-9 rounded-full border border-pink-100 bg-white text-gray-500 flex items-center justify-center hover:text-[#D63384] hover:border-[#F6B8C8] transition-colors';
+
 export default function Navbar({
   currentTab,
-  setCurrentTab,
   cartCount,
   wishlistCount,
   toggleCart,
@@ -28,12 +33,7 @@ export default function Navbar({
     { id: 'gallery', label: 'Our Work' },
     { id: 'consultation', label: 'Book Consultation' },
   ];
-
-  const handleTabSelect = (tabId: string) => {
-    setCurrentTab(tabId);
-    setIsOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const hrefFor = (id: string) => (id === 'home' ? '/' : `/${id}`);
 
   return (
     <nav className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-[#FFF5F8] transition-all duration-300">
@@ -44,7 +44,8 @@ export default function Navbar({
           </span>
           <div className="flex items-center gap-2 ml-auto">
             <a
-              href="https://wa.me/918810795004"
+              href={whatsappUrl()}
+              onClick={() => trackWhatsAppClick('top-bar')}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-xs font-black uppercase tracking-wider text-white shadow-[0_6px_18px_rgba(37,211,102,0.28)] hover:bg-[#20ba59] transition-colors"
@@ -53,7 +54,7 @@ export default function Navbar({
               <MessageCircle className="h-4 w-4 fill-white stroke-white" /> WhatsApp
             </a>
             <a
-              href="https://www.instagram.com/cakeasy99/"
+              href={siteSettings.instagramUrl}
               target="_blank"
               rel="noreferrer"
               className="h-9 w-9 rounded-full border border-pink-100 bg-[#FFF5F8] text-[#D63384] flex items-center justify-center hover:bg-[#D63384] hover:text-white transition-colors"
@@ -61,45 +62,41 @@ export default function Navbar({
             >
               <Instagram className="h-4 w-4" />
             </a>
-            <a
-              href="mailto:cakeasy94@gmail.com"
-              className="h-9 w-9 rounded-full border border-pink-100 bg-white text-gray-500 flex items-center justify-center hover:text-[#D63384] hover:border-[#F6B8C8] transition-colors"
-              aria-label="Email Cakeasy"
-            >
-              <Mail className="h-4 w-4" />
-            </a>
-            <a
-              href="https://cakeasy.in"
-              target="_blank"
-              rel="noreferrer"
-              className="h-9 w-9 rounded-full border border-pink-100 bg-white text-gray-500 flex items-center justify-center hover:text-[#D63384] hover:border-[#F6B8C8] transition-colors"
-              aria-label="Cakeasy website"
-            >
-              <Globe className="h-4 w-4" />
-            </a>
+            {siteSettings.facebookUrl && (
+              <a href={siteSettings.facebookUrl} target="_blank" rel="noreferrer" className={iconLink} aria-label="Cakeasy Facebook">
+                <Facebook className="h-4 w-4" />
+              </a>
+            )}
+            {siteSettings.youtubeUrl && (
+              <a href={siteSettings.youtubeUrl} target="_blank" rel="noreferrer" className={iconLink} aria-label="Cakeasy YouTube">
+                <Youtube className="h-4 w-4" />
+              </a>
+            )}
+            {siteSettings.email && (
+              <a href={`mailto:${siteSettings.email}`} className={iconLink} aria-label="Email Cakeasy">
+                <Mail className="h-4 w-4" />
+              </a>
+            )}
           </div>
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-24 items-center">
           {/* Logo Section */}
-          <div 
-            onClick={() => handleTabSelect('home')}
-            className="flex items-center cursor-pointer group"
-          >
+          <Link to="/" onClick={() => setIsOpen(false)} className="flex items-center group" aria-label="Cakeasy home">
             <img
               src={logo}
               alt="Cakeasy Premium Cakes"
               className="h-20 w-auto max-w-[180px] object-contain object-left transition-transform duration-300 group-hover:scale-[1.02] sm:max-w-[210px]"
             />
-          </div>
+          </Link>
 
           {/* Desktop Nav Items */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => handleTabSelect(item.id)}
+                to={hrefFor(item.id)}
                 className={`relative py-2 text-sm font-medium tracking-wide transition-colors uppercase ${
                   currentTab === item.id
                     ? 'text-[#D63384]'
@@ -110,7 +107,7 @@ export default function Navbar({
                 {currentTab === item.id && (
                   <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#D63384] rounded-full" />
                 )}
-              </button>
+              </Link>
             ))}
           </div>
 
@@ -149,6 +146,8 @@ export default function Navbar({
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 text-gray-600 hover:text-gray-900 focus:outline-none"
+                aria-label={isOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isOpen}
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
@@ -161,9 +160,10 @@ export default function Navbar({
       {isOpen && (
         <div className="md:hidden bg-white border-b border-[#FFF5F8] px-4 pt-2 pb-6 space-y-2 animate-fadeIn">
           {navItems.map((item) => (
-            <button
+            <Link
               key={item.id}
-              onClick={() => handleTabSelect(item.id)}
+              to={hrefFor(item.id)}
+              onClick={() => setIsOpen(false)}
               className={`block w-full text-left px-4 py-3 rounded-xl text-base font-medium transition-colors uppercase tracking-wider ${
                 currentTab === item.id
                   ? 'bg-[#FFF5F8] text-[#D63384]'
@@ -171,7 +171,7 @@ export default function Navbar({
               }`}
             >
               {item.label}
-            </button>
+            </Link>
           ))}
         </div>
       )}

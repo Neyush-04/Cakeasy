@@ -70,3 +70,8 @@ export const CAKE_CATEGORY_DATA: Record<CakeCategorySlug, CakeCategoryConfig> = 
 };
 
 export const PRIMARY_CATEGORIES: CakeCategorySlug[] = ['wedding', 'designer', 'engagement', 'anniversary', 'birthday', 'bento'];
+
+// Wedding is the flagship collection and lives at /weddings; the rest at /cakes/<slug>.
+export function categoryPath(slug: string): string {
+  return slug === 'wedding' ? '/weddings' : `/cakes/${slug}`;
+}

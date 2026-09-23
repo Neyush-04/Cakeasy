@@ -1,0 +1,27 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // CMS staff check, read from Firestore (mirrors firestore.rules).
+    function isStaff() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && (request.auth.token.email.lower() == 'pixiforu@gmail.com'
+          || (firestore.exists(/databases/ai-studio-cakeasy-d3f45449-f679-491a-bb46-52a2d38aeb77/documents/cms_users/$(request.auth.token.email.lower()))
+            && firestore.get(/databases/ai-studio-cakeasy-d3f45449-f679-491a-bb46-52a2d38aeb77/documents/cms_users/$(request.auth.token.email.lower())).data.active == true));
+    }
+
+    // Published website media: public read, staff upload of images up to 15 MB.
+    match /media/{fileName} {
+      allow read: if true;
+      allow create: if isStaff()
+        && request.resource.size <= 15 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp|avif)');
+      allow delete: if isStaff();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

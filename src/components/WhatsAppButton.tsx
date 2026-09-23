@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Sparkles, X } from 'lucide-react';
+import { openWhatsApp } from '../lib/whatsapp';
 
-interface WhatsAppButtonProps {
-  whatsappNumber?: string;
-}
-
-export default function WhatsAppButton({ whatsappNumber }: WhatsAppButtonProps) {
+export default function WhatsAppButton() {
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
@@ -17,9 +14,7 @@ export default function WhatsAppButton({ whatsappNumber }: WhatsAppButtonProps) 
   }, []);
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = whatsappNumber || '918810795004'; // Dynamically read from settings
-    const message = encodeURIComponent("Hi Cakeasy! I'm visiting your website and would love to inquire about ordering a custom cake. ✨");
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    openWhatsApp('floating-button', "Hi Cakeasy! I'm visiting your website and would love to enquire about a custom cake.");
   };
 
   return (

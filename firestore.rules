@@ -2,24 +2,204 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isAdmin() {
-      return request.auth != null && request.auth.token.admin == true;
+    // ---------- Identity & roles ----------
+    // CMS users sign in with Google. Access is granted by a cms_users/{email} record.
+    // The bootstrap owner (mirrors shared/site.ts BOOTSTRAP_OWNER_EMAIL) can always sign in.
+
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
     }
 
-    // Reusable primitive validators
+    function email() {
+      return request.auth.token.email.lower();
+    }
+
+    function isBootstrap() {
+      return signedIn() && email() == 'pixiforu@gmail.com';
+    }
+
+    function memberDoc() {
+      return get(/databases/$(database)/documents/cms_users/$(email()));
+    }
+
+    function isActiveMember() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/cms_users/$(email()))
+        && memberDoc().data.active == true;
+    }
+
+    // owner: everything. editor: content, SEO, media. marketing: SEO, redirects, tracking, media.
+    function hasRole(roles) {
+      return isBootstrap() || (isActiveMember() && memberDoc().data.role in roles);
+    }
+
+    function isStaff() {
+      return hasRole(['owner', 'editor', 'marketing']);
+    }
+
     function isValidId(id) {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
-    
+
     function incoming() {
       return request.resource.data;
     }
-    
+
     function existing() {
       return resource.data;
     }
 
-    // Validation Blueprint for MenuItem
+    function stamped() {
+      return incoming().updatedAt == request.time && incoming().updatedBy == email();
+    }
+
+    function optionalString(data, key, max) {
+      return !(key in data) || (data[key] is string && data[key].size() <= max);
+    }
+
+    // ---------- CMS users ----------
+    match /cms_users/{userEmail} {
+      allow read: if signedIn() && (userEmail == email() || hasRole(['owner']));
+      allow create, update: if hasRole(['owner'])
+        && userEmail == userEmail.lower()
+        && userEmail != 'pixiforu@gmail.com'
+        && incoming().keys().hasOnly(['email', 'name', 'role', 'active', 'updatedAt', 'updatedBy'])
+        && incoming().email == userEmail
+        && incoming().role in ['owner', 'editor', 'marketing']
+        && incoming().active is bool
+        && optionalString(incoming(), 'name', 80)
+        && stamped();
+      allow delete: if hasRole(['owner']) && userEmail != email();
+    }
+
+    // ---------- Settings ----------
+    function isValidSiteSettings(data) {
+      return data.keys().hasOnly(['whatsappNumber', 'phoneDisplay', 'email', 'address', 'addressStreet', 'addressLocality', 'addressRegion', 'postalCode',
+          'instagramUrl', 'instagramHandle', 'facebookUrl', 'youtubeUrl', 'pinterestUrl', 'googleBusinessUrl', 'updatedAt', 'updatedBy'])
+        && data.whatsappNumber is string && data.whatsappNumber.matches('^[0-9]{10,15}$')
+        && optionalString(data, 'phoneDisplay', 40) && optionalString(data, 'email', 120) && optionalString(data, 'address', 200)
+        && optionalString(data, 'addressStreet', 120) && optionalString(data, 'addressLocality', 80) && optionalString(data, 'addressRegion', 80)
+        && optionalString(data, 'postalCode', 12) && optionalString(data, 'instagramUrl', 200) && optionalString(data, 'instagramHandle', 60)
+        && optionalString(data, 'facebookUrl', 200) && optionalString(data, 'youtubeUrl', 200) && optionalString(data, 'pinterestUrl', 200)
+        && optionalString(data, 'googleBusinessUrl', 300);
+    }
+
+    function isValidMarketingSettings(data) {
+      return data.keys().hasOnly(['ga4MeasurementId', 'metaPixelId', 'googleSiteVerification', 'bingSiteVerification', 'updatedAt', 'updatedBy'])
+        && data.ga4MeasurementId is string && (data.ga4MeasurementId == '' || data.ga4MeasurementId.matches('^G-[A-Z0-9]{4,16}$'))
+        && data.metaPixelId is string && (data.metaPixelId == '' || data.metaPixelId.matches('^[0-9]{8,20}$'))
+        && data.googleSiteVerification is string && (data.googleSiteVerification == '' || data.googleSiteVerification.matches('^[A-Za-z0-9_\\-]{8,120}$'))
+        && data.bingSiteVerification is string && (data.bingSiteVerification == '' || data.bingSiteVerification.matches('^[A-Za-z0-9_\\-]{8,120}$'));
+    }
+
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow write: if settingsId == 'site' && hasRole(['owner']) && isValidSiteSettings(incoming()) && stamped();
+      allow write: if settingsId == 'marketing' && hasRole(['owner', 'marketing']) && isValidMarketingSettings(incoming()) && stamped();
+    }
+
+    // ---------- SEO (live + drafts) ----------
+    function isValidSeo(data, id) {
+      return data.keys().hasOnly(['path', 'title', 'description', 'canonical', 'ogTitle', 'ogDescription', 'ogImage', 'index', 'follow', 'jsonLd', 'updatedAt', 'updatedBy', 'publishedAt'])
+        && data.path is string && data.path.size() >= 1 && data.path.size() <= 200 && data.path.matches('^/[a-z0-9/_\\-]*$')
+        && data.title is string && data.title.size() <= 120
+        && data.description is string && data.description.size() <= 320
+        && data.canonical is string && data.canonical.size() <= 300
+        && data.ogTitle is string && data.ogTitle.size() <= 120
+        && data.ogDescription is string && data.ogDescription.size() <= 320
+        && data.ogImage is string && data.ogImage.size() <= 500
+        && data.index is bool && data.follow is bool
+        && data.jsonLd is string && data.jsonLd.size() <= 20000
+        && isValidId(id);
+    }
+
+    match /seo/{id} {
+      allow read: if true;
+      allow create, update: if hasRole(['owner', 'editor', 'marketing']) && isValidSeo(incoming(), id) && stamped() && incoming().publishedAt == request.time;
+      allow delete: if hasRole(['owner', 'editor', 'marketing']);
+    }
+
+    match /seo_drafts/{id} {
+      allow read: if isStaff();
+      allow create, update: if hasRole(['owner', 'editor', 'marketing']) && isValidSeo(incoming(), id) && stamped();
+      allow delete: if hasRole(['owner', 'editor', 'marketing']);
+    }
+
+    // ---------- Redirects ----------
+    match /redirects/{id} {
+      allow read: if true;
+      allow create, update: if hasRole(['owner', 'editor', 'marketing'])
+        && isValidId(id)
+        && incoming().keys().hasOnly(['source', 'destination', 'code', 'enabled', 'note', 'updatedAt', 'updatedBy'])
+        && incoming().source is string && incoming().source.matches('^/[a-z0-9/_\\-]{1,199}$')
+        && incoming().destination is string && incoming().destination.matches('^/[A-Za-z0-9/_\\-?=&#.%]{0,299}$')
+        && incoming().code in [301, 302, 307, 308]
+        && incoming().enabled is bool
+        && optionalString(incoming(), 'note', 200)
+        && stamped();
+      allow delete: if hasRole(['owner', 'editor', 'marketing']);
+    }
+
+    // ---------- Media library ----------
+    match /media/{id} {
+      allow read: if true;
+      allow create, update: if isStaff()
+        && isValidId(id)
+        && incoming().keys().hasOnly(['url', 'storagePath', 'name', 'contentType', 'size', 'width', 'height', 'alt', 'caption', 'category', 'updatedAt', 'updatedBy'])
+        && incoming().url is string && incoming().url.size() <= 1000
+        && incoming().storagePath is string && incoming().storagePath.size() <= 300
+        && incoming().contentType in ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+        && incoming().size is int && incoming().size <= 15728640
+        && optionalString(incoming(), 'alt', 200) && optionalString(incoming(), 'caption', 300)
+        && optionalString(incoming(), 'category', 60) && optionalString(incoming(), 'name', 200)
+        && stamped();
+      allow delete: if isStaff();
+    }
+
+    // ---------- Enquiries (leads) ----------
+    // Created by the /api/enquiry function (unauthenticated REST call), read only by owners.
+    function isValidNewEnquiry(data) {
+      return data.keys().hasOnly(['kind', 'name', 'phone', 'email', 'eventDate', 'details', 'source', 'pagePath', 'status', 'ref', 'createdAt'])
+        && data.kind in ['consultation', 'custom-cake', 'contact', 'cart']
+        && data.name is string && data.name.size() <= 100
+        && data.phone is string && data.phone.size() <= 30
+        && data.email is string && data.email.size() <= 120
+        && data.eventDate is string && data.eventDate.size() <= 40
+        && data.details is map && data.details.size() <= 40
+        && data.source is map && data.source.size() <= 12
+        && data.pagePath is string && data.pagePath.size() <= 200
+        && data.status == 'new'
+        && data.ref is string && data.ref.matches('^CK-[A-F0-9]{6}$')
+        && data.createdAt == request.time;
+    }
+
+    match /enquiries/{id} {
+      allow create: if isValidId(id) && isValidNewEnquiry(incoming());
+      allow read: if hasRole(['owner']);
+      allow update: if hasRole(['owner'])
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'notes', 'followUpDate', 'updatedAt', 'updatedBy'])
+        && incoming().status in ['new', 'contacted', 'quoted', 'confirmed', 'completed', 'lost', 'spam']
+        && optionalString(incoming(), 'notes', 4000)
+        && optionalString(incoming(), 'followUpDate', 20)
+        && stamped();
+      allow delete: if hasRole(['owner']);
+    }
+
+    // ---------- Audit log ----------
+    match /audit_log/{id} {
+      allow read: if hasRole(['owner']);
+      allow create: if isStaff()
+        && incoming().keys().hasOnly(['actor', 'action', 'target', 'summary', 'at'])
+        && incoming().actor == email()
+        && incoming().at == request.time
+        && incoming().action is string && incoming().action.size() <= 60
+        && incoming().target is string && incoming().target.size() <= 200
+        && optionalString(incoming(), 'summary', 500);
+    }
+
+    // ---------- Existing catalogue collections ----------
     function isValidMenuItem(data) {
       return data.keys().hasAll(['id', 'name', 'description', 'priceRange', 'category', 'image', 'popularFlavors'])
         && data.keys().size() == 7
@@ -32,18 +212,6 @@ service cloud.firestore {
         && data.popularFlavors is list && data.popularFlavors.size() <= 20;
     }
 
-    // Validation Blueprint for Order Inquiries
-    function isValidOrder(data) {
-      return data.keys().hasAll(['id', 'customer', 'cake', 'status', 'eta'])
-        && data.keys().size() >= 5
-        && data.id is string && data.id.size() <= 128
-        && data.customer is string && data.customer.size() <= 100
-        && data.cake is string && data.cake.size() <= 200
-        && (data.status == 'received' || data.status == 'baking' || data.status == 'piping' || data.status == 'checked' || data.status == 'dispatched')
-        && data.eta is string && data.eta.size() <= 100;
-    }
-
-    // Validation Blueprint for Instagram Posts
     function isValidInstagramPost(data) {
       return data.keys().hasAll(['id', 'imageUrl', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
         && data.keys().hasOnly(['id', 'imageUrl', 'images', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
@@ -57,40 +225,24 @@ service cloud.firestore {
         && data.comments is list;
     }
 
-    // Products Catalog Match Rules
     match /products/{productId} {
       allow read: if true;
-      allow create, update: if isAdmin() && isValidId(productId) && isValidMenuItem(incoming());
-      allow delete: if isAdmin() && isValidId(productId);
+      allow create, update: if hasRole(['owner', 'editor']) && isValidId(productId) && isValidMenuItem(incoming());
+      allow delete: if hasRole(['owner', 'editor']) && isValidId(productId);
     }
 
-    // Order Tracking Match Rules
-    match /orders/{orderId} {
-      allow read: if isAdmin();
-      allow create: if false;
-      allow update: if isAdmin() && isValidId(orderId) && isValidOrder(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['status']) ||
-        incoming().diff(existing()).affectedKeys().hasOnly(['id', 'customer', 'cake', 'status', 'eta'])
-      );
-      allow delete: if isAdmin() && isValidId(orderId);
-    }
-
-    // General Studio Operations Settings Match Rules
-    match /settings/{settingsId} {
-      allow read: if true;
-      allow write: if isAdmin() && isValidId(settingsId);
-    }
-
-    // Promo Coupons Match Rules
-    match /coupons/{couponId} {
-      allow read, write: if isAdmin() && isValidId(couponId);
-    }
-
-    // Instagram Posts Match Rules
     match /instagram_posts/{postId} {
       allow read: if true;
-      allow write: if isAdmin() && isValidId(postId) && isValidInstagramPost(incoming());
-      allow delete: if isAdmin() && isValidId(postId);
+      allow write: if hasRole(['owner', 'editor']) && isValidId(postId) && isValidInstagramPost(incoming());
+    }
+
+    // Legacy collections from the old mock admin: owner-only, no public access.
+    match /orders/{orderId} {
+      allow read, write: if hasRole(['owner']);
+    }
+
+    match /coupons/{couponId} {
+      allow read, write: if hasRole(['owner']);
     }
 
     match /{document=**} {

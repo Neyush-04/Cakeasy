@@ -1,0 +1,17 @@
+{
+  "firestore": [
+    {
+      "database": "ai-studio-cakeasy-d3f45449-f679-491a-bb46-52a2d38aeb77",
+      "rules": "firestore.rules"
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8085 },
+    "storage": { "port": 9199 },
+    "ui": { "enabled": false }
+  }
+}

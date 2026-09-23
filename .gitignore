@@ -6,3 +6,12 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Local scratch and tool output
+tmp/
+tmp_*
+__pycache__/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebase/

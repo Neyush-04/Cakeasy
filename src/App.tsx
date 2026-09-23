@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomeView from './components/HomeView';
@@ -9,18 +9,22 @@ import CustomBuilderView from './components/CustomBuilderView';
 import GalleryView from './components/GalleryView';
 import AboutView from './components/AboutView';
 import ContactView from './components/ContactView';
-import AdminView from './components/AdminView';
 import ConsultationView from './components/ConsultationView';
 import CategoryView from './components/CategoryView';
 import CartSidebar from './components/CartSidebar';
 import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
 import PageMeta from './components/PageMeta';
+import ConsentBanner from './components/ConsentBanner';
 
 import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
 import { CAKE_CATEGORY_DATA } from './data/categoryData';
 import { MenuItem, CustomCakeState, AtelierSettings, InstagramPost } from './types';
+import { siteSettings } from './lib/runtime';
 import { Sparkles, X } from 'lucide-react';
+
+// The CMS is a separate bundle, so visitors never download it.
+const AdminApp = lazy(() => import('./admin/AdminApp'));
 
 interface CartItem {
   product: MenuItem;
@@ -30,9 +34,24 @@ interface CartItem {
   quantity: number;
 }
 
+const atelierSettings: AtelierSettings = {
+  instagramUrl: siteSettings.instagramUrl,
+  instagramHandle: siteSettings.instagramHandle,
+  whatsappNumber: siteSettings.whatsappNumber,
+  address: siteSettings.address,
+  email: siteSettings.email,
+  bannerImage: '/gallery/1/img1.jpg',
+  egglessPremium: 100,
+  base1Tier: 999,
+  base2Tiers: 2499,
+  base3Tiers: 4999,
+  deliveryFeePerKm: 45
+};
+
 export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
   const currentTab = location.pathname === '/' ? 'home' : location.pathname.replace(/^\//, '');
   const setCurrentTab = (tab: string) => {
     navigate(tab === 'home' ? '/' : `/${tab}`);
@@ -52,6 +71,7 @@ export default function App() {
   const [galleryPosts, setGalleryPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
 
   useEffect(() => {
+    if (isAdmin) return;
     const controller = new AbortController();
 
     async function loadInstagramGallery() {
@@ -77,24 +97,21 @@ export default function App() {
     loadInstagramGallery();
 
     return () => controller.abort();
-  }, []);
-
-  const atelierSettings: AtelierSettings = {
-    instagramUrl: 'https://www.instagram.com/cakeasy99/',
-    instagramHandle: '@cakeasy99',
-    whatsappNumber: '918810795004',
-    address: 'Cakeasy, 4C-601, AWHO, Gr. Noida, Delhi NCR, 201310',
-    email: 'cakeasy94@gmail.com',
-    bannerImage: '/gallery/1/img1.jpg',
-    egglessPremium: 100,
-    base1Tier: 999,
-    base2Tiers: 2499,
-    base3Tiers: 4999,
-    deliveryFeePerKm: 45
-  };
+  }, [isAdmin]);
 
   // Policy Modal States
   const [activePolicy, setActivePolicy] = useState<string | null>(null);
+
+  if (isAdmin) {
+    return (
+      <>
+        <PageMeta pathname={location.pathname} />
+        <Suspense fallback={<div className="min-h-screen bg-[#FBF8F7]" />}>
+          <AdminApp />
+        </Suspense>
+      </>
+    );
+  }
 
   // Cart actions
   const handleAddToCart = (product: MenuItem, flavor: string, weight: string, message: string, qty: number) => {
@@ -121,7 +138,6 @@ export default function App() {
   };
 
   const handleCheckoutOrders = () => {
-    // WhatsApp is the current handoff. No visitor data is written to Firestore.
     setCartItems([]);
   };
 
@@ -131,15 +147,17 @@ export default function App() {
 
   // Wishlist actions
   const handleToggleWishlist = (product: MenuItem) => {
-    setWishlistedIds(prev => 
-      prev.includes(product.id) 
-        ? prev.filter(id => id !== product.id) 
+    setWishlistedIds(prev =>
+      prev.includes(product.id)
+        ? prev.filter(id => id !== product.id)
         : [...prev, product.id]
     );
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between font-sans text-[#1E1E1E] antialiased">
+      <PageMeta pathname={location.pathname} />
+
       {/* 1. STICKY TOP NAVBAR */}
       <Navbar
         currentTab={currentTab}
@@ -167,144 +185,55 @@ export default function App() {
               <Route
                 path="/"
                 element={
-                  <>
-                    <PageMeta
-                      title="Cakeasy | Bespoke Wedding & Celebration Cake Studio"
-                      description="Cakeasy designs bespoke wedding and celebration cakes around your colours, décor, outfits and story. Serving Delhi NCR from Greater Noida."
-                    />
-                    <HomeView
-                      products={productsList}
-                      setCurrentTab={setCurrentTab}
-                      setSelectedProduct={setSelectedProduct}
-                      toggleWishlist={handleToggleWishlist}
-                      wishlistedIds={wishlistedIds}
-                      settings={atelierSettings}
-                      galleryPosts={galleryPosts}
-                    />
-                  </>
+                  <HomeView
+                    products={productsList}
+                    setCurrentTab={setCurrentTab}
+                    setSelectedProduct={setSelectedProduct}
+                    toggleWishlist={handleToggleWishlist}
+                    wishlistedIds={wishlistedIds}
+                    settings={atelierSettings}
+                    galleryPosts={galleryPosts}
+                  />
                 }
               />
 
               <Route
                 path="/weddings"
-                element={
-                  <>
-                    <PageMeta
-                      title="Wedding & Milestone Cakes | Cakeasy"
-                      description="Bespoke cakes for engagements, weddings and anniversaries, designed around your venue, palette, outfits, flowers and story."
-                    />
-                    <CategoryView config={CAKE_CATEGORY_DATA.wedding} setCurrentTab={setCurrentTab} />
-                  </>
-                }
+                element={<CategoryView config={CAKE_CATEGORY_DATA.wedding} setCurrentTab={setCurrentTab} />}
               />
 
               <Route
                 path="/cakes/:slug"
-                element={
-                  <CategoryRoute setCurrentTab={setCurrentTab} />
-                }
+                element={<CategoryRoute setCurrentTab={setCurrentTab} />}
               />
 
               <Route
                 path="/catalog"
                 element={
-                  <>
-                    <PageMeta
-                      title="Our Cakes | Cakeasy Catalog — Bento, Wedding & Celebration Cakes"
-                      description="Browse Cakeasy's full menu of bento cakes, wedding cakes, celebration cakes, and cupcakes. Custom flavors and designs, handcrafted to order in Greater Noida."
-                    />
-                    <CatalogView
-                      products={productsList}
-                      setSelectedProduct={setSelectedProduct}
-                      toggleWishlist={handleToggleWishlist}
-                      wishlistedIds={wishlistedIds}
-                    />
-                  </>
+                  <CatalogView
+                    products={productsList}
+                    setSelectedProduct={setSelectedProduct}
+                    toggleWishlist={handleToggleWishlist}
+                    wishlistedIds={wishlistedIds}
+                  />
                 }
               />
 
               <Route
                 path="/custom"
                 element={
-                  <>
-                    <PageMeta
-                      title="Custom Cake Builder | Cakeasy"
-                      description="Design your own custom cake with Cakeasy — choose shape, size, flavor, and upload inspiration photos. We'll bring your vision to life."
-                    />
-                    <CustomBuilderView
-                      onAddCustomInquiry={handleAddCustomInquiry}
-                      settings={atelierSettings}
-                    />
-                  </>
+                  <CustomBuilderView
+                    onAddCustomInquiry={handleAddCustomInquiry}
+                    settings={atelierSettings}
+                  />
                 }
               />
 
-              <Route
-                path="/gallery"
-                element={
-                  <>
-                    <PageMeta
-                      title="Cake Gallery | Cakeasy Instagram Showcase"
-                      description="See real cakes handcrafted by Cakeasy — browse our Instagram-style gallery of bento cakes, wedding cakes, and celebration cakes from Greater Noida."
-                    />
-                    <GalleryView
-                      posts={galleryPosts}
-                    />
-                  </>
-                }
-              />
-
-              <Route
-                path="/about"
-                element={
-                  <>
-                    <PageMeta
-                      title="Our Story | About Cakeasy"
-                      description="Meet the home baker behind Cakeasy — a Greater Noida cake studio crafting custom, handmade cakes for every celebration."
-                    />
-                    <AboutView />
-                  </>
-                }
-              />
-
-              <Route
-                path="/consultation"
-                element={
-                  <>
-                    <PageMeta
-                      title="Book a Cake Consultation | Cakeasy"
-                      description="Share your event date, venue, servings, palette, outfits and inspiration with Cakeasy's wedding cake design studio."
-                    />
-                    <ConsultationView whatsappNumber={atelierSettings.whatsappNumber} />
-                  </>
-                }
-              />
-
-              <Route
-                path="/contact"
-                element={
-                  <>
-                    <PageMeta
-                      title="Contact Cakeasy | WhatsApp Orders"
-                      description="Contact Cakeasy via WhatsApp or Instagram DM, find our Greater Noida address, and share custom cake enquiries directly."
-                    />
-                    <ContactView />
-                  </>
-                }
-              />
-
-              <Route
-                path="/admin"
-                element={
-                  <>
-                    <PageMeta
-                      title="Owner CMS | Cakeasy"
-                      description="Cakeasy owner CMS access and secure activation status."
-                    />
-                    <AdminView />
-                  </>
-                }
-              />
+              <Route path="/gallery" element={<GalleryView posts={galleryPosts} />} />
+              <Route path="/about" element={<AboutView />} />
+              <Route path="/consultation" element={<ConsultationView />} />
+              <Route path="/contact" element={<ContactView />} />
+              <Route path="*" element={<NotFoundView />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
@@ -312,13 +241,14 @@ export default function App() {
 
       {/* 3. PREMIUM PERSISTENT FOOTER */}
       <Footer
-        setCurrentTab={setCurrentTab}
         openPolicyModal={(policyType) => setActivePolicy(policyType)}
         settings={atelierSettings}
       />
 
       {/* 4. WHATSAPP FLOATING CTA INTEGRATION */}
-      <WhatsAppButton whatsappNumber={atelierSettings.whatsappNumber} />
+      <WhatsAppButton />
+
+      <ConsentBanner />
 
       {/* 5. SLIDE-IN CART & INQUIRY CHECKOUT SIDEBAR */}
       <CartSidebar
@@ -330,7 +260,6 @@ export default function App() {
         onRemoveInquiry={handleRemoveInquiry}
         onUpdateQty={handleUpdateCartQty}
         onCheckoutOrders={handleCheckoutOrders}
-        whatsappNumber={atelierSettings.whatsappNumber}
       />
 
       {/* 6. PRODUCT QUICK VIEW MODAL */}
@@ -360,6 +289,7 @@ export default function App() {
               <button
                 onClick={() => setActivePolicy(null)}
                 className="h-9 w-9 hover:bg-[#FFF5F8] text-gray-400 hover:text-[#D63384] rounded-full flex items-center justify-center transition-colors"
+                aria-label="Close"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -368,8 +298,10 @@ export default function App() {
             <div className="space-y-4 text-xs text-gray-500 leading-relaxed font-sans">
               {activePolicy === 'privacy' && (
                 <>
-                  <p>Cakeasy currently uses WhatsApp to receive and confirm enquiries. The website does not offer customer accounts or online payment.</p>
-                  <p>For privacy questions about an enquiry, please contact Cakeasy on WhatsApp.</p>
+                  <p>When you send an enquiry from this website (consultation brief, custom cake simulator, contact form or enquiry list), Cakeasy saves the details you enter, such as your name, phone, email, event date and cake brief, so that Neha can reply and prepare a quotation. The conversation then continues on WhatsApp.</p>
+                  <p>We also note how you reached the site (for example an Instagram or Google campaign link) to understand which channels help people find us. Photos you choose in the forms are not uploaded; you attach them yourself in WhatsApp.</p>
+                  <p>Optional analytics and advertising cookies are used only if you accept them, and you can change that choice at any time from "Cookie preferences" in the footer. The website does not offer customer accounts or online payment.</p>
+                  <p>To see, correct or delete the details of your enquiry, message Cakeasy on WhatsApp or email {siteSettings.email}.</p>
                 </>
               )}
 
@@ -391,7 +323,7 @@ export default function App() {
                 onClick={() => setActivePolicy(null)}
                 className="bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl transition-all"
               >
-                Accept & Close
+                Close
               </button>
             </div>
           </div>
@@ -405,9 +337,24 @@ function CategoryRoute({ setCurrentTab }: { setCurrentTab: (tab: string) => void
   const { slug } = useParams<{ slug: string }>();
   const config = slug ? CAKE_CATEGORY_DATA[slug as keyof typeof CAKE_CATEGORY_DATA] : undefined;
 
-  if (!config) {
-    return <div className="rounded-3xl border border-[#EDE3E2] bg-[#FFF7FA] p-12 text-center"><h1 className="font-serif text-3xl font-bold text-[#251B21]">We are still shaping this collection.</h1><p className="mt-3 text-sm text-gray-500">Start with a direct consultation and we will help you find the right direction.</p><button onClick={() => setCurrentTab('consultation')} className="mt-6 rounded-full bg-[#D63384] px-5 py-3 text-xs font-bold uppercase tracking-wider text-white">Book a consultation</button></div>;
+  if (!config || slug === 'wedding') {
+    return <NotFoundView />;
   }
 
-  return <><PageMeta title={`${config.navLabel} | Cakeasy`} description={config.description} /><CategoryView config={config} setCurrentTab={setCurrentTab} /></>;
+  return <CategoryView config={config} setCurrentTab={setCurrentTab} />;
+}
+
+function NotFoundView() {
+  return (
+    <section className="mx-auto my-10 max-w-xl rounded-3xl border border-[#EDE3E2] bg-[#FFF7FA] px-6 py-12 text-center">
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D63384]">Page not found</p>
+      <h1 className="mt-3 font-serif text-3xl font-bold text-[#251B21]">This page isn't on the menu.</h1>
+      <p className="mt-3 text-sm text-gray-500">The link may be old or mistyped. Here are good places to start.</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <Link to="/weddings" className="rounded-full bg-[#D63384] px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-white hover:bg-[#B02266]">Wedding cakes</Link>
+        <Link to="/gallery" className="rounded-full border border-[#F0B7C9] px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-[#D63384] hover:bg-white">Our work</Link>
+        <Link to="/" className="rounded-full border border-[#EDE3E2] px-5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-[#43242F] hover:bg-white">Home</Link>
+      </div>
+    </section>
+  );
 }

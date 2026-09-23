@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { POPULAR_FLAVORS } from '../data';
 import { AtelierSettings, CustomCakeState } from '../types';
+import { sendEnquiry } from '../lib/whatsapp';
 
 interface CustomBuilderViewProps {
   onAddCustomInquiry: (cake: CustomCakeState, date: string, notes: string) => void;
@@ -142,8 +143,9 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
 
   const selectedToppingText = selectedToppingNames.join(', ') || 'Standard / baker recommended';
 
-  const buildCustomInquiryText = () => [
+  const buildCustomInquiryText = (ref: string | null = null) => [
     '*New Custom Cake Inquiry from Cakeasy.in*',
+    ...(ref ? [`*Reference:* ${ref}`] : []),
     '',
     `*Shape & tiers:* ${tiers} Tier ${shape} cake`,
     `*Weight:* ${weight}`,
@@ -163,8 +165,21 @@ export default function CustomBuilderView({ onAddCustomInquiry, settings }: Cust
   ].join('\n');
 
   const openWhatsAppInquiry = () => {
-    const phoneNumber = settings.whatsappNumber || '918810795004';
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(buildCustomInquiryText())}`, '_blank', 'noopener,noreferrer');
+    void sendEnquiry({
+      kind: 'custom-cake',
+      eventDate: deliveryDate,
+      details: {
+        'Shape & tiers': `${tiers} tier ${shape}`,
+        Weight: weight,
+        Flavour: flavor,
+        Frosting: `${frostingStyle}, ${selectedFrostingName}`,
+        Toppings: selectedToppingText,
+        'Cake message': cakeMessage,
+        'Estimated quote': `Rs. ${calculateEstPrice().toLocaleString()} approx.`,
+        Notes: specialInstructions,
+        'Reference image': uploadedImage ? `Selected (${uploadedImageName || 'reference image'}), to attach in WhatsApp` : 'None',
+      },
+    }, buildCustomInquiryText);
   };
 
   const handleCompleteInquiry = () => {

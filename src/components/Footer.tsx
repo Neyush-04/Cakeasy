@@ -1,17 +1,18 @@
-import { MapPin, Instagram, Globe, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MapPin, Instagram, Sparkles, MessageCircle, Facebook, Youtube } from 'lucide-react';
 import { AtelierSettings } from '../types';
+import { siteSettings } from '../lib/runtime';
+import { whatsappUrl } from '../lib/whatsapp';
+import { trackWhatsAppClick, trackingConfigured } from '../lib/analytics';
+import { OPEN_CONSENT_EVENT } from './ConsentBanner';
 
 interface FooterProps {
-  setCurrentTab: (tab: string) => void;
   openPolicyModal: (policyType: string) => void;
   settings?: AtelierSettings;
 }
 
-export default function Footer({ setCurrentTab, openPolicyModal, settings }: FooterProps) {
-  const handleNavigation = (tabId: string) => {
-    setCurrentTab(tabId);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+export default function Footer({ openPolicyModal, settings }: FooterProps) {
+  const social = 'h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all';
 
   return (
     <footer className="bg-[#1E1E1E] text-white pt-16 pb-12 overflow-hidden border-t border-[#D63384]/10">
@@ -39,15 +40,11 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
               >
                 <Instagram className="h-4 w-4" />
               </a>
-              <a
-                href="https://cakeasy.in"
-                target="_blank"
-                rel="noreferrer"
-                className="h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all"
-                aria-label="Website Link"
-              >
-                <Globe className="h-4 w-4" />
+              <a href={whatsappUrl()} onClick={() => trackWhatsAppClick('footer')} target="_blank" rel="noreferrer" className={social} aria-label="WhatsApp Cakeasy">
+                <MessageCircle className="h-4 w-4" />
               </a>
+              {siteSettings.facebookUrl && <a href={siteSettings.facebookUrl} target="_blank" rel="noreferrer" className={social} aria-label="Cakeasy Facebook"><Facebook className="h-4 w-4" /></a>}
+              {siteSettings.youtubeUrl && <a href={siteSettings.youtubeUrl} target="_blank" rel="noreferrer" className={social} aria-label="Cakeasy YouTube"><Youtube className="h-4 w-4" /></a>}
             </div>
           </div>
 
@@ -55,16 +52,17 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
             <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Browse</h3>
             <ul className="space-y-2.5 text-sm">
               {[
-                ['home', 'Home'],
-                ['catalog', 'Our Cakes'],
-                ['custom', 'Custom Cakes'],
-                ['gallery', 'Cake Gallery'],
-                ['about', 'Our Story'],
+                ['/weddings', 'Wedding & Milestone Cakes'],
+                ['/cakes/designer', 'Designer Cakes'],
+                ['/catalog', 'Our Cakes'],
+                ['/custom', 'Custom Cake Simulator'],
+                ['/gallery', 'Cake Gallery'],
+                ['/about', 'Our Story'],
               ].map(([id, label]) => (
                 <li key={id}>
-                  <button onClick={() => handleNavigation(id)} className="text-gray-400 hover:text-white transition-colors">
+                  <Link to={id} className="text-gray-400 hover:text-white transition-colors">
                     {label}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -78,13 +76,8 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
                 <span>{settings?.address || 'Cakeasy, 4C-601, AWHO, Gr. Noida, Delhi NCR, 201310'}</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <Globe className="h-4 w-4 text-[#F6B8C8] shrink-0" />
-                <span>
-                  Official Web:{' '}
-                  <a href="https://cakeasy.in" target="_blank" rel="noreferrer" className="underline hover:text-white">
-                    cakeasy.in
-                  </a>
-                </span>
+                <MessageCircle className="h-4 w-4 text-[#F6B8C8] shrink-0" />
+                <a href={whatsappUrl()} onClick={() => trackWhatsAppClick('footer-studio')} target="_blank" rel="noreferrer" className="hover:text-white">{siteSettings.phoneDisplay}</a>
               </li>
               <li className="pt-2 text-xs text-neutral-500 border-t border-neutral-800">
                 Please confirm pickup, delivery, and hours before visiting.
@@ -111,14 +104,21 @@ export default function Footer({ setCurrentTab, openPolicyModal, settings }: Foo
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavigation('contact')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
+                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-left w-full block">
                   Contact Cakeasy
-                </button>
+                </Link>
               </li>
+              {trackingConfigured && (
+                <li>
+                  <button onClick={() => window.dispatchEvent(new Event(OPEN_CONSENT_EVENT))} className="text-gray-400 hover:text-white transition-colors text-left w-full">
+                    Cookie preferences
+                  </button>
+                </li>
+              )}
               <li>
-                <button onClick={() => handleNavigation('admin')} className="text-neutral-500 hover:text-[#F6B8C8] transition-colors text-left w-full">
+                <a href="/admin" rel="nofollow" className="text-neutral-500 hover:text-[#F6B8C8] transition-colors text-left w-full block">
                   Owner CMS
-                </button>
+                </a>
               </li>
             </ul>
           </div>

@@ -1,6 +1,7 @@
 import { X, ShoppingBag, Trash2, MessageCircle, AlertTriangle, Cake } from 'lucide-react';
 import { MenuItem, CustomCakeState } from '../types';
 import { resolveCakeImage } from '../utils';
+import { sendEnquiry } from '../lib/whatsapp';
 
 interface CartItem {
   product: MenuItem;
@@ -19,7 +20,6 @@ interface CartSidebarProps {
   onRemoveInquiry: (index: number) => void;
   onUpdateQty: (index: number, newQty: number) => void;
   onCheckoutOrders?: (items: CartItem[]) => void;
-  whatsappNumber?: string;
 }
 
 export default function CartSidebar({
@@ -31,7 +31,6 @@ export default function CartSidebar({
   onRemoveInquiry,
   onUpdateQty,
   onCheckoutOrders,
-  whatsappNumber,
 }: CartSidebarProps) {
   if (!isOpen) return null;
 
@@ -43,7 +42,7 @@ export default function CartSidebar({
   };
 
   const handleCheckoutWhatsApp = () => {
-    let text = '*New Order Inquiry from Cakeasy.in Web Portal*\n\n';
+    let text = '*New Order Inquiry from Cakeasy.in Web Portal*\n{{REF}}\n';
 
     if (cartItems.length > 0) {
       text += '*SHOPPING CART ITEMS:*\n';
@@ -79,8 +78,14 @@ export default function CartSidebar({
       onCheckoutOrders(cartItems);
     }
 
-    const phoneNumber = whatsappNumber || '918810795004';
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    const details: Record<string, string> = {};
+    cartItems.forEach((item, index) => {
+      details[`Item ${index + 1}`] = `${item.product.name}, ${item.flavor}, ${item.weight}, qty ${item.quantity}${item.message ? `, message: ${item.message}` : ''}`;
+    });
+    customInquiries.forEach((item, index) => {
+      details[`Custom design ${index + 1}`] = `${item.cake.tiers} tier ${item.cake.shape}, ${item.cake.flavor}, ${item.cake.weight || 'weight TBD'}, date ${item.date || 'TBD'}`;
+    });
+    void sendEnquiry({ kind: 'cart', details }, (ref) => text.replace('{{REF}}', ref ? `*Reference:* ${ref}\n` : ''));
   };
 
   const isEmpty = cartItems.length === 0 && customInquiries.length === 0;

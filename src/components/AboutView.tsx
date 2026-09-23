@@ -1,5 +1,8 @@
 import { Award, MapPin, MessageCircle, Sparkles } from 'lucide-react';
 import { MEET_THE_TEAM } from '../data';
+import { whatsappUrl } from '../lib/whatsapp';
+import { trackWhatsAppClick } from '../lib/analytics';
+import { siteSettings } from '../lib/runtime';
 
 const journey = [
   {
@@ -44,7 +47,8 @@ export default function AboutView() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <a
-              href="https://wa.me/918810795004"
+              href={whatsappUrl()}
+              onClick={() => trackWhatsAppClick('about')}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-xs font-black uppercase tracking-wider text-white hover:bg-[#20ba59] transition-colors"
@@ -52,7 +56,7 @@ export default function AboutView() {
               <MessageCircle className="h-4 w-4 fill-white stroke-white" /> WhatsApp Neha
             </a>
             <a
-              href="https://www.instagram.com/cakeasy99/"
+              href={siteSettings.instagramUrl}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-wider text-[#D63384] border border-[#F6B8C8] hover:bg-[#FFF5F8] transition-colors"
