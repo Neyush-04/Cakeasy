@@ -80,6 +80,10 @@ test('tracking IDs are validated before reaching the page', () => {
   assert.equal(clean.metaPixelId, '');
   const html = buildHeadHtml(resolveSeo({ path: '/', kind: 'public', route: findRoute('/'), site }), clean);
   assert.ok(html.includes('google-site-verification" content="token_123456"'));
+  const meta = buildHeadHtml(resolveSeo({ path: '/', kind: 'public', route: findRoute('/'), site }), sanitizeMarketing({ metaDomainVerification: 'abc123def456' }));
+  assert.ok(meta.includes('facebook-domain-verification" content="abc123def456"'));
+  const bad = buildHeadHtml(resolveSeo({ path: '/', kind: 'public', route: findRoute('/'), site }), sanitizeMarketing({ metaDomainVerification: '"><script>' }));
+  assert.ok(!bad.includes('facebook-domain-verification'));
 });
 
 test('the shell gets SEO between the markers plus runtime settings', () => {

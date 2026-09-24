@@ -143,6 +143,8 @@ describe('marketing', () => {
     const ok = { ga4MeasurementId: 'G-ABC123XYZ', metaPixelId: '123456789012345', googleSiteVerification: '', bingSiteVerification: '', ...stamp(MARKETER) };
     await assertSucceeds(setDoc(doc(as(MARKETER), 'settings', 'marketing'), ok));
     await assertFails(setDoc(doc(as(MARKETER), 'settings', 'marketing'), { ...ok, metaPixelId: '<script>' }));
+    await assertSucceeds(setDoc(doc(as(MARKETER), 'settings', 'marketing'), { ...ok, metaDomainVerification: 'abc123def456' }));
+    await assertFails(setDoc(doc(as(MARKETER), 'settings', 'marketing'), { ...ok, metaDomainVerification: '"><script>' }));
   });
   test('can manage internal redirects only', async () => {
     const rule = { source: '/old-page', destination: '/weddings', code: 301, enabled: true, ...stamp(MARKETER) };

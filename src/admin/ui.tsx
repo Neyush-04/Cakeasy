@@ -51,7 +51,7 @@ export function Button({ tone = 'ghost', busy, children, className = '', ...prop
       type="button"
       {...props}
       disabled={props.disabled || busy}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[12px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${tones[tone]} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[12px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${tones[tone]} ${className}`}
     >
       {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
       {children}

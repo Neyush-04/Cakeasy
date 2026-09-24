@@ -11,6 +11,7 @@ The **live** website for Cakeasy, a bespoke wedding & celebration cake studio ru
 - Vercel previews (non-main branches) are behind Vercel login. Claude checked them through Claude in Chrome with Piyush's session.
 - Firebase project `gen-lang-client-0442655314`, **named** Firestore DB `ai-studio-cakeasy-d3f45449-f679-491a-bb46-52a2d38aeb77` (Enterprise edition). Firebase CLI on this PC is logged in as pixiforu@gmail.com.
 - Print collateral: `output/`. Audit + plan: `AUDIT.md`, `ROADMAP.md`.
+- **Digital marketing kit** (how to use the CMS for SEO, Google, campaigns and measurement): `docs/marketing/README.md`.
 - Reference project with the same CMS/marketing-kit ideas: `C:\Users\pixif\Documents\Baba website - Delta Project` (see its `docs/DIGITAL_MARKETING_OPERATIONS_MANUAL.md`).
 
 ## Stack / architecture
@@ -50,13 +51,12 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - Earlier: security hardening, baker-story homepage, story gallery, Instagram sync with fallback, cake simulator, `/weddings`, `/consultation`, print collateral pack.
 - 2026-09-24: **CMS foundation + SEO engine** (see architecture above). Firestore rules deployed to production (23 emulator tests pass). Enquiries are saved before WhatsApp opens (all 4 flows), with a fallback that still opens WhatsApp if saving fails. Nav/footer/home links are now crawlable `<a>` links. Privacy text updated for saved enquiries and cookies.
 
+- 2026-09-24: **Digital marketing kit** in `docs/marketing/` (README, QUICK_START, OPERATIONS_MANUAL, SEARCH_AND_GOOGLE_BUSINESS_PLAYBOOK, CAMPAIGN_LINKS_GUIDE, LOCAL_SEO_KEYWORD_MAP, MEASUREMENT_PLAN). Added a Meta domain verification field (CMS → Marketing). In Firebase Auth, Google was already enabled; Claude added `www.cakeasy.in`, `cakeasy.in` and `cakeasy.vercel.app` to the authorised domains (via Piyush's Chrome, with his OK).
+
 ## Open / next
-1. **Piyush, in the Firebase console** (Claude can't do these through the CLI):
-   - Authentication → Sign-in method → enable **Google**.
-   - Authentication → Settings → Authorized domains → add `www.cakeasy.in`, `cakeasy.in`, `cakeasy.vercel.app`.
-   - Storage → Get started (the new-style bucket may require the Blaze plan). Then deploy: `npx firebase-tools deploy --only storage --project gen-lang-client-0442655314`. Until then, Media uploads show a friendly error.
+1. **Media uploads**: Firebase Storage requires upgrading the project from Spark to **Blaze** (pay-as-you-go; small usage is typically free). This is Piyush's decision. After upgrading: Storage → Get started, then `npx firebase-tools deploy --only storage --project gen-lang-client-0442655314`. The alternative is Vercel Blob (needs a store and token in Vercel).
 2. Delete the 3 QA enquiries in CMS → Enquiries (named "QA Test (Claude)…": CK-1371A3, CK-23030A, CK-1B0925).
-3. Phase 3: **digital marketing kit docs** (operations manual, quick start, Search Console + Google Business Profile playbook, UTM guide, local keyword/landing-page map), modelled on the Baba project docs.
+3. Marketing setup from the kit: verify Search Console, submit the sitemap, set up the Google Business Profile and link it, then connect GA4/Pixel. Paste the suggested SEO titles from `LOCAL_SEO_KEYWORD_MAP.md` once Neha approves them.
 4. Phase 4: content modules (cakes/catalogue, gallery archive metadata, FAQs, landing-page builder), then new SEO landing pages.
 5. Performance: public JS bundle is ~535 KB (159 KB gz). Route-level code splitting would help. Images are unoptimised JPEGs.
 6. Instagram access token: store it only in Vercel as `INSTAGRAM_ACCESS_TOKEN` (+ `INSTAGRAM_MEDIA_LIMIT=50`). `/api/instagram` returns 503 until then (the site falls back to the local gallery).

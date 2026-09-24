@@ -1,7 +1,7 @@
 // GA4 + Meta Pixel, loaded only after the visitor consents and only when the IDs
 // are set in CMS > Marketing & tracking. Never runs on /admin.
 //
-// Event contract (see docs/marketing/DIGITAL_MARKETING_OPERATIONS_MANUAL.md):
+// Event contract (see docs/marketing/MEASUREMENT_PLAN.md):
 //   page_view        every public route change
 //   whatsapp_click   engagement only, never a lead
 //   generate_lead    one per enquiry actually saved in the CMS (Meta: Lead)

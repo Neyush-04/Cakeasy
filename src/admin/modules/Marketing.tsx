@@ -28,6 +28,7 @@ export function validateMarketing(form: MarketingSettings): string {
   if (form.metaPixelId && !META_PIXEL_PATTERN.test(form.metaPixelId)) return 'Meta Pixel ID is a number of 8–20 digits.';
   if (form.googleSiteVerification && !VERIFICATION_TOKEN_PATTERN.test(form.googleSiteVerification)) return 'Paste only the content value of the Google verification tag, not the whole tag.';
   if (form.bingSiteVerification && !VERIFICATION_TOKEN_PATTERN.test(form.bingSiteVerification)) return 'Paste only the content value of the Bing verification tag.';
+  if (form.metaDomainVerification && !VERIFICATION_TOKEN_PATTERN.test(form.metaDomainVerification)) return 'Paste only the content value of the Meta domain verification tag.';
   return '';
 }
 
@@ -46,7 +47,10 @@ export default function MarketingModule() {
   useEffect(() => {
     getDoc(doc(db, 'settings', 'marketing')).then((snapshot) => {
       const data = { ...DEFAULT_MARKETING_SETTINGS, ...(snapshot.data() || {}) } as MarketingSettings;
-      const clean: MarketingSettings = { ga4MeasurementId: data.ga4MeasurementId || '', metaPixelId: data.metaPixelId || '', googleSiteVerification: data.googleSiteVerification || '', bingSiteVerification: data.bingSiteVerification || '' };
+      const clean: MarketingSettings = {
+        ga4MeasurementId: data.ga4MeasurementId || '', metaPixelId: data.metaPixelId || '', googleSiteVerification: data.googleSiteVerification || '',
+        bingSiteVerification: data.bingSiteVerification || '', metaDomainVerification: data.metaDomainVerification || '',
+      };
       setForm(clean);
       setSaved(clean);
     }).catch((error) => { notify(friendlyError(error), 'error'); setForm({ ...DEFAULT_MARKETING_SETTINGS }); });
@@ -100,6 +104,9 @@ export default function MarketingModule() {
           </Field>
           <Field label="Bing Webmaster Tools" hint="Optional. Also powers some AI search answers.">
             <input value={form.bingSiteVerification} onChange={(event) => setForm({ ...form, bingSiteVerification: extractToken(event.target.value) })} placeholder="ABC123…" className={`${inputClass} font-mono`} />
+          </Field>
+          <Field label="Meta domain verification" hint="Meta Business Suite → Brand safety → Domains → Add → Meta-tag option. Needed before running Instagram/Facebook ads to the site.">
+            <input value={form.metaDomainVerification} onChange={(event) => setForm({ ...form, metaDomainVerification: extractToken(event.target.value) })} placeholder="abc123…" className={`${inputClass} font-mono`} />
           </Field>
           <div className="grid grid-cols-2 gap-2 pt-1 text-[12px]">
             {[

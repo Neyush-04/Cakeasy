@@ -146,6 +146,9 @@ export function buildHeadHtml(seo: ResolvedSeo, marketing: MarketingSettings): s
   if (VERIFICATION_TOKEN_PATTERN.test(marketing.bingSiteVerification)) {
     tags.push(`<meta name="msvalidate.01" content="${marketing.bingSiteVerification}" />`);
   }
+  if (VERIFICATION_TOKEN_PATTERN.test(marketing.metaDomainVerification)) {
+    tags.push(`<meta name="facebook-domain-verification" content="${marketing.metaDomainVerification}" />`);
+  }
   for (const item of seo.jsonLd) tags.push(`<script type="application/ld+json">${safeJson(item)}</script>`);
   return tags.join('\n    ');
 }
@@ -158,6 +161,7 @@ export function sanitizeMarketing(marketing: Partial<MarketingSettings>): Market
     metaPixelId: META_PIXEL_PATTERN.test(pixel) ? pixel : '',
     googleSiteVerification: String(marketing.googleSiteVerification || '').trim(),
     bingSiteVerification: String(marketing.bingSiteVerification || '').trim(),
+    metaDomainVerification: String(marketing.metaDomainVerification || '').trim(),
   };
 }
 

@@ -54,6 +54,7 @@ export interface MarketingSettings {
   metaPixelId: string;
   googleSiteVerification: string;
   bingSiteVerification: string;
+  metaDomainVerification: string;
 }
 
 export const DEFAULT_MARKETING_SETTINGS: MarketingSettings = {
@@ -61,6 +62,7 @@ export const DEFAULT_MARKETING_SETTINGS: MarketingSettings = {
   metaPixelId: '',
   googleSiteVerification: '',
   bingSiteVerification: '',
+  metaDomainVerification: '',
 };
 
 export const GA4_ID_PATTERN = /^G-[A-Z0-9]{4,16}$/;

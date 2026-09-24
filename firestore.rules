@@ -87,7 +87,8 @@ service cloud.firestore {
     }
 
     function isValidMarketingSettings(data) {
-      return data.keys().hasOnly(['ga4MeasurementId', 'metaPixelId', 'googleSiteVerification', 'bingSiteVerification', 'updatedAt', 'updatedBy'])
+      return data.keys().hasOnly(['ga4MeasurementId', 'metaPixelId', 'googleSiteVerification', 'bingSiteVerification', 'metaDomainVerification', 'updatedAt', 'updatedBy'])
+        && (!('metaDomainVerification' in data) || data.metaDomainVerification == '' || data.metaDomainVerification.matches('^[A-Za-z0-9_\\-]{8,120}$'))
         && data.ga4MeasurementId is string && (data.ga4MeasurementId == '' || data.ga4MeasurementId.matches('^G-[A-Z0-9]{4,16}$'))
         && data.metaPixelId is string && (data.metaPixelId == '' || data.metaPixelId.matches('^[0-9]{8,20}$'))
         && data.googleSiteVerification is string && (data.googleSiteVerification == '' || data.googleSiteVerification.matches('^[A-Za-z0-9_\\-]{8,120}$'))
