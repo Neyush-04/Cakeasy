@@ -96,7 +96,7 @@ export const PUBLIC_ROUTES: RouteSeo[] = [
   {
     path: '/',
     title: 'Cakeasy | Premium Cake Boutique in Greater Noida',
-    description: "Neha Chaudhary's premium cake boutique for bespoke wedding, designer and celebration cakes, designed around your story. Greater Noida, serving Delhi NCR.",
+    description: "Neha Chaudhary's premium cake boutique: bespoke, 100% eggless wedding, designer and celebration cakes, designed around your story. Greater Noida, Delhi NCR.",
     index: true, changefreq: 'weekly', priority: 1.0,
   },
   {

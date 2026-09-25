@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { after, before, beforeEach, describe, test } from 'node:test';
 import { assertFails, assertSucceeds, initializeTestEnvironment } from '@firebase/rules-unit-testing';
-import { deleteDoc, doc, getDoc, getDocs, collection, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, getDocs, collection, query, where, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 
 let env;
 
@@ -167,5 +167,54 @@ describe('audit log', () => {
     await env.withSecurityRulesDisabled(async (ctx) => setDoc(doc(ctx.firestore(), 'audit_log', 'a3'), { actor: NEHA, action: 'x', target: 'y', at: new Date() }));
     await assertFails(updateDoc(doc(as(NEHA), 'audit_log', 'a3'), { action: 'changed' }));
     await assertFails(deleteDoc(doc(as(NEHA), 'audit_log', 'a3')));
+  });
+});
+
+describe('website content (gallery, catalogue, FAQs)', () => {
+  const gallery = (email, extra = {}) => ({
+    caption: 'Three-tier engagement cake', category: 'engagement', year: '2026', date: 'Mar 05, 2026',
+    images: [{ url: '/gallery/9/img1.jpg', alt: 'Engagement cake' }], featured: false, published: true, order: 1, ...stamp(email), ...extra,
+  });
+  const product = (email, extra = {}) => ({
+    name: 'Bento cake', description: 'Small cake', priceRange: 'On request', category: 'bento', image: '/catalog/product1.jpg',
+    popularFlavors: ['Vanilla'], published: true, order: 1, ...stamp(email), ...extra,
+  });
+  const faq = (email, extra = {}) => ({ question: 'Are your cakes eggless?', answer: 'Yes, by default.', published: true, order: 1, ...stamp(email), ...extra });
+
+  test('editors and owners can manage gallery, catalogue and FAQs', async () => {
+    await assertSucceeds(setDoc(doc(as(EDITOR), 'gallery', 'g1'), gallery(EDITOR)));
+    await assertSucceeds(setDoc(doc(as(NEHA), 'catalogue', 'c1'), product(NEHA)));
+    await assertSucceeds(setDoc(doc(as(EDITOR), 'faqs', 'f1'), faq(EDITOR)));
+  });
+  test('marketing role cannot edit content', async () => {
+    await assertFails(setDoc(doc(as(MARKETER), 'gallery', 'g2'), gallery(MARKETER)));
+    await assertFails(setDoc(doc(as(MARKETER), 'faqs', 'f2'), faq(MARKETER)));
+  });
+  test('invalid content is refused', async () => {
+    await assertFails(setDoc(doc(as(EDITOR), 'gallery', 'g3'), gallery(EDITOR, { images: [] })));
+    await assertFails(setDoc(doc(as(EDITOR), 'gallery', 'g4'), gallery(EDITOR, { category: 'hacked' })));
+    await assertFails(setDoc(doc(as(EDITOR), 'catalogue', 'c2'), product(EDITOR, { name: '' })));
+    await assertFails(setDoc(doc(as(EDITOR), 'faqs', 'f3'), faq(EDITOR, { answer: 'x'.repeat(2000) })));
+    await assertFails(setDoc(doc(as(EDITOR), 'faqs', 'f4'), faq(EDITOR, { rating: 5 })));
+  });
+  test('visitors see only published items and must query for them', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const db = ctx.firestore();
+      await setDoc(doc(db, 'gallery', 'live'), { ...gallery(OWNER), updatedAt: new Date() });
+      await setDoc(doc(db, 'gallery', 'hidden'), { ...gallery(OWNER), published: false, updatedAt: new Date() });
+    });
+    await assertSucceeds(getDoc(doc(anon(), 'gallery', 'live')));
+    await assertFails(getDoc(doc(anon(), 'gallery', 'hidden')));
+    await assertFails(getDocs(collection(anon(), 'gallery')));
+    await assertSucceeds(getDocs(query(collection(anon(), 'gallery'), where('published', '==', true))));
+    await assertSucceeds(getDoc(doc(as(EDITOR), 'gallery', 'hidden')));
+  });
+  test('visitors cannot write content', async () => {
+    await assertFails(setDoc(doc(anon(), 'faqs', 'x'), faq('nobody@example.com')));
+  });
+  test('legacy products and instagram_posts are owner-only', async () => {
+    await assertFails(getDocs(collection(anon(), 'products')));
+    await assertFails(getDocs(collection(as(EDITOR), 'instagram_posts')));
+    await assertSucceeds(getDocs(collection(as(NEHA), 'products')));
   });
 });

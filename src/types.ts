@@ -5,7 +5,6 @@ export interface AtelierSettings {
   address: string;
   email: string;
   bannerImage: string;
-  egglessPremium: number;
   base1Tier: number;
   base2Tiers: number;
   base3Tiers: number;

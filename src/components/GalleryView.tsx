@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Images, Instagram, MapPin, Sparkles, X } from 'lucide-react';
-import { InstagramPost } from '../types';
+import { GALLERY_CATEGORY_LABELS } from '../../shared/content';
+import type { GalleryEntry } from '../lib/content';
 import { resolveCakeImage } from '../utils';
 
 interface GalleryViewProps {
-  posts: InstagramPost[];
+  posts: GalleryEntry[];
 }
 
 const storyChapters = [
@@ -34,27 +35,17 @@ const storyChapters = [
   },
 ];
 
-const galleryFilters = ['all', 'wedding', 'designer', 'engagement', 'anniversary', 'birthday', 'bento', 'cupcakes'];
-const galleryCategoryById: Record<string, string> = {
-  'ig-1': 'birthday', 'ig-2': 'designer', 'ig-3': 'designer', 'ig-4': 'birthday', 'ig-5': 'anniversary', 'ig-6': 'birthday', 'ig-7': 'designer',
-  'ig-8': 'wedding', 'ig-9': 'engagement', 'ig-10': 'anniversary', 'ig-11': 'designer', 'ig-12': 'anniversary', 'ig-13': 'designer', 'ig-14': 'designer',
-  'ig-15': 'designer', 'ig-16': 'designer', 'ig-17': 'designer', 'ig-18': 'anniversary', 'ig-19': 'designer', 'ig-20': 'wedding', 'ig-21': 'birthday',
-  'ig-22': 'birthday', 'ig-23': 'anniversary', 'ig-24': 'anniversary', 'ig-25': 'anniversary', 'ig-26': 'designer', 'ig-27': 'birthday', 'ig-28': 'birthday',
-  'ig-29': 'designer', 'ig-30': 'designer',
-};
-
 export default function GalleryView({ posts }: GalleryViewProps) {
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState('all');
 
+  // Featured work first, then the order set in the CMS.
+  const orderedPosts = [...posts].sort((a, b) => Number(b.featured) - Number(a.featured));
+  const galleryFilters = ['all', ...Array.from(new Set(posts.map((post) => post.category)))];
   const selectedPost = posts.find((post) => post.id === selectedPostId) ?? null;
-  const filteredPosts = activeFilter === 'all'
-    ? posts
-    : posts.filter((post) => (galleryCategoryById[post.id] ?? 'designer') === activeFilter);
-  const selectedImages = selectedPost?.images?.length
-    ? selectedPost.images
-    : selectedPost ? [selectedPost.imageUrl] : [];
+  const filteredPosts = activeFilter === 'all' ? orderedPosts : orderedPosts.filter((post) => post.category === activeFilter);
+  const selectedImages = selectedPost?.images ?? [];
 
   const openPost = (id: string) => {
     setActiveImageIndex(0);
@@ -110,7 +101,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
         <div className="flex flex-wrap gap-2 border-y border-[#EDE3E2] py-4">
           {galleryFilters.map((filter) => (
             <button key={filter} type="button" onClick={() => setActiveFilter(filter)} className={`rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition ${activeFilter === filter ? 'bg-[#251B21] text-white' : 'border border-[#EDE3E2] bg-white text-[#6D6265] hover:border-[#D8B4B7] hover:text-[#D63384]'}`}>
-              {filter === 'all' ? 'All work' : filter}
+              {filter === 'all' ? 'All work' : GALLERY_CATEGORY_LABELS[filter as keyof typeof GALLERY_CATEGORY_LABELS] ?? filter}
             </button>
           ))}
         </div>
@@ -125,19 +116,19 @@ export default function GalleryView({ posts }: GalleryViewProps) {
             >
               <div className="relative aspect-square overflow-hidden bg-[#FFF5F8]/45">
                 <img
-                  src={resolveCakeImage(post.imageUrl)}
-                  alt={post.caption || 'Cakeasy cake creation'}
+                  src={resolveCakeImage(post.images[0].url)}
+                  alt={post.images[0].alt || post.caption || 'Cakeasy cake creation'}
                   className="w-full h-full object-contain p-2 group-hover:scale-[1.02] transition-transform duration-500"
                   loading="lazy"
                 />
-                {post.images?.length > 1 && (
+                {post.images.length > 1 && (
                   <span className="absolute top-3 right-3 bg-black/55 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
                     <Images className="h-3 w-3" /> {post.images.length} poses
                   </span>
                 )}
               </div>
               <div className="p-5 space-y-3">
-                <div className="flex items-center justify-between gap-3"><p className="text-xs text-gray-500 font-semibold">{post.date}</p><span className="text-[9px] font-bold uppercase tracking-wider text-[#D63384]">{galleryCategoryById[post.id] ?? 'designer'}</span></div>
+                <div className="flex items-center justify-between gap-3"><p className="text-xs text-gray-500 font-semibold">{post.date || post.year}</p><span className="text-[9px] font-bold uppercase tracking-wider text-[#D63384]">{GALLERY_CATEGORY_LABELS[post.category]}</span></div>
                 <p className="text-xs text-gray-700 leading-relaxed line-clamp-2 font-sans">{post.caption}</p>
                 <span className="block pt-2 border-t border-gray-50 text-[10px] uppercase font-bold text-[#D63384]">Open gallery set</span>
               </div>
@@ -153,8 +144,8 @@ export default function GalleryView({ posts }: GalleryViewProps) {
             <div className="bg-neutral-950 relative flex flex-col justify-center gap-3 p-3">
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-neutral-900">
                 <img
-                  src={resolveCakeImage(selectedImages[activeImageIndex])}
-                  alt={selectedPost.caption || 'Cakeasy cake creation'}
+                  src={resolveCakeImage(selectedImages[activeImageIndex]?.url)}
+                  alt={selectedImages[activeImageIndex]?.alt || selectedPost.caption || 'Cakeasy cake creation'}
                   className="h-full w-full object-contain"
                 />
                 {selectedImages.length > 1 && (
@@ -173,7 +164,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
                 <div className="grid grid-cols-5 gap-2">
                   {selectedImages.map((image, index) => (
                     <button
-                      key={image}
+                      key={image.url}
                       type="button"
                       onClick={() => setActiveImageIndex(index)}
                       className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
@@ -181,7 +172,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
                       }`}
                       aria-label={`View pose ${index + 1}`}
                     >
-                      <img src={resolveCakeImage(image)} alt="" className="h-full w-full object-contain bg-neutral-900" />
+                      <img src={resolveCakeImage(image.url)} alt="" className="h-full w-full object-contain bg-neutral-900" />
                     </button>
                   ))}
                 </div>
@@ -202,7 +193,7 @@ export default function GalleryView({ posts }: GalleryViewProps) {
                 <p className="text-xs text-gray-700 leading-relaxed font-sans">{selectedPost.caption}</p>
               </div>
               <div className="mt-auto flex items-center justify-between gap-4 text-xs text-gray-400 font-medium">
-                <span>{selectedPost.date}</span>
+                <span>{selectedPost.date || selectedPost.year}</span>
                 <span className="inline-flex items-center gap-1 text-[#D63384] font-bold">
                   <Sparkles className="h-3.5 w-3.5" /> {selectedImages.length} photo{selectedImages.length === 1 ? '' : 's'}
                 </span>

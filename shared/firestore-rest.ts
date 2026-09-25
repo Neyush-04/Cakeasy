@@ -72,6 +72,26 @@ export async function listDocuments(collection: string, timeoutMs = 3000, max = 
   return rows.filter((row) => row.document).map((row) => toPlain(row.document!));
 }
 
+// Published-only query, for collections whose rules allow public reads of published items.
+export async function listPublished(collection: string, timeoutMs = 3000, max = 500): Promise<PlainDoc[]> {
+  const response = await fetch(`${BASE}:runQuery?key=${FIREBASE_WEB_API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(timeoutMs),
+    body: JSON.stringify({
+      structuredQuery: {
+        from: [{ collectionId: collection }],
+        where: { fieldFilter: { field: { fieldPath: 'published' }, op: 'EQUAL', value: { booleanValue: true } } },
+        limit: max,
+      },
+    }),
+  });
+  if (response.status === 403 || response.status === 404) return [];
+  if (!response.ok) throw new Error(`Firestore published query ${collection} failed: ${response.status}`);
+  const rows = await response.json() as { document?: { name: string; fields?: Record<string, FirestoreValue> } }[];
+  return rows.filter((row) => row.document).map((row) => toPlain(row.document!));
+}
+
 // Creates a document that must not already exist. `serverTimeFields` are set to the
 // commit time, which lets firestore.rules check `== request.time`.
 export async function createDocument(collection: string, id: string, data: Record<string, unknown>, serverTimeFields: string[] = []): Promise<void> {

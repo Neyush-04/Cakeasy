@@ -21,7 +21,6 @@ export default function CatalogView({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedFlavor, setSelectedFlavor] = useState<string>('all');
-  const [isEgglessOnly, setIsEgglessOnly] = useState(false);
   const [maxPrice, setMaxPrice] = useState<number>(12000); // Max in rupees
   const [sortBy, setSortBy] = useState<'popular' | 'price-low' | 'price-high'>('popular');
 
@@ -52,9 +51,7 @@ export default function CatalogView({
       const startingPrice = getStartingPrice(product.priceRange);
       const matchesPrice = startingPrice <= maxPrice;
 
-      const matchesEggless = !isEgglessOnly || true;
-
-      return matchesSearch && matchesCategory && matchesFlavor && matchesPrice && matchesEggless;
+      return matchesSearch && matchesCategory && matchesFlavor && matchesPrice;
     }).sort((a, b) => {
       if (sortBy === 'price-low') {
         return getStartingPrice(a.priceRange) - getStartingPrice(b.priceRange);
@@ -64,13 +61,12 @@ export default function CatalogView({
       }
       return 0; // Default popularity / natural list order
     });
-  }, [searchQuery, selectedCategory, selectedFlavor, maxPrice, isEgglessOnly, sortBy]);
+  }, [products, searchQuery, selectedCategory, selectedFlavor, maxPrice, sortBy]);
 
   const handleResetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('all');
     setSelectedFlavor('all');
-    setIsEgglessOnly(false);
     setMaxPrice(12000);
     setSortBy('popular');
   };
@@ -197,20 +193,13 @@ export default function CatalogView({
             </select>
           </div>
 
-          {/* Dietary Preference (Eggless) */}
-          <div className="pt-2">
-            <label className="flex items-center gap-2.5 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={isEgglessOnly}
-                onChange={() => setIsEgglessOnly(!isEgglessOnly)}
-                className="rounded text-[#D63384] focus:ring-[#D63384] border-gray-300 h-4.5 w-4.5 accent-[#D63384]"
-              />
-              <div>
-                <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">Ask About Eggless</span>
-                <p className="text-[10px] text-gray-400">Availability is confirmed before baking.</p>
-              </div>
-            </label>
+          {/* Every Cakeasy cake is eggless by default */}
+          <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-3">
+            <Check className="h-4 w-4 shrink-0 text-emerald-600" />
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wide text-emerald-800">100% eggless by default</span>
+              <p className="text-[10px] text-emerald-700/80">Every Cakeasy cake is made without eggs.</p>
+            </div>
           </div>
 
           {/* Kitchen info badge */}

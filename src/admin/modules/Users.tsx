@@ -10,7 +10,7 @@ interface Member { email: string; name?: string; role: Role; active: boolean; up
 
 const ROLE_HELP: Record<Role, string> = {
   owner: 'Everything, including enquiries, studio details and users.',
-  editor: 'SEO, redirects and media. Cannot see enquiries.',
+  editor: 'Gallery, catalogue, FAQs, SEO, redirects and media. Cannot see enquiries.',
   marketing: 'SEO, redirects, media and tracking IDs. Cannot see enquiries.',
 };
 

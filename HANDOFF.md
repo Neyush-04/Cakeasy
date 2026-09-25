@@ -45,7 +45,7 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - Top bar: all social icons, with **WhatsApp bold and prominent**. Orders, contact and custom-cake enquiries go to **WhatsApp** (there's no checkout).
 - Categories: **Wedding & Milestone Cakes** (`/weddings`), **Designer** (`/cakes/designer`), **Bento** (`/cakes/bento`). `/cakes/wedding` 301-redirects to `/weddings`.
 - Gallery tells the story from 2021. Multi-photo posts open like an Amazon product catalogue. Photos are shown uncropped.
-- No fabricated reviews, stats, delivery/refund/eggless claims. No ratings in schema.
+- **All Cakeasy cakes are eggless by default** (confirmed by Piyush, 2026-09-25): say it confidently ("100% eggless"). Still no fabricated reviews, stats, delivery or refund claims, and no ratings in schema.
 - Judge design as the bride, a parent buying a kid's designer cake, a wife surprising her husband, etc. It must feel luxury.
 
 ## Done
@@ -62,6 +62,8 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - Mobile fix: the cookie banner now leaves room for the floating WhatsApp button, and the WhatsApp tooltip waits until the banner is answered.
 
 - 2026-09-25 (final): Firebase is on **Blaze**. Storage bucket `gen-lang-client-0442655314.firebasestorage.app` was created (US-EAST1, no-cost location, production mode) and `storage.rules` deployed; a live CMS upload was tested OK (first media item: the "Just Engaged" three-tier cake, with alt text). **Meta** (via the Cakeasy Chrome profile, signed in as cakeasy94@gmail.com, business "Cakeasy" id 1007086482114002): used the existing dataset/Pixel **"Cakeasy Website" `2258784791546941`** (saved in CMS › Marketing). Domain `cakeasy.in` was added and **verified** with the meta tag (the code is in CMS › Marketing › Meta domain verification; don't remove it). Verified live: banner first, then after Accept both GA4 `page_view` and Meta `PageView` fire. Claude in Chrome now has two browsers: "Browser 1" = Cakeasy profile (cakeasy94), "Browser 2" = Piyush's (pixiforu).
+
+- 2026-09-26: **Content modules**. CMS › Gallery (posts with up to 12 photos + alt text, category, year/date, featured, hidden, reorder, "Import current archive"), CMS › Catalogue (cakes with photo, price text, flavours, hide, reorder, "Import current catalogue"), CMS › FAQs (shown on /consultation as an accordion + FAQPage schema; "Add suggested FAQs" adds 6 hidden drafts). New Firestore collections `gallery`, `catalogue`, `faqs` (public read only when `published == true`; owner/editor write); legacy `products`/`instagram_posts` are now owner-only. Public data comes from `/api/content` (edge-cached ~2 min); while a collection is empty the site uses the built-in archive/catalogue (`src/lib/content.ts`). Eggless-by-default copy on home, catalogue (replaced the dead "Ask about eggless" checkbox), product modal, consultation dietary field, schema and llms.txt. Fixed: the catalogue list didn't refresh when products changed.
 
 ## Open / next
 0. Needs Piyush: (a) done: Blaze + Storage; (b) GA4: once the first real enquiry arrives, mark `generate_lead` as a key event (Admin › Events), and optionally link GA4 ↔ Google Ads ↔ Search Console; (c) done: Meta Pixel + domain verification; when ads start, set up an optimisation event on `Lead` in Events Manager; (d) confirm the GBP "review your info" prompt; (e) Ads: pick images, budget and launch himself (or tell Claude a budget).

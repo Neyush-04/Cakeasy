@@ -1,5 +1,6 @@
 // Published CMS content for the server functions, with a short in-memory cache per instance.
-import { getDocument, listDocuments, type PlainDoc } from '../../shared/firestore-rest.js';
+import { getDocument, listDocuments, listPublished, type PlainDoc } from '../../shared/firestore-rest.js';
+import { byOrder, cleanCatalogueItem, cleanFaqItem, cleanGalleryItem, type PublicContent } from '../../shared/content.js';
 import { sanitizeMarketing } from '../../shared/head.js';
 import {
   DEFAULT_MARKETING_SETTINGS, DEFAULT_SITE_SETTINGS, normalizePath,
@@ -79,4 +80,19 @@ export function getRedirects(): Promise<Map<string, RedirectRule>> {
 
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+const notNull = <T>(value: T | null): value is T => value !== null;
+
+export function getPublicContent(): Promise<PublicContent> {
+  return cached('public-content', async () => {
+    const [gallery, catalogue, faqs] = await Promise.all([
+      listPublished('gallery'), listPublished('catalogue'), listPublished('faqs'),
+    ]);
+    return {
+      gallery: gallery.map((doc) => cleanGalleryItem(doc._id, doc)).filter(notNull).sort(byOrder),
+      catalogue: catalogue.map((doc) => cleanCatalogueItem(doc._id, doc)).filter(notNull).sort(byOrder),
+      faqs: faqs.map((doc) => cleanFaqItem(doc._id, doc)).filter(notNull).sort(byOrder),
+    };
+  }, { gallery: [], catalogue: [], faqs: [] });
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Check, Heart, Instagram, MessageCircle, Sparkles } from 'lucide-react';
-import { MenuItem, AtelierSettings, InstagramPost } from '../types';
+import { MenuItem, AtelierSettings } from '../types';
 import { CAKE_CATEGORY_DATA, PRIMARY_CATEGORIES } from '../data/categoryData';
 import { Link } from 'react-router-dom';
 import ScrollReveal from './ScrollReveal';
@@ -15,7 +15,6 @@ interface HomeViewProps {
   toggleWishlist: (product: MenuItem) => void;
   wishlistedIds: string[];
   settings: AtelierSettings;
-  galleryPosts: InstagramPost[];
 }
 
 const designerHighlights = [
@@ -46,7 +45,7 @@ export default function HomeView({ setCurrentTab, settings }: HomeViewProps) {
             <h1 className="font-serif text-5xl font-bold leading-[1.04] sm:text-6xl">Bespoke cakes designed around your celebration.</h1>
             <p className="max-w-xl text-base leading-8 text-white/70">From wedding decor and outfits to birthdays, milestones and personal stories, Cakeasy creates cakes that are designed uniquely for your occasion.</p>
             <div className="flex flex-col gap-3 sm:flex-row"><Link to="/catalog" className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D63384] px-6 py-4 text-xs font-bold uppercase tracking-wider hover:bg-[#B02266]">Explore our cakes <ArrowRight className="h-4 w-4" /></Link><Link to="/consultation" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-4 text-xs font-bold uppercase tracking-wider text-white hover:bg-white/10">Book a consultation</Link></div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold uppercase tracking-wider text-white/45"><span>Lucknow roots</span><span>Greater Noida boutique</span><span>Delhi NCR service</span></div>
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold uppercase tracking-wider text-white/45"><span>100% eggless</span><span>Lucknow roots</span><span>Greater Noida boutique</span><span>Delhi NCR service</span></div>
           </div>
           <div className="order-1 relative min-h-[460px] lg:order-2 lg:col-span-7 lg:min-h-0"><img src="/gallery/1/img1.jpg" alt="Neha Chaudhary, founder and baker behind Cakeasy" className="h-full w-full object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-[#251B21] via-transparent to-transparent lg:w-2/3" /><div className="absolute bottom-7 left-7 rounded-2xl border border-white/20 bg-black/35 p-4 backdrop-blur-md"><p className="text-[10px] font-bold uppercase tracking-widest text-[#F5C178]">The face behind Cakeasy</p><p className="mt-1 font-serif text-xl">Neha Chaudhary</p><p className="mt-1 text-xs text-white/60">Founder and baker · Lucknow roots, Greater Noida cake boutique</p></div></div>
         </div>

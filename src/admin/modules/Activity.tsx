@@ -11,6 +11,9 @@ const LABELS: Record<string, string> = {
   'media.upload': 'Uploaded photo', 'media.delete': 'Deleted photo',
   'settings.site': 'Changed studio settings', 'settings.marketing': 'Changed tracking settings',
   'enquiry.update': 'Updated enquiry', 'enquiry.delete': 'Deleted enquiry', 'enquiries.export': 'Exported enquiries',
+  'gallery.import': 'Imported gallery archive', 'gallery.create': 'Added gallery post', 'gallery.update': 'Edited gallery post', 'gallery.delete': 'Removed gallery post',
+  'catalogue.import': 'Imported catalogue', 'catalogue.create': 'Added cake', 'catalogue.update': 'Edited cake', 'catalogue.delete': 'Removed cake',
+  'faqs.import': 'Added suggested FAQs', 'faq.save': 'Saved FAQ', 'faq.delete': 'Deleted FAQ',
   'user.add': 'Gave access', 'user.update': 'Changed access', 'user.remove': 'Removed access',
 };
 

@@ -409,3 +409,12 @@ export const MEET_THE_TEAM = [
     image: '/gallery/1/img1.jpg'
   }
 ];
+
+// Category of each built-in archive post (used until the CMS gallery is filled).
+export const ARCHIVE_CATEGORY_BY_ID: Record<string, string> = {
+  'ig-1': 'birthday', 'ig-2': 'designer', 'ig-3': 'designer', 'ig-4': 'birthday', 'ig-5': 'anniversary', 'ig-6': 'birthday', 'ig-7': 'designer',
+  'ig-8': 'wedding', 'ig-9': 'engagement', 'ig-10': 'anniversary', 'ig-11': 'designer', 'ig-12': 'anniversary', 'ig-13': 'designer', 'ig-14': 'designer',
+  'ig-15': 'designer', 'ig-16': 'designer', 'ig-17': 'designer', 'ig-18': 'anniversary', 'ig-19': 'designer', 'ig-20': 'wedding', 'ig-21': 'birthday',
+  'ig-22': 'birthday', 'ig-23': 'anniversary', 'ig-24': 'anniversary', 'ig-25': 'anniversary', 'ig-26': 'designer', 'ig-27': 'birthday', 'ig-28': 'birthday',
+  'ig-29': 'designer', 'ig-30': 'designer',
+};

@@ -17,10 +17,11 @@ import WhatsAppButton from './components/WhatsAppButton';
 import PageMeta from './components/PageMeta';
 import ConsentBanner from './components/ConsentBanner';
 
-import { ALL_PRODUCTS, INSTAGRAM_POSTS } from './data';
+import { ALL_PRODUCTS } from './data';
 import { CAKE_CATEGORY_DATA } from './data/categoryData';
 import { MenuItem, CustomCakeState, AtelierSettings, InstagramPost } from './types';
 import { siteSettings } from './lib/runtime';
+import { BUILT_IN_GALLERY, postsToEntries, usePublicContent } from './lib/content';
 import { Sparkles, X } from 'lucide-react';
 
 // The CMS is a separate bundle, so visitors never download it.
@@ -41,7 +42,6 @@ const atelierSettings: AtelierSettings = {
   address: siteSettings.address,
   email: siteSettings.email,
   bannerImage: '/gallery/1/img1.jpg',
-  egglessPremium: 100,
   base1Tier: 999,
   base2Tiers: 2499,
   base3Tiers: 4999,
@@ -64,11 +64,14 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
-  const productsList = ALL_PRODUCTS;
   const [wishlistedIds, setWishlistedIds] = useState<string[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [customInquiries, setCustomInquiries] = useState<{ cake: CustomCakeState; date: string; notes: string }[]>([]);
-  const [galleryPosts, setGalleryPosts] = useState<InstagramPost[]>(INSTAGRAM_POSTS);
+  const [instagramPosts, setInstagramPosts] = useState<InstagramPost[]>([]);
+  const content = usePublicContent();
+  // CMS content wins; otherwise the Instagram sync; otherwise the built-in archive/catalogue.
+  const galleryEntries = content?.gallery.length ? content.gallery : instagramPosts.length ? postsToEntries(instagramPosts) : BUILT_IN_GALLERY;
+  const productsList: MenuItem[] = content?.catalogue.length ? content.catalogue : ALL_PRODUCTS;
 
   useEffect(() => {
     if (isAdmin) return;
@@ -87,7 +90,7 @@ export default function App() {
         const syncedPosts = Array.isArray(payload?.posts) ? payload.posts : [];
 
         if (syncedPosts.length > 0) {
-          setGalleryPosts(syncedPosts);
+          setInstagramPosts(syncedPosts);
         }
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') return;
@@ -192,7 +195,6 @@ export default function App() {
                     toggleWishlist={handleToggleWishlist}
                     wishlistedIds={wishlistedIds}
                     settings={atelierSettings}
-                    galleryPosts={galleryPosts}
                   />
                 }
               />
@@ -229,9 +231,9 @@ export default function App() {
                 }
               />
 
-              <Route path="/gallery" element={<GalleryView posts={galleryPosts} />} />
+              <Route path="/gallery" element={<GalleryView posts={galleryEntries} />} />
               <Route path="/about" element={<AboutView />} />
-              <Route path="/consultation" element={<ConsultationView />} />
+              <Route path="/consultation" element={<ConsultationView faqs={content?.faqs ?? []} />} />
               <Route path="/contact" element={<ContactView />} />
               <Route path="*" element={<NotFoundView />} />
             </Routes>

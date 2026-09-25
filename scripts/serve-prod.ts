@@ -17,6 +17,7 @@ const handlers: Record<string, () => Promise<{ default: Handler }>> = {
   sitemap: () => import('../api/sitemap.ts'),
   llms: () => import('../api/llms.ts'),
   enquiry: () => import('../api/enquiry.ts'),
+  content: () => import('../api/content.ts'),
   instagram: () => import('../api/instagram.js') as Promise<{ default: Handler }>,
 };
 

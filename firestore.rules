@@ -200,41 +200,68 @@ service cloud.firestore {
         && optionalString(incoming(), 'summary', 500);
     }
 
-    // ---------- Existing catalogue collections ----------
-    function isValidMenuItem(data) {
-      return data.keys().hasAll(['id', 'name', 'description', 'priceRange', 'category', 'image', 'popularFlavors'])
-        && data.keys().size() == 7
-        && data.id is string && data.id.size() <= 128
-        && data.name is string && data.name.size() <= 100
-        && data.description is string && data.description.size() <= 500
+    // ---------- Website content (gallery, catalogue, FAQs) ----------
+    // Public visitors can read only published items; queries must filter published == true.
+    function isContentEditor() {
+      return hasRole(['owner', 'editor']);
+    }
+
+    function isValidGallery(data) {
+      return data.keys().hasOnly(['caption', 'category', 'year', 'date', 'images', 'featured', 'published', 'order', 'updatedAt', 'updatedBy'])
+        && data.caption is string && data.caption.size() <= 600
+        && data.category in ['wedding', 'engagement', 'anniversary', 'designer', 'birthday', 'bento', 'cupcakes', 'pastries', 'dessert-boxes']
+        && data.year is string && data.year.size() <= 12
+        && data.date is string && data.date.size() <= 40
+        && data.images is list && data.images.size() >= 1 && data.images.size() <= 12
+        && data.featured is bool && data.published is bool
+        && data.order is number;
+    }
+
+    match /gallery/{id} {
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update: if isContentEditor() && isValidId(id) && isValidGallery(incoming()) && stamped();
+      allow delete: if isContentEditor();
+    }
+
+    function isValidCatalogue(data) {
+      return data.keys().hasOnly(['name', 'description', 'priceRange', 'category', 'image', 'popularFlavors', 'published', 'order', 'updatedAt', 'updatedBy'])
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 100
+        && data.description is string && data.description.size() <= 600
         && data.priceRange is string && data.priceRange.size() <= 50
-        && (data.category == 'bento' || data.category == 'celebration' || data.category == 'wedding' || data.category == 'cupcakes')
-        && data.image is string && data.image.size() <= 1000
-        && data.popularFlavors is list && data.popularFlavors.size() <= 20;
+        && data.category in ['wedding', 'celebration', 'bento', 'cupcakes']
+        && data.image is string && data.image.size() >= 1 && data.image.size() <= 1000
+        && data.popularFlavors is list && data.popularFlavors.size() <= 20
+        && data.published is bool
+        && data.order is number;
     }
 
-    function isValidInstagramPost(data) {
-      return data.keys().hasAll(['id', 'imageUrl', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
-        && data.keys().hasOnly(['id', 'imageUrl', 'images', 'caption', 'likes', 'commentsCount', 'date', 'comments'])
-        && data.id is string && data.id.size() <= 128
-        && data.imageUrl is string && data.imageUrl.size() <= 1000
-        && (!('images' in data.keys()) || (data.images is list && data.images.size() <= 20))
-        && data.caption is string && data.caption.size() <= 1000
-        && data.likes is number
-        && data.commentsCount is number
-        && data.date is string && data.date.size() <= 100
-        && data.comments is list;
+    match /catalogue/{id} {
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update: if isContentEditor() && isValidId(id) && isValidCatalogue(incoming()) && stamped();
+      allow delete: if isContentEditor();
     }
 
+    function isValidFaq(data) {
+      return data.keys().hasOnly(['question', 'answer', 'published', 'order', 'updatedAt', 'updatedBy'])
+        && data.question is string && data.question.size() >= 1 && data.question.size() <= 200
+        && data.answer is string && data.answer.size() >= 1 && data.answer.size() <= 1500
+        && data.published is bool
+        && data.order is number;
+    }
+
+    match /faqs/{id} {
+      allow read: if resource.data.published == true || isStaff();
+      allow create, update: if isContentEditor() && isValidId(id) && isValidFaq(incoming()) && stamped();
+      allow delete: if isContentEditor();
+    }
+
+    // Legacy copies from the original site builder (superseded by gallery/catalogue): owner-only.
     match /products/{productId} {
-      allow read: if true;
-      allow create, update: if hasRole(['owner', 'editor']) && isValidId(productId) && isValidMenuItem(incoming());
-      allow delete: if hasRole(['owner', 'editor']) && isValidId(productId);
+      allow read, write: if hasRole(['owner']);
     }
 
     match /instagram_posts/{postId} {
-      allow read: if true;
-      allow write: if hasRole(['owner', 'editor']) && isValidId(postId) && isValidInstagramPost(incoming());
+      allow read, write: if hasRole(['owner']);
     }
 
     // Legacy collections from the old mock admin: owner-only, no public access.

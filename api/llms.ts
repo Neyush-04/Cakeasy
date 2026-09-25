@@ -14,6 +14,7 @@ export default async function handler(_req: IncomingMessage, res: ServerResponse
     '',
     '## How to order',
     `- Orders and custom cake enquiries are handled on WhatsApp: https://wa.me/${site.whatsappNumber}`,
+    '- All Cakeasy cakes are eggless by default.',
     '- There is no online checkout. Design, price, pickup or delivery are confirmed directly with Cakeasy before an order is accepted.',
     `- Consultation brief: ${absoluteUrl('/consultation')}`,
     '',

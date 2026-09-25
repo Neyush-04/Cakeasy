@@ -3,12 +3,12 @@ import type { User } from 'firebase/auth';
 
 export type Role = 'owner' | 'editor' | 'marketing';
 
-export type ModuleId = 'dashboard' | 'enquiries' | 'seo' | 'redirects' | 'media' | 'settings' | 'marketing' | 'users' | 'activity';
+export type ModuleId = 'dashboard' | 'enquiries' | 'gallery' | 'catalogue' | 'faqs' | 'seo' | 'redirects' | 'media' | 'settings' | 'marketing' | 'users' | 'activity';
 
 // Mirrors firestore.rules. The rules are the real enforcement; this only shapes the UI.
 export const ROLE_ACCESS: Record<Role, ModuleId[]> = {
-  owner: ['dashboard', 'enquiries', 'seo', 'redirects', 'media', 'settings', 'marketing', 'users', 'activity'],
-  editor: ['dashboard', 'seo', 'redirects', 'media'],
+  owner: ['dashboard', 'enquiries', 'gallery', 'catalogue', 'faqs', 'seo', 'redirects', 'media', 'settings', 'marketing', 'users', 'activity'],
+  editor: ['dashboard', 'gallery', 'catalogue', 'faqs', 'seo', 'redirects', 'media'],
   marketing: ['dashboard', 'seo', 'redirects', 'media', 'marketing'],
 };
 

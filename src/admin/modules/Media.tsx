@@ -38,6 +38,27 @@ function readDimensions(file: File): Promise<{ width: number; height: number }> 
   });
 }
 
+export function checkImageFile(file: File): string {
+  if (!ACCEPTED.includes(file.type)) return `${file.name}: use JPEG, PNG, WebP or AVIF.`;
+  if (file.size > MAX_BYTES) return `${file.name}: larger than 15 MB.`;
+  return '';
+}
+
+// Uploads one image to Storage and records it in the Media library. Returns its public URL.
+export async function uploadImage(file: File, alt = '', category = ''): Promise<string> {
+  const problem = checkImageFile(file);
+  if (problem) throw new Error(problem);
+  const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/-+/g, '-').slice(-80);
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  const storagePath = `media/${id}-${safeName}`;
+  const dims = await readDimensions(file);
+  await uploadBytes(ref(storage, storagePath), file, { contentType: file.type, cacheControl: 'public, max-age=31536000, immutable' });
+  const url = await getDownloadURL(ref(storage, storagePath));
+  await setDoc(doc(db, 'media', id), { url, storagePath, name: file.name.slice(0, 200), contentType: file.type, size: file.size, width: dims.width, height: dims.height, alt: alt.slice(0, 200), caption: '', category: category.slice(0, 60), ...stamp() });
+  void logAudit('media.upload', file.name);
+  return url;
+}
+
 export default function MediaLibrary() {
   const notify = useToast();
   const [items, setItems] = useState<MediaItem[] | null>(null);
@@ -54,18 +75,11 @@ export default function MediaLibrary() {
   const upload = async (files: FileList | null) => {
     const list = Array.from(files || []);
     for (const file of list) {
-      if (!ACCEPTED.includes(file.type)) { notify(`${file.name}: use JPEG, PNG, WebP or AVIF.`, 'error'); continue; }
-      if (file.size > MAX_BYTES) { notify(`${file.name}: larger than 15 MB.`, 'error'); continue; }
+      const problem = checkImageFile(file);
+      if (problem) { notify(problem, 'error'); continue; }
       setUploading((count) => count + 1);
       try {
-        const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/-+/g, '-').slice(-80);
-        const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-        const storagePath = `media/${id}-${safeName}`;
-        const dims = await readDimensions(file);
-        await uploadBytes(ref(storage, storagePath), file, { contentType: file.type, cacheControl: 'public, max-age=31536000, immutable' });
-        const url = await getDownloadURL(ref(storage, storagePath));
-        await setDoc(doc(db, 'media', id), { url, storagePath, name: file.name.slice(0, 200), contentType: file.type, size: file.size, width: dims.width, height: dims.height, alt: '', caption: '', category: '', ...stamp() });
-        void logAudit('media.upload', file.name);
+        await uploadImage(file);
         notify(`${file.name} uploaded. Add alt text so Google and screen readers understand it.`);
       } catch (err) {
         notify(`${file.name}: ${friendlyError(err)}`, 'error');

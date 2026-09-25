@@ -56,7 +56,7 @@ export function businessJsonLd(site: SiteSettings): Record<string, unknown> {
     '@type': 'Bakery',
     '@id': `${SITE_ORIGIN}/#bakery`,
     name: SITE_NAME,
-    description: 'Premium cake boutique by Neha Chaudhary: bespoke wedding and designer cakes, plus birthday, bento and other celebration cakes.',
+    description: 'Premium cake boutique by Neha Chaudhary: bespoke wedding and designer cakes, plus birthday, bento and other celebration cakes. All cakes are eggless by default.',
     url: `${SITE_ORIGIN}/`,
     image: absoluteUrl(DEFAULT_OG_IMAGE),
     logo: absoluteUrl('/favicon.png'),

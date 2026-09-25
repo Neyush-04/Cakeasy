@@ -27,6 +27,7 @@ words like *delivery*, *eggless*, *same-day*, *price* or specific localities,
 | `/cakes/designer` | designer cake greater noida, theme cake noida, customised cake greater noida | fondant cake, sculpted cake, hobby theme cake |
 | `/cakes/birthday` | birthday theme cake greater noida, kids birthday cake noida | first birthday cake, milestone birthday cake |
 | `/cakes/bento` | bento cake greater noida, bento cake noida | mini cake gift, lunchbox cake |
+| *(all pages)* | eggless cake greater noida, eggless wedding cake noida, eggless designer cake delhi ncr, eggless birthday cake greater noida | 100% eggless bakery, egg free cake |
 | `/cakes/cupcakes` | cupcakes greater noida | cupcake box gift |
 | `/cakes/dessert-boxes` | dessert box greater noida | dessert hamper, return gift dessert box |
 | `/custom` | design your own cake, custom cake online greater noida | cake builder |
@@ -62,7 +63,7 @@ answers. Thin copies of the same page for every suburb hurt more than they help.
 | 3 | **Area page: Greater Noida West** (only if served) | Many societies; people search by locality | Confirm service, and photos of cakes made for that area |
 | 4 | **Area page: Noida** (only if served) | Large search area next door | Same as above |
 | 5 | **Seasonal**: Diwali hampers / Valentine's bento (only if offered that season) | Time-bound demand; pairs with a short link and GBP post | Confirm the offer and dates |
-| 6 | **FAQ page** (with FAQ schema, only for visible answers) | Wins "people also ask" boxes and AI answers | Real answers: lead time, advance, cancellation, eggless (only if true) |
+| 6 | **Eggless guide**: "100% eggless wedding and designer cakes" | Big search demand in India; Cakeasy is eggless by default | Photos of eggless multi-tier work, flavour list |
 
 Every new page gets: one clear H1, real photos with alt text, a consultation
 and WhatsApp call to action, links to two related pages, and its own SEO title,

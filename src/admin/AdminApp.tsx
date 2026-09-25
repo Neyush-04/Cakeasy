@@ -3,7 +3,7 @@ import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import { onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut, type User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import {
-  LayoutDashboard, Inbox, Search, Shuffle, Image as ImageIcon, Store, Megaphone, Users as UsersIcon, History, LogOut, ExternalLink, ShieldAlert,
+  LayoutDashboard, Inbox, GalleryHorizontalEnd, Cake, HelpCircle, Search, Shuffle, Image as ImageIcon, Store, Megaphone, Users as UsersIcon, History, LogOut, ExternalLink, ShieldAlert,
 } from 'lucide-react';
 import logo from '../assets/brand/cakeasy-logo-web.webp';
 import { BOOTSTRAP_OWNER_EMAIL } from '../../shared/site';
@@ -19,10 +19,16 @@ import SiteSettingsModule from './modules/SiteSettings';
 import MarketingModule from './modules/Marketing';
 import UsersModule from './modules/Users';
 import Activity from './modules/Activity';
+import GalleryModule from './modules/Gallery';
+import CatalogueModule from './modules/Catalogue';
+import FaqsModule from './modules/Faqs';
 
 const NAV: { id: ModuleId; path: string; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'dashboard', path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'enquiries', path: '/admin/enquiries', label: 'Enquiries', icon: Inbox },
+  { id: 'gallery', path: '/admin/gallery', label: 'Gallery', icon: GalleryHorizontalEnd },
+  { id: 'catalogue', path: '/admin/catalogue', label: 'Catalogue', icon: Cake },
+  { id: 'faqs', path: '/admin/faqs', label: 'FAQs', icon: HelpCircle },
   { id: 'seo', path: '/admin/seo', label: 'SEO', icon: Search },
   { id: 'redirects', path: '/admin/redirects', label: 'Redirects', icon: Shuffle },
   { id: 'media', path: '/admin/media', label: 'Media', icon: ImageIcon },
@@ -183,6 +189,9 @@ function Layout() {
             <Routes>
               <Route path="/admin" element={<Dashboard />} />
               {session.can('enquiries') && <Route path="/admin/enquiries" element={<Enquiries />} />}
+              {session.can('gallery') && <Route path="/admin/gallery" element={<GalleryModule />} />}
+              {session.can('catalogue') && <Route path="/admin/catalogue" element={<CatalogueModule />} />}
+              {session.can('faqs') && <Route path="/admin/faqs" element={<FaqsModule />} />}
               <Route path="/admin/seo" element={<SeoManager />} />
               <Route path="/admin/redirects" element={<Redirects />} />
               <Route path="/admin/media" element={<MediaLibrary />} />
