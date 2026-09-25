@@ -49,7 +49,7 @@ export default function ContactView() {
             <div className="flex items-start gap-4 p-5 bg-white border border-[#FFF5F8] rounded-2xl">
               <MapPin className="h-5 w-5 text-[#D63384] shrink-0 mt-0.5" />
               <div>
-                <h2 className="font-bold text-sm text-[#1E1E1E]">Studio Address</h2>
+                <h2 className="font-bold text-sm text-[#1E1E1E]">Boutique Address</h2>
                 <p className="text-xs text-gray-500 mt-0.5">{siteSettings.address.replace(/^Cakeasy,\s*/, '')}</p>
               </div>
             </div>

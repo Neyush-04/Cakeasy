@@ -39,6 +39,7 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 (PowerShell may block `npm.ps1`. Use `npm.cmd`.)
 
 ## Brand & content rules (from Piyush)
+- **Positioning: Cakeasy is a premium "cake boutique"** (a home bakery focused on very premium cakes, plus other cakes). Say "cake boutique", not "cake studio", in public copy, SEO, ads and docs. Internal CMS labels ("Studio CMS", "Studio settings") are fine.
 - **Homepage hero must feature Neha herself.** She is the face of the brand.
 - The original watercolor/floral Cakeasy logo is the source of truth (`src/assets/brand/`). Never redraw it.
 - Top bar: all social icons, with **WhatsApp bold and prominent**. Orders, contact and custom-cake enquiries go to **WhatsApp** (there's no checkout).

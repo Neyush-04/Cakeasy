@@ -95,8 +95,8 @@ export interface RouteSeo {
 export const PUBLIC_ROUTES: RouteSeo[] = [
   {
     path: '/',
-    title: 'Cakeasy | Bespoke Wedding & Celebration Cake Studio',
-    description: 'Cakeasy designs bespoke wedding and celebration cakes around your colours, décor, outfits and story. Serving Delhi NCR from Greater Noida.',
+    title: 'Cakeasy | Premium Cake Boutique in Greater Noida',
+    description: "Neha Chaudhary's premium cake boutique for bespoke wedding, designer and celebration cakes, designed around your story. Greater Noida, serving Delhi NCR.",
     index: true, changefreq: 'weekly', priority: 1.0,
   },
   {
@@ -174,19 +174,19 @@ export const PUBLIC_ROUTES: RouteSeo[] = [
   {
     path: '/about',
     title: 'Our Story | Neha Chaudhary & Cakeasy',
-    description: 'Meet Neha Chaudhary, founder and baker of Cakeasy, and the journey from Lucknow in 2021 to a cake studio in Greater Noida.',
+    description: 'Meet Neha Chaudhary, founder and baker of Cakeasy, and the journey from Lucknow in 2021 to a premium cake boutique in Greater Noida.',
     index: true, changefreq: 'monthly', priority: 0.6,
   },
   {
     path: '/consultation',
     title: 'Book a Cake Consultation | Cakeasy',
-    description: "Share your event date, venue, servings, palette, outfits and inspiration with Cakeasy's wedding cake design studio.",
+    description: "Share your event date, venue, servings, palette, outfits and inspiration with Cakeasy, Neha Chaudhary's premium cake boutique.",
     index: true, changefreq: 'monthly', priority: 0.8,
   },
   {
     path: '/contact',
     title: 'Contact Cakeasy | WhatsApp Orders',
-    description: 'Contact Cakeasy on WhatsApp or Instagram, find the Greater Noida studio address, and share a custom cake enquiry.',
+    description: 'Contact Cakeasy on WhatsApp or Instagram, find the Greater Noida boutique address, and share a custom cake enquiry.',
     index: true, changefreq: 'monthly', priority: 0.6,
   },
 ];

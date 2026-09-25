@@ -38,7 +38,7 @@ export default function AboutView() {
               Meet <span className="text-[#D63384] italic">Neha Chaudhary</span>, the heart of Cakeasy.
             </h1>
             <p className="text-gray-600 text-sm leading-relaxed max-w-xl">
-              Neha is the face, baker, and creative force behind Cakeasy. Her journey began in Lucknow in 2021 and grew into a Greater Noida cake studio serving Delhi NCR celebrations.
+              Neha is the face, baker, and creative force behind Cakeasy. Her journey began in Lucknow in 2021 and grew into a premium cake boutique in Greater Noida, serving Delhi NCR celebrations.
             </p>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xl">
               Cakeasy is built around direct conversations: the occasion, the design, the flavour, the date, and the small emotional details that make a cake feel personal.
@@ -103,7 +103,7 @@ export default function AboutView() {
       <section className="space-y-10">
         <div className="text-center max-w-xl mx-auto space-y-2">
           <span className="text-xs font-bold uppercase tracking-widest text-[#D63384]">The Kitchen</span>
-          <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">The Cakeasy Studio</h2>
+          <h2 className="font-serif text-3xl font-bold text-[#1E1E1E]">The Cakeasy Boutique</h2>
           <p className="text-gray-500 text-xs">The person behind the cakes, designs, and celebration details.</p>
         </div>
 

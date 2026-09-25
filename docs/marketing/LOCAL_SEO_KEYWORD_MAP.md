@@ -9,7 +9,7 @@ Keyword Planner (free with an Ads account) for rough volumes. Replace
 assumptions here with that real data.
 
 **Claims check.** Suggestions below use only what the site already states:
-bespoke / designer / wedding cakes, Neha Chaudhary, Greater Noida studio, Delhi
+premium cake boutique, bespoke / designer / wedding cakes, Neha Chaudhary, Greater Noida, Delhi
 NCR, Lucknow roots since 2021, WhatsApp ordering, consultations. Before using
 words like *delivery*, *eggless*, *same-day*, *price* or specific localities,
 **Neha must confirm they are true.**
@@ -20,7 +20,7 @@ words like *delivery*, *eggless*, *same-day*, *price* or specific localities,
 
 | Page | Main searches (intent) | Supporting searches |
 | --- | --- | --- |
-| `/` Home | cakeasy, cakeasy greater noida, neha chaudhary cakes, custom cake studio greater noida | bespoke cakes delhi ncr, designer cake baker greater noida |
+| `/` Home | cakeasy, cakeasy greater noida, cake boutique greater noida, premium cakes greater noida, neha chaudhary cakes | luxury cakes noida, premium cake shop delhi ncr, bespoke cakes delhi ncr, designer cake baker greater noida |
 | `/weddings` | wedding cake greater noida, wedding cake noida, multi tier wedding cake delhi ncr | 3 tier wedding cake, reception cake, wedding cake designer near me |
 | `/cakes/engagement` | engagement cake greater noida, ring ceremony cake | roka cake, couple cake |
 | `/cakes/anniversary` | anniversary cake greater noida | 25th anniversary cake, 50th anniversary cake design |
@@ -38,7 +38,7 @@ words like *delivery*, *eggless*, *same-day*, *price* or specific localities,
 
 | Page | SEO title (≤60) | Meta description (120–160) |
 | --- | --- | --- |
-| `/` | Cakeasy: Bespoke Cake Studio in Greater Noida by Neha | Bespoke wedding, designer and celebration cakes by Neha Chaudhary, designed around your colours, décor and story. Greater Noida studio serving Delhi NCR. |
+| `/` | Cakeasy: Premium Cake Boutique in Greater Noida | Neha Chaudhary's premium cake boutique: bespoke wedding and designer cakes, plus birthday, bento and celebration cakes. Greater Noida, serving Delhi NCR. |
 | `/weddings` | Wedding Cakes in Greater Noida & Delhi NCR · Cakeasy | Multi-tier wedding, engagement and anniversary cakes designed around your venue, palette and outfits. Book a design consultation with Cakeasy. |
 | `/cakes/designer` | Designer & Theme Cakes in Greater Noida · Cakeasy | Sculpted, themed and story-led designer cakes, single or multi-tier. Share your idea and Neha will shape it in cake. |
 | `/cakes/engagement` | Engagement Cakes in Greater Noida · Cakeasy | Elegant engagement and ring-ceremony cakes with florals and finishes coordinated to your décor and outfits. |

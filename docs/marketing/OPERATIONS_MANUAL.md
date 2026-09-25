@@ -9,7 +9,7 @@ live on www.cakeasy.in. Features marked **NOT YET ACTIVE** need a setup step fir
 
 | Tool | Used for | Not used for |
 | --- | --- | --- |
-| **Cakeasy CMS** (`/admin`) | Enquiries, SEO per page, social previews, redirects, short links, media, studio details, tracking IDs, users | Page design, new page layouts, code, domain/DNS |
+| **Cakeasy CMS** (`/admin`) | Enquiries, SEO per page, social previews, redirects, short links, media, business details, tracking IDs, users | Page design, new page layouts, code, domain/DNS |
 | **Google Search Console** | Seeing Google searches that show Cakeasy, indexing problems, sitemap | Changing page content |
 | **Google Business Profile** | The Google Maps / "near me" listing, reviews, photos, posts, calls and chats | Website content |
 | **GA4** | Visits, sources, which pages lead to enquiries (consenting visitors only) | Proving an enquiry exists (the CMS does that) |

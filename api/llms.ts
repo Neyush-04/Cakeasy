@@ -10,7 +10,7 @@ export default async function handler(_req: IncomingMessage, res: ServerResponse
   const lines = [
     '# Cakeasy',
     '',
-    '> Cakeasy is a bespoke wedding and celebration cake studio founded by baker Neha Chaudhary. It began in Lucknow in 2021 and now works from Greater Noida, serving Delhi NCR.',
+    '> Cakeasy is a premium cake boutique founded by baker Neha Chaudhary. It creates bespoke wedding and designer cakes, plus birthday, bento and other celebration cakes. It began in Lucknow in 2021 and now works from Greater Noida, serving Delhi NCR.',
     '',
     '## How to order',
     `- Orders and custom cake enquiries are handled on WhatsApp: https://wa.me/${site.whatsappNumber}`,
@@ -20,7 +20,7 @@ export default async function handler(_req: IncomingMessage, res: ServerResponse
     '## Contact',
     `- Phone / WhatsApp: ${site.phoneDisplay}`,
     site.email ? `- Email: ${site.email}` : '',
-    `- Studio: ${site.address}`,
+    `- Boutique: ${site.address}`,
     site.instagramUrl ? `- Instagram: ${site.instagramUrl}` : '',
     '',
     '## Pages',

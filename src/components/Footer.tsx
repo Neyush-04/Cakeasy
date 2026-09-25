@@ -28,7 +28,7 @@ export default function Footer({ openPolicyModal, settings }: FooterProps) {
               </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Neha Chaudhary's custom cake studio in Greater Noida. Orders and availability are confirmed directly on WhatsApp.
+              Neha Chaudhary's premium cake boutique in Greater Noida. Orders and availability are confirmed directly on WhatsApp.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a
@@ -69,7 +69,7 @@ export default function Footer({ openPolicyModal, settings }: FooterProps) {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Studio</h3>
+            <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Boutique</h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-[#F6B8C8] shrink-0 mt-0.5" />

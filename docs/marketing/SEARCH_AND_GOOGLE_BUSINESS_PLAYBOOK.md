@@ -1,6 +1,6 @@
 # Google Search Console & Google Business Profile Playbook
 
-For a local cake studio, **Google Maps + the Business Profile** usually brings
+For a local cake boutique, **Google Maps + the Business Profile** usually brings
 more enquiries than the website's ranking in regular search. Do both, in this
 order. Time needed: about 1 hour, then 15 minutes a week.
 
@@ -70,9 +70,9 @@ still gets clicks, add a **Redirect** in the CMS.
    Google offers (for example *Wedding bakery*, *Bakery*, *Dessert shop*), only
    ones that are true.
 4. **Location**:
-   - If customers pick up cakes at the studio, show the address, exactly as in
+   - If customers pick up cakes from the boutique, show the address, exactly as in
      CMS › Studio settings.
-   - If it's a home studio customers don't visit, **hide the address** and set a
+   - If it's a home boutique customers don't visit, **hide the address** and set a
      **service area** instead (for example Greater Noida, Greater Noida West,
      Noida). List only areas Neha actually delivers to or serves.
 5. **Phone** `+91 88107 95004`, **website** `https://www.cakeasy.in/?utm_source=google&utm_medium=organic_local&utm_content=gbp`
@@ -110,7 +110,7 @@ Reviews are the strongest local signal, and the most policed.
 **Do**
 - After every delivered order, send the review link from Business Profile ›
   **Ask for reviews**, in the thank-you WhatsApp: "It was lovely making your
-  cake! If you have a minute, a Google review helps a small studio like ours
+  cake! If you have a minute, a Google review helps a small cake boutique like ours
   a lot: <link>".
 - Ask everyone the same way, happy or not.
 - Reply personally to each review. Handle complaints calmly and take details to
