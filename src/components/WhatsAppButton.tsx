@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Sparkles, X } from 'lucide-react';
 import { openWhatsApp } from '../lib/whatsapp';
+import { getConsent, onConsentChange, trackingConfigured } from '../lib/analytics';
 
 export default function WhatsAppButton() {
   const [showTooltip, setShowTooltip] = useState(false);
+  // Wait until the cookie banner is answered so the two never overlap.
+  const [consentPending, setConsentPending] = useState(() => trackingConfigured && !getConsent());
+
+  useEffect(() => onConsentChange(() => setConsentPending(false)), []);
 
   useEffect(() => {
+    if (consentPending) return;
     // Show tooltip after a slight delay to capture user attention without being intrusive
     const timer = setTimeout(() => {
       setShowTooltip(true);
     }, 4000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [consentPending]);
 
   const handleWhatsAppClick = () => {
     openWhatsApp('floating-button', "Hi Cakeasy! I'm visiting your website and would love to enquire about a custom cake.");

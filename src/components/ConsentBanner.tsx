@@ -29,7 +29,7 @@ export default function ConsentBanner() {
   };
 
   return (
-    <div role="dialog" aria-live="polite" aria-label="Cookie preferences" className="fixed inset-x-3 bottom-3 z-[60] sm:inset-x-auto sm:left-5 sm:bottom-5 sm:max-w-sm animate-fadeIn">
+    <div role="dialog" aria-live="polite" aria-label="Cookie preferences" className="fixed bottom-3 left-3 right-[88px] z-[60] sm:right-auto sm:left-5 sm:bottom-5 sm:max-w-sm animate-fadeIn">
       <div className="rounded-2xl border border-[#EDE3E2] bg-white p-4 shadow-[0_12px_40px_rgba(37,27,33,0.14)]">
         <p className="text-[13px] font-semibold text-[#251B21]">Cookies on Cakeasy</p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
