@@ -51,9 +51,9 @@ Instagram / WhatsApp / Google / print ──(tagged link)──▶ www.cakeasy.i
 | CMS, SEO per page, redirects, enquiries | Live since 24 Sep 2026 |
 | Google sign-in for the CMS | Enabled; www.cakeasy.in, cakeasy.in and cakeasy.vercel.app authorised |
 | Meta domain verification field | Available in CMS › Marketing & tracking |
-| Google Search Console | **Not yet verified.** See the playbook, step 1 |
-| Google Business Profile link on the site | **Not yet added** (CMS › Studio settings) |
-| GA4 | **Not connected** (no Measurement ID yet) |
-| Meta Pixel | **Not connected** (no Pixel ID yet) |
-| Media uploads | **Waiting.** Firebase Storage needs the Blaze plan; website photos can still be picked for previews |
+| Google Search Console | Verified 25 Sep 2026 (HTML tag in CMS); sitemap submitted; indexing requested for 5 key pages |
+| Google Business Profile | Verified listing; website link (tagged `gbp`) added; Maps link in CMS › Studio settings |
+| GA4 | Connected: account "Cakeasy" (pixiforu@gmail.com), `G-9PDRESRK1D` |
+| Meta Pixel | Connected: "Cakeasy Website" `2258784791546941`; `cakeasy.in` verified in the Cakeasy business portfolio |
+| Media uploads | Live (Firebase Storage on the Blaze plan) |
 | Instagram live gallery | **Waiting.** Needs `INSTAGRAM_ACCESS_TOKEN` in Vercel; the site shows the curated archive meanwhile |
