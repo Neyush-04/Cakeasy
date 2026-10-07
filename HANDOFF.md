@@ -69,6 +69,7 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - 2026-10-07: **Search Console "Not found (404)" alert** (Google email, 7 Oct). The report lists exactly 2 URLs, both from the previous site and not linked from the current one: `/shop` (now a built-in **301 → `/catalog`**, in `BUILT_IN_REDIRECTS`) and `/privacy-policy` (now a **real page**). Added real policy pages `/privacy-policy`, `/terms`, `/refund-policy` (`src/components/PolicyView.tsx`, in the sitemap at priority 0.2); the footer links to them and the old policy popup was removed. Google Ads/Meta ads need a privacy-policy URL: use `https://www.cakeasy.in/privacy-policy`. The other 10 "not indexed" pages are "Discovered – currently not indexed" (normal for a new site; nothing to fix). Deployed `a757ef9` and verified live (`/shop` → 301 `/catalog`; the 3 policy pages return 200 and are in the sitemap). In Search Console: **Validate Fix started 7 Oct 2026** on "Not found (404)" (Google says up to ~2 weeks), and indexing was requested for `/privacy-policy`. Check the result around 21 Oct.
 
 - 2026-10-07: **Indexing + local SEO release** (branch `seo-prerender-local`). Root cause of slow indexing / no AI visibility: every page served an empty `<div id="root">`, so crawlers that don't run JavaScript (most AI crawlers, Bing's first pass) saw no text. Now `api/_lib/prerender.ts` server-renders real, semantic HTML for each public page inside `#root` (nav links, h1, page copy, catalogue/gallery/FAQ text from the CMS, footer with address + hours); React replaces it on load. `/admin` stays empty. New Greater Noida landing pages from `shared/landing.ts` + `src/components/LandingView.tsx`: **`/custom-cakes-greater-noida`** and **`/eggless-cakes`** (facts only; in the footer, sitemap, llms.txt; FAQPage schema). Bakery schema now has geo, opening hours (from GBP), `hasMap`, `areaServed` (Greater Noida, Noida, Delhi NCR) and `knowsAbout`; inner pages get BreadcrumbList. `/contact` shows hours. `llms.txt` lists hours, areas, Maps link and FAQs. **IndexNow** (Bing/Yandex): key file `public/3427882d14bc3b1903b5011106a74b35.txt` (public by design), run `node scripts/indexnow.mjs` after publishing new pages. Deployed `39aa910` (preview checked first) and verified live: every public page serves 130–650 words of real HTML, `/admin` stays empty. IndexNow: 202 Accepted for 21 URLs. Search Console: sitemap resubmitted (Success, 21 pages); indexing requested for `/custom-cakes-greater-noida`, `/eggless-cakes`, `/catalog`, `/about`, `/contact`, `/cakes/birthday`, `/cakes/engagement`, `/cakes/anniversary` and `/` (daily quota). Still to request on a later day: `/cakes/bento`, `/cakes/designer`, `/weddings`, `/gallery`, `/consultation` (were requested on 25 Sep; re-request since content changed).
+- 2026-10-07 (with Piyush's OK): **Google Business Profile service area** set to **Greater Noida + Noida** (Uttar Pradesh). The yellow "review and confirm your info" prompt was still left for Piyush. **Bing Webmaster Tools** isn't signed up yet; signing up creates an account, so Piyush does that step himself (sign in at bing.com/webmasters with pixiforu Google → "Import from Google Search Console"). Claude can do the rest once signed in.
 
 ## Open / next
 0. Needs Piyush: (a) done: Blaze + Storage; (b) GA4: once the first real enquiry arrives, mark `generate_lead` as a key event (Admin › Events), and optionally link GA4 ↔ Google Ads ↔ Search Console; (c) done: Meta Pixel + domain verification; when ads start, set up an optimisation event on `Lead` in Events Manager; (d) confirm the GBP "review your info" prompt; (e) Ads: pick images, budget and launch himself (or tell Claude a budget).
@@ -81,16 +82,16 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 7. Spam protection for `/api/enquiry` is basic (validation, per-instance rate limit; the API accepts a `website` honeypot field but the forms don't send one yet). Consider Firebase App Check / Turnstile if spam appears.
 
 <!-- auto-snapshot:start -->
-## Auto snapshot (2026-10-07 15:55, Claude ended a turn)
+## Auto snapshot (2026-10-07 16:27, Claude ended a turn)
 Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
 
 - Branch: `main`
-- Last request in the session: An explicit index,follow robots tag is not required merely to make a page indexable; the critical test is that an unintended restrictive directive such as noindex is absent. Google's documentation identifies noindex as the directive that prevents indexing. Sitemap membership and three-level internal…
+- Last request in the session: This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation. Summary: 1. Primary Request and Intent: - Initial: "Cakeasy website": orient on the project. - Main request: "i want to create the cms same like we …
 - Uncommitted files (2), work in progress that is not committed yet:
   - `?? .claude/`
   - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
 - Last commits:
+  - 2026-10-07 3023342 docs: record indexing release, IndexNow and Search Console requests
+  - 2026-10-07 39aa910 feat: server-rendered page content, Greater Noida landing pages and IndexNow
   - 2026-10-07 3caa85e docs: record Search Console 404 fix and validation
-  - 2026-10-07 a757ef9 fix: resolve Search Console 404s with a /shop redirect and real policy pages
-  - 2026-09-26 6e2bdd8 docs: record gallery captions, catalogue and FAQ content going live
 <!-- auto-snapshot:end -->
