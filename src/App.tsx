@@ -17,6 +17,8 @@ import WhatsAppButton from './components/WhatsAppButton';
 import PageMeta from './components/PageMeta';
 import ConsentBanner from './components/ConsentBanner';
 import PolicyView from './components/PolicyView';
+import LandingView from './components/LandingView';
+import { LANDING_PAGES } from '../shared/landing';
 
 import { ALL_PRODUCTS } from './data';
 import { CAKE_CATEGORY_DATA } from './data/categoryData';
@@ -234,6 +236,9 @@ export default function App() {
               <Route path="/about" element={<AboutView />} />
               <Route path="/consultation" element={<ConsultationView faqs={content?.faqs ?? []} />} />
               <Route path="/contact" element={<ContactView />} />
+              {Object.values(LANDING_PAGES).map((page) => (
+                <Route key={page.path} path={page.path} element={<LandingView page={page} gallery={galleryEntries} faqs={content?.faqs ?? []} />} />
+              ))}
               <Route path="/privacy-policy" element={<PolicyView slug="privacy-policy" />} />
               <Route path="/terms" element={<PolicyView slug="terms" />} />
               <Route path="/refund-policy" element={<PolicyView slug="refund-policy" />} />

@@ -44,7 +44,7 @@ export const CAKE_CATEGORY_DATA: Record<CakeCategorySlug, CakeCategoryConfig> = 
     slug: 'birthday', navLabel: 'Birthday Cakes', eyebrow: 'Celebrations, made personal', title: 'A birthday centrepiece they will talk about after the candles are gone.',
     description: 'Kid themes, adult milestones, professions, hobbies and luxury birthday designs, from intimate cakes to statement tiers.', hero: gallery(28), images: [gallery(28), gallery(13), gallery(14), gallery(21), gallery(22)],
     styles: ['Kids themes and character cakes', 'Adult birthdays and milestones', 'Profession and hobby cakes', 'Number and message cakes', 'Luxury birthday centrepieces'],
-    note: 'Tell us the age, interest, serving size and the reaction you want. Eggless and flavour options can be discussed before confirmation.'
+    note: 'Tell us the age, interest, serving size and the reaction you want. Every cake is eggless by default; flavour options are discussed before confirmation.'
   },
   bento: {
     slug: 'bento', navLabel: 'Bento Cakes', eyebrow: 'Small, personal, giftable', title: 'A little cake for a very specific feeling.',

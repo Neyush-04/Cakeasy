@@ -1,10 +1,10 @@
 // Plain-text summary for AI assistants and answer engines. Facts only, drawn from site settings.
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { PUBLIC_ROUTES, absoluteUrl } from '../shared/site.js';
-import { getSeoOverrides, getSiteSettings } from './_lib/content.js';
+import { AREAS_SERVED, PUBLIC_ROUTES, absoluteUrl, hoursText } from '../shared/site.js';
+import { getPublicContent, getSeoOverrides, getSiteSettings } from './_lib/content.js';
 
 export default async function handler(_req: IncomingMessage, res: ServerResponse) {
-  const [site, seoMap] = await Promise.all([getSiteSettings(), getSeoOverrides()]);
+  const [site, seoMap, content] = await Promise.all([getSiteSettings(), getSeoOverrides(), getPublicContent()]);
   const pages = PUBLIC_ROUTES.filter((route) => (seoMap[route.path]?.index ?? route.index) !== false);
 
   const lines = [
@@ -22,7 +22,12 @@ export default async function handler(_req: IncomingMessage, res: ServerResponse
     `- Phone / WhatsApp: ${site.phoneDisplay}`,
     site.email ? `- Email: ${site.email}` : '',
     `- Boutique: ${site.address}`,
+    `- Opening hours: ${hoursText()}`,
+    `- Areas served: ${AREAS_SERVED.join(', ')}`,
+    site.googleBusinessUrl ? `- Google Maps: ${site.googleBusinessUrl}` : '',
     site.instagramUrl ? `- Instagram: ${site.instagramUrl}` : '',
+    '',
+    ...(content.faqs.length ? ['', '## Frequently asked questions', ...content.faqs.flatMap((faq) => [`### ${faq.question}`, faq.answer])] : []),
     '',
     '## Pages',
     ...pages.map((route) => `- [${seoMap[route.path]?.title || route.title}](${absoluteUrl(route.path)}): ${seoMap[route.path]?.description || route.description}`),

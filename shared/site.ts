@@ -91,6 +91,23 @@ export interface RouteSeo {
   priority?: number;
 }
 
+// From the Google Business Profile (Oct 2026). Shown on the site and in schema.
+export const OPENING_HOURS: { days: string; dayCodes: string[]; opens: string; closes: string }[] = [
+  { days: 'Monday to Friday', dayCodes: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '12:00', closes: '18:00' },
+  { days: 'Saturday', dayCodes: ['Saturday'], opens: '09:00', closes: '19:00' },
+];
+export const CLOSED_DAYS = 'Sunday';
+export const GEO = { latitude: 28.4484242, longitude: 77.5122827 };
+export const AREAS_SERVED = ['Greater Noida', 'Noida', 'Delhi NCR'];
+
+export function hoursText(): string {
+  const fmt = (time: string) => {
+    const [h, m] = time.split(':').map(Number);
+    return `${((h + 11) % 12) + 1}${m ? `:${String(m).padStart(2, '0')}` : ''} ${h < 12 ? 'am' : 'pm'}`;
+  };
+  return [...OPENING_HOURS.map((slot) => `${slot.days}: ${fmt(slot.opens)} – ${fmt(slot.closes)}`), `${CLOSED_DAYS}: closed`].join(' · ');
+}
+
 // Built-in SEO for every public route. The CMS can override any of these per path.
 export const PUBLIC_ROUTES: RouteSeo[] = [
   {
@@ -156,7 +173,7 @@ export const PUBLIC_ROUTES: RouteSeo[] = [
   {
     path: '/catalog',
     title: 'Our Cakes | Cakeasy Catalogue: Bento, Wedding & Celebration Cakes',
-    description: "Browse Cakeasy's bento cakes, wedding cakes, celebration cakes and cupcakes. Custom flavours and designs, handcrafted to order in Greater Noida.",
+    description: "Browse Cakeasy's eggless bento, wedding and celebration cakes and cupcakes. Custom flavours and designs, handcrafted to order in Greater Noida.",
     index: true, changefreq: 'weekly', priority: 0.8,
   },
   {
@@ -186,8 +203,20 @@ export const PUBLIC_ROUTES: RouteSeo[] = [
   {
     path: '/contact',
     title: 'Contact Cakeasy | WhatsApp Orders',
-    description: 'Contact Cakeasy on WhatsApp or Instagram, find the Greater Noida boutique address, and share a custom cake enquiry.',
+    description: 'Contact Cakeasy, the eggless cake boutique in Greater Noida: WhatsApp, address, opening hours and how to share a custom cake enquiry.',
     index: true, changefreq: 'monthly', priority: 0.6,
+  },
+  {
+    path: '/custom-cakes-greater-noida',
+    title: 'Custom Cakes in Greater Noida | Cakeasy Cake Boutique',
+    description: 'Premium custom cakes in Greater Noida by Neha Chaudhary: wedding, designer, birthday and bento cakes, all eggless. Serving Noida and Delhi NCR.',
+    index: true, changefreq: 'monthly', priority: 0.9,
+  },
+  {
+    path: '/eggless-cakes',
+    title: '100% Eggless Cakes in Greater Noida | Cakeasy',
+    description: 'Every Cakeasy cake is eggless by default: bespoke wedding, designer, birthday and bento cakes by Neha Chaudhary in Greater Noida, serving Delhi NCR.',
+    index: true, changefreq: 'monthly', priority: 0.9,
   },
   {
     path: '/privacy-policy',

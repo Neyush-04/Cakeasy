@@ -1,6 +1,6 @@
 # HANDOFF — Cakeasy
 
-_Last updated: 2026-09-24 by Claude (CMS foundation + SEO engine release). Update this file whenever you stop working._
+_Last updated: 2026-10-07 by Claude (indexing + local SEO release). Update this file whenever you stop working._
 
 ## What this is
 The **live** website for Cakeasy, a bespoke wedding & celebration cake studio run by founder/main baker **Neha Chaudhary**. Its story runs Lucknow (2021) → Delhi NCR → Greater Noida. Instagram: `@cakeasy99`. Treat changes as production-priority: the site is live.
@@ -68,6 +68,8 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 
 - 2026-10-07: **Search Console "Not found (404)" alert** (Google email, 7 Oct). The report lists exactly 2 URLs, both from the previous site and not linked from the current one: `/shop` (now a built-in **301 → `/catalog`**, in `BUILT_IN_REDIRECTS`) and `/privacy-policy` (now a **real page**). Added real policy pages `/privacy-policy`, `/terms`, `/refund-policy` (`src/components/PolicyView.tsx`, in the sitemap at priority 0.2); the footer links to them and the old policy popup was removed. Google Ads/Meta ads need a privacy-policy URL: use `https://www.cakeasy.in/privacy-policy`. The other 10 "not indexed" pages are "Discovered – currently not indexed" (normal for a new site; nothing to fix). Deployed `a757ef9` and verified live (`/shop` → 301 `/catalog`; the 3 policy pages return 200 and are in the sitemap). In Search Console: **Validate Fix started 7 Oct 2026** on "Not found (404)" (Google says up to ~2 weeks), and indexing was requested for `/privacy-policy`. Check the result around 21 Oct.
 
+- 2026-10-07: **Indexing + local SEO release** (branch `seo-prerender-local`). Root cause of slow indexing / no AI visibility: every page served an empty `<div id="root">`, so crawlers that don't run JavaScript (most AI crawlers, Bing's first pass) saw no text. Now `api/_lib/prerender.ts` server-renders real, semantic HTML for each public page inside `#root` (nav links, h1, page copy, catalogue/gallery/FAQ text from the CMS, footer with address + hours); React replaces it on load. `/admin` stays empty. New Greater Noida landing pages from `shared/landing.ts` + `src/components/LandingView.tsx`: **`/custom-cakes-greater-noida`** and **`/eggless-cakes`** (facts only; in the footer, sitemap, llms.txt; FAQPage schema). Bakery schema now has geo, opening hours (from GBP), `hasMap`, `areaServed` (Greater Noida, Noida, Delhi NCR) and `knowsAbout`; inner pages get BreadcrumbList. `/contact` shows hours. `llms.txt` lists hours, areas, Maps link and FAQs. **IndexNow** (Bing/Yandex): key file `public/3427882d14bc3b1903b5011106a74b35.txt` (public by design), run `node scripts/indexnow.mjs` after publishing new pages.
+
 ## Open / next
 0. Needs Piyush: (a) done: Blaze + Storage; (b) GA4: once the first real enquiry arrives, mark `generate_lead` as a key event (Admin › Events), and optionally link GA4 ↔ Google Ads ↔ Search Console; (c) done: Meta Pixel + domain verification; when ads start, set up an optimisation event on `Lead` in Events Manager; (d) confirm the GBP "review your info" prompt; (e) Ads: pick images, budget and launch himself (or tell Claude a budget).
 1. **Media uploads**: Firebase Storage requires upgrading the project from Spark to **Blaze** (pay-as-you-go; small usage is typically free). This is Piyush's decision. After upgrading: Storage → Get started, then `npx firebase-tools deploy --only storage --project gen-lang-client-0442655314`. The alternative is Vercel Blob (needs a store and token in Vercel).
@@ -79,16 +81,16 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 7. Spam protection for `/api/enquiry` is basic (validation, per-instance rate limit; the API accepts a `website` honeypot field but the forms don't send one yet). Consider Firebase App Check / Turnstile if spam appears.
 
 <!-- auto-snapshot:start -->
-## Auto snapshot (2026-10-07 15:26, Claude ended a turn)
+## Auto snapshot (2026-10-07 15:55, Claude ended a turn)
 Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
 
 - Branch: `main`
-- Last request in the session: calude rc
+- Last request in the session: An explicit index,follow robots tag is not required merely to make a page indexable; the critical test is that an unintended restrictive directive such as noindex is absent. Google's documentation identifies noindex as the directive that prevents indexing. Sitemap membership and three-level internal…
 - Uncommitted files (2), work in progress that is not committed yet:
   - `?? .claude/`
   - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
 - Last commits:
+  - 2026-10-07 3caa85e docs: record Search Console 404 fix and validation
+  - 2026-10-07 a757ef9 fix: resolve Search Console 404s with a /shop redirect and real policy pages
   - 2026-09-26 6e2bdd8 docs: record gallery captions, catalogue and FAQ content going live
-  - 2026-09-26 6a63d8d feat: CMS gallery, catalogue and FAQs; eggless-by-default messaging
-  - 2026-09-25 41d0d54 docs: record Storage, GA4 and Meta Pixel setup
 <!-- auto-snapshot:end -->

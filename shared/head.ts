@@ -1,7 +1,7 @@
 // Builds the SEO <head> block and the runtime payload injected into every page.
 import {
   DEFAULT_OG_IMAGE, GA4_ID_PATTERN, META_PIXEL_PATTERN, SITE_NAME, SITE_ORIGIN, VERIFICATION_TOKEN_PATTERN,
-  absoluteUrl, type MarketingSettings, type PublicRuntime, type RouteSeo, type SeoRecord, type SiteSettings,
+  AREAS_SERVED, GEO, OPENING_HOURS, absoluteUrl, type MarketingSettings, type PublicRuntime, type RouteSeo, type SeoRecord, type SiteSettings,
 } from './site.js';
 
 export type PageKind = 'public' | 'landing' | 'admin' | 'not-found';
@@ -71,7 +71,11 @@ export function businessJsonLd(site: SiteSettings): Record<string, unknown> {
       postalCode: site.postalCode,
       addressCountry: 'IN',
     },
-    areaServed: ['Greater Noida', 'Noida', 'Delhi NCR'],
+    areaServed: AREAS_SERVED.map((name) => ({ '@type': 'Place', name })),
+    geo: { '@type': 'GeoCoordinates', latitude: GEO.latitude, longitude: GEO.longitude },
+    openingHoursSpecification: OPENING_HOURS.map((slot) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: slot.dayCodes.map((day) => `https://schema.org/${day}`), opens: slot.opens, closes: slot.closes })),
+    hasMap: site.googleBusinessUrl || undefined,
+    knowsAbout: ['Wedding cakes', 'Engagement cakes', 'Anniversary cakes', 'Designer cakes', 'Birthday cakes', 'Bento cakes', 'Eggless cakes'],
     servesCuisine: 'Cakes & Desserts',
     priceRange: '₹₹',
     sameAs,
@@ -115,7 +119,19 @@ export function resolveSeo(options: {
     ogTitle: override?.ogTitle || title,
     ogDescription: override?.ogDescription || description,
     ogImage: absoluteUrl(override?.ogImage || DEFAULT_OG_IMAGE),
-    jsonLd: path === '/' ? [businessJsonLd(site), websiteJsonLd(), ...pageJsonLd] : [businessJsonLd(site), ...pageJsonLd],
+    jsonLd: path === '/' ? [businessJsonLd(site), websiteJsonLd(), ...pageJsonLd] : [businessJsonLd(site), breadcrumbJsonLd(path, title), ...pageJsonLd],
+  };
+}
+
+function breadcrumbJsonLd(path: string, title: string) {
+  const name = title.split(/ [|·] /)[0].trim() || title;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+      { '@type': 'ListItem', position: 2, name, item: absoluteUrl(path) },
+    ],
   };
 }
 
@@ -166,7 +182,7 @@ export function sanitizeMarketing(marketing: Partial<MarketingSettings>): Market
   };
 }
 
-export function injectIntoShell(shell: string, headHtml: string, runtime: PublicRuntime): string {
+export function injectIntoShell(shell: string, headHtml: string, runtime: PublicRuntime, bodyHtml = ''): string {
   const runtimeScript = `<script>window.__CAKEASY__=${safeJson(runtime)};</script>`;
   const start = shell.indexOf('<!--seo:start-->');
   const end = shell.indexOf('<!--seo:end-->');
@@ -174,5 +190,7 @@ export function injectIntoShell(shell: string, headHtml: string, runtime: Public
     ? `${shell.slice(0, start)}<!--seo:start-->\n    ${headHtml}\n    <!--seo:end-->${shell.slice(end + '<!--seo:end-->'.length)}`
     : shell.replace('</head>', `    ${headHtml}\n  </head>`);
   html = html.replace('</head>', `    ${runtimeScript}\n  </head>`);
+  // A function replacer, so "$" in page text is never treated as a replacement pattern.
+  if (bodyHtml) html = html.replace('<div id="root"></div>', () => `<div id="root">${bodyHtml}</div>`);
   return html;
 }

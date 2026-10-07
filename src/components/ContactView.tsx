@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Instagram, Send, Check } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Send, Check, Clock } from 'lucide-react';
+import { hoursText } from '../../shared/site';
 import { sendEnquiry } from '../lib/whatsapp';
 import { siteSettings } from '../lib/runtime';
 
@@ -51,6 +52,15 @@ export default function ContactView() {
               <div>
                 <h2 className="font-bold text-sm text-[#1E1E1E]">Boutique Address</h2>
                 <p className="text-xs text-gray-500 mt-0.5">{siteSettings.address.replace(/^Cakeasy,\s*/, '')}</p>
+                {siteSettings.googleBusinessUrl && <a href={siteSettings.googleBusinessUrl} target="_blank" rel="noreferrer" className="mt-1 inline-block text-[11px] font-bold uppercase tracking-wider text-[#D63384]">Open in Google Maps</a>}
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 p-5 bg-white border border-[#FFF5F8] rounded-2xl">
+              <Clock className="h-5 w-5 text-[#D63384] shrink-0 mt-0.5" />
+              <div>
+                <h2 className="font-bold text-sm text-[#1E1E1E]">Hours</h2>
+                {hoursText().split(' · ').map((line) => <p key={line} className="text-xs text-gray-500 mt-0.5">{line}</p>)}
               </div>
             </div>
 

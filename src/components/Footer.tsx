@@ -52,6 +52,8 @@ export default function Footer({ settings }: FooterProps) {
             <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Browse</h3>
             <ul className="space-y-2.5 text-sm">
               {[
+                ['/custom-cakes-greater-noida', 'Custom Cakes in Greater Noida'],
+                ['/eggless-cakes', '100% Eggless Cakes'],
                 ['/weddings', 'Wedding & Milestone Cakes'],
                 ['/cakes/designer', 'Designer Cakes'],
                 ['/catalog', 'Our Cakes'],

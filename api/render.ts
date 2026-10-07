@@ -7,9 +7,10 @@ import { buildHeadHtml, injectIntoShell, resolveSeo, type PageKind } from '../sh
 import { BUILT_IN_REDIRECTS, UTM_KEYS, findRoute, normalizePath } from '../shared/site.js';
 import { getMarketingSettings, getPublicContent, getRedirects, getSeoOverrides, getSiteSettings } from './_lib/content.js';
 import { faqJsonLd } from '../shared/content.js';
+import { renderBody } from './_lib/prerender.js';
 
 // Pages that display the published FAQs (and so may carry FAQPage schema).
-const FAQ_PAGES = new Set(['/consultation']);
+const FAQ_PAGES = new Set(['/consultation', '/eggless-cakes', '/custom-cakes-greater-noida']);
 
 type Req = IncomingMessage & { query?: Record<string, string | string[]> };
 
@@ -83,11 +84,18 @@ export default async function handler(req: Req, res: ServerResponse) {
   }
 
   const seo = resolveSeo({ path: pagePath, kind, route, override: seoMap[pagePath], site });
-  if (kind === 'public' && FAQ_PAGES.has(pagePath)) {
-    const faqSchema = faqJsonLd((await getPublicContent()).faqs);
+  const content = kind === 'admin' ? null : await getPublicContent();
+  if (content && kind === 'public' && FAQ_PAGES.has(pagePath)) {
+    const faqSchema = faqJsonLd(content.faqs);
     if (faqSchema) seo.jsonLd.push(faqSchema);
   }
-  const html = injectIntoShell(shell, buildHeadHtml(seo, marketing), { site, marketing, seo: seoMap });
+  let bodyHtml = '';
+  try {
+    bodyHtml = content ? renderBody(pagePath, kind, content, site) : '';
+  } catch (error) {
+    console.error('[render] body:', error instanceof Error ? error.message : error);
+  }
+  const html = injectIntoShell(shell, buildHeadHtml(seo, marketing), { site, marketing, seo: seoMap }, bodyHtml);
 
   res.statusCode = kind === 'not-found' ? 404 : 200;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
