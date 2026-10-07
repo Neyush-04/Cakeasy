@@ -66,6 +66,8 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - 2026-09-26: **Content modules**. CMS › Gallery (posts with up to 12 photos + alt text, category, year/date, featured, hidden, reorder, "Import current archive"), CMS › Catalogue (cakes with photo, price text, flavours, hide, reorder, "Import current catalogue"), CMS › FAQs (shown on /consultation as an accordion + FAQPage schema; "Add suggested FAQs" adds 6 hidden drafts). New Firestore collections `gallery`, `catalogue`, `faqs` (public read only when `published == true`; owner/editor write); legacy `products`/`instagram_posts` are now owner-only. Public data comes from `/api/content` (edge-cached ~2 min); while a collection is empty the site uses the built-in archive/catalogue (`src/lib/content.ts`). Eggless-by-default copy on home, catalogue (replaced the dead "Ask about eggless" checkbox), product modal, consultation dietary field, schema and llms.txt. Fixed: the catalogue list didn't refresh when products changed.
 - 2026-09-26 (live CMS, via Piyush's Chrome): imported the 30-post archive and wrote factual captions, alt text and corrected categories for every post (no customer/child names, even where toppers show them). Featured: 8 (floral cascade), 9 (engagement), 10 (anniversary), 20 (suspended-tier wedding). Imported the 6-cake catalogue **with its existing prices** (Neha should confirm them). Added and published the 6 suggested FAQs; `/consultation` now has FAQPage schema. The home CMS description now says "100% eggless". Note: `/api/content` is edge-cached with stale-while-revalidate, so the first visitor after a change may still see the old version once.
 
+- 2026-10-07: **Search Console "Not found (404)" alert** (Google email, 7 Oct). The report lists exactly 2 URLs, both from the previous site and not linked from the current one: `/shop` (now a built-in **301 → `/catalog`**, in `BUILT_IN_REDIRECTS`) and `/privacy-policy` (now a **real page**). Added real policy pages `/privacy-policy`, `/terms`, `/refund-policy` (`src/components/PolicyView.tsx`, in the sitemap at priority 0.2); the footer links to them and the old policy popup was removed. Google Ads/Meta ads need a privacy-policy URL: use `https://www.cakeasy.in/privacy-policy`. The other 10 "not indexed" pages are "Discovered – currently not indexed" (normal for a new site; nothing to fix).
+
 ## Open / next
 0. Needs Piyush: (a) done: Blaze + Storage; (b) GA4: once the first real enquiry arrives, mark `generate_lead` as a key event (Admin › Events), and optionally link GA4 ↔ Google Ads ↔ Search Console; (c) done: Meta Pixel + domain verification; when ads start, set up an optimisation event on `Lead` in Events Manager; (d) confirm the GBP "review your info" prompt; (e) Ads: pick images, budget and launch himself (or tell Claude a budget).
 1. **Media uploads**: Firebase Storage requires upgrading the project from Spark to **Blaze** (pay-as-you-go; small usage is typically free). This is Piyush's decision. After upgrading: Storage → Get started, then `npx firebase-tools deploy --only storage --project gen-lang-client-0442655314`. The alternative is Vercel Blob (needs a store and token in Vercel).
@@ -75,3 +77,18 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 5. Performance: public JS bundle is ~535 KB (159 KB gz). Route-level code splitting would help. Images are unoptimised JPEGs.
 6. Instagram access token: store it only in Vercel as `INSTAGRAM_ACCESS_TOKEN` (+ `INSTAGRAM_MEDIA_LIMIT=50`). `/api/instagram` returns 503 until then (the site falls back to the local gallery).
 7. Spam protection for `/api/enquiry` is basic (validation, per-instance rate limit; the API accepts a `website` honeypot field but the forms don't send one yet). Consider Firebase App Check / Turnstile if spam appears.
+
+<!-- auto-snapshot:start -->
+## Auto snapshot (2026-10-07 15:26, Claude ended a turn)
+Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
+
+- Branch: `main`
+- Last request in the session: calude rc
+- Uncommitted files (2), work in progress that is not committed yet:
+  - `?? .claude/`
+  - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
+- Last commits:
+  - 2026-09-26 6e2bdd8 docs: record gallery captions, catalogue and FAQ content going live
+  - 2026-09-26 6a63d8d feat: CMS gallery, catalogue and FAQs; eggless-by-default messaging
+  - 2026-09-25 41d0d54 docs: record Storage, GA4 and Meta Pixel setup
+<!-- auto-snapshot:end -->

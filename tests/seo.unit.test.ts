@@ -111,3 +111,13 @@ test('enquiry validation requires contact details and strips junk', () => {
   }
   assert.ok('value' in validateEnquiry({ kind: 'custom-cake', details: { Flavour: 'Vanilla' } }));
 });
+
+test('old-site addresses from Search Console are handled', async () => {
+  const { BUILT_IN_REDIRECTS } = await import('../shared/site.ts');
+  assert.equal(BUILT_IN_REDIRECTS['/shop'], '/catalog');
+  for (const path of ['/privacy-policy', '/terms', '/refund-policy']) {
+    const route = findRoute(path);
+    assert.ok(route, `${path} should be a public page`);
+    assert.equal(route!.index, true);
+  }
+});

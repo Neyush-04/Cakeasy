@@ -7,11 +7,11 @@ import { trackWhatsAppClick, trackingConfigured } from '../lib/analytics';
 import { OPEN_CONSENT_EVENT } from './ConsentBanner';
 
 interface FooterProps {
-  openPolicyModal: (policyType: string) => void;
+
   settings?: AtelierSettings;
 }
 
-export default function Footer({ openPolicyModal, settings }: FooterProps) {
+export default function Footer({ settings }: FooterProps) {
   const social = 'h-8 w-8 rounded-full bg-neutral-800 hover:bg-[#D63384] text-gray-300 hover:text-white flex items-center justify-center transition-all';
 
   return (
@@ -89,19 +89,19 @@ export default function Footer({ openPolicyModal, settings }: FooterProps) {
             <h3 className="text-sm font-semibold tracking-wider uppercase text-[#F6B8C8]">Policies</h3>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <button onClick={() => openPolicyModal('privacy')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors text-left w-full block">
                   Privacy Policy
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => openPolicyModal('terms')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
+                <Link to="/terms" className="text-gray-400 hover:text-white transition-colors text-left w-full block">
                   Terms of Service
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => openPolicyModal('refund')} className="text-gray-400 hover:text-white transition-colors text-left w-full">
+                <Link to="/refund-policy" className="text-gray-400 hover:text-white transition-colors text-left w-full block">
                   Cancellation & Refund Policy
-                </button>
+                </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-gray-400 hover:text-white transition-colors text-left w-full block">

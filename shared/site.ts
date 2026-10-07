@@ -189,11 +189,31 @@ export const PUBLIC_ROUTES: RouteSeo[] = [
     description: 'Contact Cakeasy on WhatsApp or Instagram, find the Greater Noida boutique address, and share a custom cake enquiry.',
     index: true, changefreq: 'monthly', priority: 0.6,
   },
+  {
+    path: '/privacy-policy',
+    title: 'Privacy Policy | Cakeasy',
+    description: 'How Cakeasy handles the details you share in an enquiry, cookies and measurement, and how to see, correct or delete your information.',
+    index: true, changefreq: 'monthly', priority: 0.2,
+  },
+  {
+    path: '/terms',
+    title: 'Terms of Service | Cakeasy',
+    description: 'How Cakeasy confirms custom cake orders on WhatsApp, eggless-by-default cakes and use of website photos.',
+    index: true, changefreq: 'monthly', priority: 0.2,
+  },
+  {
+    path: '/refund-policy',
+    title: 'Cancellation & Refund Policy | Cakeasy',
+    description: 'Cancellation and refund terms for Cakeasy custom cake orders are confirmed directly before an order is accepted.',
+    index: true, changefreq: 'monthly', priority: 0.2,
+  },
 ];
 
 // Permanent moves that must keep working regardless of CMS content.
 export const BUILT_IN_REDIRECTS: Record<string, string> = {
   '/cakes/wedding': '/weddings',
+  // From the previous site (Search Console 404s, Oct 2026).
+  '/shop': '/catalog',
 };
 
 // Paths the CMS may never claim for a landing page or redirect source.

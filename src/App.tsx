@@ -16,6 +16,7 @@ import QuickViewModal from './components/QuickViewModal';
 import WhatsAppButton from './components/WhatsAppButton';
 import PageMeta from './components/PageMeta';
 import ConsentBanner from './components/ConsentBanner';
+import PolicyView from './components/PolicyView';
 
 import { ALL_PRODUCTS } from './data';
 import { CAKE_CATEGORY_DATA } from './data/categoryData';
@@ -102,8 +103,6 @@ export default function App() {
     return () => controller.abort();
   }, [isAdmin]);
 
-  // Policy Modal States
-  const [activePolicy, setActivePolicy] = useState<string | null>(null);
 
   if (isAdmin) {
     return (
@@ -235,6 +234,9 @@ export default function App() {
               <Route path="/about" element={<AboutView />} />
               <Route path="/consultation" element={<ConsultationView faqs={content?.faqs ?? []} />} />
               <Route path="/contact" element={<ContactView />} />
+              <Route path="/privacy-policy" element={<PolicyView slug="privacy-policy" />} />
+              <Route path="/terms" element={<PolicyView slug="terms" />} />
+              <Route path="/refund-policy" element={<PolicyView slug="refund-policy" />} />
               <Route path="*" element={<NotFoundView />} />
             </Routes>
           </motion.div>
@@ -243,7 +245,6 @@ export default function App() {
 
       {/* 3. PREMIUM PERSISTENT FOOTER */}
       <Footer
-        openPolicyModal={(policyType) => setActivePolicy(policyType)}
         settings={atelierSettings}
       />
 
@@ -275,62 +276,6 @@ export default function App() {
         />
       )}
 
-      {/* 7. POLICY MODALS SCREEN (PRIVACY, TERMS, CANCELLATION) */}
-      {activePolicy && (
-        <div className="fixed inset-0 z-50 bg-[#1E1E1E]/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-[32px] p-8 max-w-2xl w-full border border-[#FFF5F8] text-left space-y-6 shadow-2xl animate-scaleIn max-h-[85vh] overflow-y-auto">
-            <div className="flex justify-between items-center pb-4 border-b border-gray-50 shrink-0">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-[#D63384]" />
-                <h3 className="font-serif font-bold text-xl text-[#1E1E1E]">
-                  {activePolicy === 'privacy' && 'Privacy Policy'}
-                  {activePolicy === 'terms' && 'Terms of Service'}
-                  {activePolicy === 'refund' && 'Cancellation & Refund Guidelines'}
-                </h3>
-              </div>
-              <button
-                onClick={() => setActivePolicy(null)}
-                className="h-9 w-9 hover:bg-[#FFF5F8] text-gray-400 hover:text-[#D63384] rounded-full flex items-center justify-center transition-colors"
-                aria-label="Close"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs text-gray-500 leading-relaxed font-sans">
-              {activePolicy === 'privacy' && (
-                <>
-                  <p>When you send an enquiry from this website (consultation brief, custom cake simulator, contact form or enquiry list), Cakeasy saves the details you enter, such as your name, phone, email, event date and cake brief, so that Neha can reply and prepare a quotation. The conversation then continues on WhatsApp.</p>
-                  <p>We also note how you reached the site (for example an Instagram or Google campaign link) to understand which channels help people find us. Photos you choose in the forms are not uploaded; you attach them yourself in WhatsApp.</p>
-                  <p>Optional analytics and advertising cookies are used only if you accept them, and you can change that choice at any time from "Cookie preferences" in the footer. The website does not offer customer accounts or online payment.</p>
-                  <p>To see, correct or delete the details of your enquiry, message Cakeasy on WhatsApp or email {siteSettings.email}.</p>
-                </>
-              )}
-
-              {activePolicy === 'terms' && (
-                <>
-                  <p>Cake designs, availability, pricing, delivery, and pickup details are confirmed directly with Cakeasy before an order is accepted.</p>
-                </>
-              )}
-
-              {activePolicy === 'refund' && (
-                <>
-                  <p>Cancellation and refund terms for a custom order are confirmed directly with Cakeasy before the order is accepted.</p>
-                </>
-              )}
-            </div>
-
-            <div className="pt-4 border-t border-gray-50 text-right">
-              <button
-                onClick={() => setActivePolicy(null)}
-                className="bg-[#D63384] hover:bg-[#b02266] text-white text-xs font-bold uppercase tracking-wider px-6 py-2.5 rounded-xl transition-all"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
