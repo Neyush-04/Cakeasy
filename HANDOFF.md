@@ -1,6 +1,6 @@
 # HANDOFF — Cakeasy
 
-_Last updated: 2026-10-07 by Claude (indexing + local SEO release). Update this file whenever you stop working._
+_Last updated: 2026-10-09 by Codex (first website sale + Google indexing follow-up). Update this file whenever you stop working._
 
 ## What this is
 The **live** website for Cakeasy, a bespoke wedding & celebration cake studio run by founder/main baker **Neha Chaudhary**. Its story runs Lucknow (2021) → Delhi NCR → Greater Noida. Instagram: `@cakeasy99`. Treat changes as production-priority: the site is live.
@@ -72,26 +72,38 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - 2026-10-07 (with Piyush's OK): **Google Business Profile service area** set to **Greater Noida + Noida** (Uttar Pradesh). The yellow "review and confirm your info" prompt was still left for Piyush. **Bing Webmaster Tools** isn't signed up yet; signing up creates an account, so Piyush does that step himself (sign in at bing.com/webmasters with pixiforu Google → "Import from Google Search Console"). Claude can do the rest once signed in.
 
 ## Open / next
-0. Needs Piyush: (a) done: Blaze + Storage; (b) GA4: once the first real enquiry arrives, mark `generate_lead` as a key event (Admin › Events), and optionally link GA4 ↔ Google Ads ↔ Search Console; (c) done: Meta Pixel + domain verification; when ads start, set up an optimisation event on `Lead` in Events Manager; (d) confirm the GBP "review your info" prompt; (e) Ads: pick images, budget and launch himself (or tell Claude a budget).
-1. **Media uploads**: Firebase Storage requires upgrading the project from Spark to **Blaze** (pay-as-you-go; small usage is typically free). This is Piyush's decision. After upgrading: Storage → Get started, then `npx firebase-tools deploy --only storage --project gen-lang-client-0442655314`. The alternative is Vercel Blob (needs a store and token in Vercel).
-2. Delete the 3 QA enquiries in CMS → Enquiries (named "QA Test (Claude)…": CK-1371A3, CK-23030A, CK-1B0925).
-3. Marketing setup from the kit: verify Search Console, submit the sitemap, set up the Google Business Profile and link it, then connect GA4/Pixel. Paste the suggested SEO titles from `LOCAL_SEO_KEYWORD_MAP.md` once Neha approves them.
-4. Phase 4: content modules (cakes/catalogue, gallery archive metadata, FAQs, landing-page builder), then new SEO landing pages.
-5. Performance: public JS bundle is ~535 KB (159 KB gz). Route-level code splitting would help. Images are unoptimised JPEGs.
-6. Instagram access token: store it only in Vercel as `INSTAGRAM_ACCESS_TOKEN` (+ `INSTAGRAM_MEDIA_LIMIT=50`). `/api/instagram` returns 503 until then (the site falls back to the local gallery).
-7. Spam protection for `/api/enquiry` is basic (validation, per-instance rate limit; the API accepts a `website` honeypot field but the forms don't send one yet). Consider Firebase App Check / Turnstile if spam appears.
+### Current follow-up (2026-10-09)
+- Piyush reported Cakeasy's **first website sale on 9 October 2026**. He shared a screenshot of an AI recommendation naming Cakeasy by Neha Chaudhary; this is user-reported sale evidence, not independently verified conversion attribution. No customer details stored here.
+- Live technical audit completed: all **21 sitemap URLs** return 200, have matching canonical URLs, one H1, indexable robots metadata and real server-rendered page content. robots.txt permits public pages and lists the canonical sitemap.
+- Completed the five priority inspections from 7 Oct (`/cakes/bento`, `/cakes/designer`, `/weddings`, `/gallery`, `/consultation`); outcomes below and in `docs/marketing/INDEXING_STATUS.md`.
+- Search Console follow-up: overview shows **6 indexed / 12 not indexed** and **2 web search clicks**. Bento (`/cakes/bento`) is already indexed; Googlebot smartphone successfully crawled it **8 Oct 2026 at 02:43**, after the prerender release. No repeat request needed for that page.
+- Designer (`/cakes/designer`) is also indexed, successfully crawled **8 Oct 2026 at 03:58**. It has a valid breadcrumb and Google selected the inspected URL as canonical.
+- Weddings is indexed but its last crawl is **25 Sep 2026 at 20:22** (before prerender). Google confirmed **Indexing requested** on 9 Oct after its live eligibility test. Acceptance is a crawl request, not evidence that the updated page has been recrawled yet.
+- Gallery is indexed, successfully crawled **7 Oct 2026 at 21:25**, with valid breadcrumbs and the correct selected canonical. No repeat request needed.
+- Consultation is indexed, last crawled **29 Sep 2026 at 02:59** (before prerender). Google confirmed **Indexing requested** for its updated version on 9 Oct. All five priority-page follow-ups are now complete: three fresh crawls, two accepted recrawl requests.
+- Sitemap report: **Success**, submitted/read **7 Oct**, **21 discovered pages**. Pages report's last update is **4 Oct**; its 10 discovered-not-indexed and 2 old 404 entries therefore predate the release, while URL Inspection shows fresher crawl results. The 404 validation still shows **Started**. No new error category observed. Removed obsolete pending items from this handoff; automatic snapshot markers/content remain untouched.
+- Verification passed: `npm.cmd run lint` and `npm.cmd run build` (9 Oct); live `/shop` 301 to `/catalog`, `/cakes/wedding` 301 to `/weddings`, privacy page 200, an unknown route 404/noindex, and `/admin` noindex. This pass changes documentation only; no public content changed, so no repeat IndexNow submission was sent.
+
+1. Indexing: review accepted Weddings/Consultation recrawl requests and the newer Pages report at the next check; review 404 validation around **21 Oct 2026**. Set up Bing Webmaster Tools when the owner is signed in; IndexNow already accepted the 21 URLs on 7 Oct.
+2. Measurement: check whether `generate_lead` has arrived in Cakeasy GA4 and mark it as a key event. First sale is reported, but a WhatsApp order alone does not prove a saved form enquiry fired this event. Optional GA4 links to Google Ads and Search Console remain.
+3. Business/ads: confirm GBP's "review your info" prompt. Ads need approved images, budget and launch direction; Meta `Lead` optimisation can be configured when ads begin. No campaign has been launched.
+4. CMS: Neha should confirm the six imported catalogue prices. Gallery, catalogue, FAQs, Storage, Search Console verification, GA4 and Meta Pixel are complete. A general landing-page builder remains future scope; two factual local SEO landing pages are live.
+5. QA enquiries: three were marked spam on 25 Sep (CK-1371A3, CK-23030A, CK-1B0925). Deletion is optional housekeeping, not a deployment blocker.
+6. Performance: public JS is about 553 KB / 164 KB gzipped (9 Oct build); admin chunk 830 KB / 211 KB gzipped. Route splitting and JPEG optimisation remain.
+7. Instagram: `INSTAGRAM_ACCESS_TOKEN` and optional `INSTAGRAM_MEDIA_LIMIT=50` belong only in Vercel. Verify current endpoint status before assuming the integration is configured; local/CMS gallery fallback is available.
+8. Spam protection: basic validation and per-instance rate limit; forms do not yet send the accepted `website` honeypot. Consider stronger protection if spam appears.
 
 <!-- auto-snapshot:start -->
-## Auto snapshot (2026-10-07 16:27, Claude ended a turn)
+## Auto snapshot (2026-10-07 18:24, Claude ended a turn)
 Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
 
 - Branch: `main`
-- Last request in the session: This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation. Summary: 1. Primary Request and Intent: - Initial: "Cakeasy website": orient on the project. - Main request: "i want to create the cms same like we …
+- Last request in the session: yes
 - Uncommitted files (2), work in progress that is not committed yet:
   - `?? .claude/`
   - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
 - Last commits:
+  - 2026-10-07 28427c2 docs: record GBP service area and Bing Webmaster next step
   - 2026-10-07 3023342 docs: record indexing release, IndexNow and Search Console requests
   - 2026-10-07 39aa910 feat: server-rendered page content, Greater Noida landing pages and IndexNow
-  - 2026-10-07 3caa85e docs: record Search Console 404 fix and validation
 <!-- auto-snapshot:end -->
