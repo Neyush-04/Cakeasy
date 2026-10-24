@@ -1,6 +1,6 @@
 # HANDOFF — Cakeasy
 
-_Last updated: 2026-10-24 by Claude (Meta developer app + Instagram feed live). Update this file whenever you stop working._
+_Last updated: 2026-10-24 by Claude (Meta app, Instagram feed live, Search Console check). Update this file whenever you stop working._
 
 ## What this is
 The **live** website for Cakeasy, a bespoke wedding & celebration cake studio run by founder/main baker **Neha Chaudhary**. Its story runs Lucknow (2021) → Delhi NCR → Greater Noida. Instagram: `@cakeasy99`. Treat changes as production-priority: the site is live.
@@ -73,6 +73,8 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 
 - 2026-10-24 (via the Cakeasy Chrome profile, cakeasy94): **Meta for Developers** app "Cakeasy Website" (App ID `2258784791546941`, business "Cakeasy", mode In development). Checked and fixed: Basic settings now have App domain `cakeasy.in`, Privacy policy `https://www.cakeasy.in/privacy-policy`, Terms `https://www.cakeasy.in/terms`, data deletion URL = the privacy page (it says how to delete an enquiry), category "Business and pages" (saved). Not set: app icon (1024×1024; only needed to publish). Instagram use case is set up: Instagram app "Cakeasy Website-IG" (id `1368522001905707`), permission `instagram_business_basic` is enough for the gallery, **`cakeasy99` is already an Instagram Tester and added under "Generate access tokens"**. Webhooks / business login / publishing are not needed. **Token added to Vercel by Piyush and redeployed (24 Oct 2026): `/api/instagram` now returns 200 with 100 posts** (verified live). The public gallery still prefers the curated CMS Gallery (30 posts); the Instagram feed is only its fallback and powers the CMS dashboard check. **The token expires in about 60 days (around 23 Dec 2026): renew it** (Meta app > Use cases > Instagram API setup > Generate token, then update `INSTAGRAM_ACCESS_TOKEN` in Vercel and redeploy).
 
+- 2026-10-24 (Search Console check, via Piyush's Chrome): **16 pages indexed (was 6), 6 not indexed.** The "Not found (404)" validation **Passed**. Not indexed: 1 "Page with redirect" (expected: an old URL that 301s, nothing to fix) and 5 "Discovered - currently not indexed": `/custom`, `/cakes/cupcakes`, `/cakes/dessert-boxes`, `/cakes/pastries` (indexing requested for these 4 today) and `/terms` (low value, left alone). Search, last 28 days: 4 clicks, 102 impressions, average position 9.6; queries include "cakeasy", "bento cake", "engagement cake noida", "designer cakes in noida", "customised cake in noida". Re-check these 4 pages in about a week.
+
 ## Open / next
 ### Current follow-up (2026-10-09)
 - Piyush reported Cakeasy's **first website sale on 9 October 2026**. He shared a screenshot of an AI recommendation naming Cakeasy by Neha Chaudhary; this is user-reported sale evidence, not independently verified conversion attribution. No customer details stored here.
@@ -96,16 +98,16 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 8. Spam protection: basic validation and per-instance rate limit; forms do not yet send the accepted `website` honeypot. Consider stronger protection if spam appears.
 
 <!-- auto-snapshot:start -->
-## Auto snapshot (2026-10-24 09:03, Claude ended a turn)
+## Auto snapshot (2026-10-24 09:10, Claude ended a turn)
 Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
 
 - Branch: `main`
-- Last request in the session: Base directory for this skill: C:\Users\pixif\AppData\Local\Claude-Data\claude_pzs8sxrjxfjjc\local-agent-mode-sessions\skills-plugin\e50ad251-15e2-4ef3-b16e-5cece05db346\81601a80-5663-4ebc-bf9a-74639c8139c6\skills\chrome-browser # Claude in Chrome Claude in Chrome is a browser extension. Its tools, …
+- Last request in the session: done and redeployed
 - Uncommitted files (2), work in progress that is not committed yet:
   - `?? .claude/`
   - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
 - Last commits:
+  - 2026-10-24 f8e00ed docs: Instagram feed live, token renewal date
   - 2026-10-24 f75ae4a docs: record Meta developer app settings and Instagram token next step
   - 2026-10-09 e20fe75 docs: record first sale and verified Google indexing follow-up
-  - 2026-10-07 28427c2 docs: record GBP service area and Bing Webmaster next step
 <!-- auto-snapshot:end -->
