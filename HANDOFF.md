@@ -1,6 +1,6 @@
 # HANDOFF — Cakeasy
 
-_Last updated: 2026-10-09 by Codex (first website sale + Google indexing follow-up). Update this file whenever you stop working._
+_Last updated: 2026-10-24 by Claude (Meta developer app check). Update this file whenever you stop working._
 
 ## What this is
 The **live** website for Cakeasy, a bespoke wedding & celebration cake studio run by founder/main baker **Neha Chaudhary**. Its story runs Lucknow (2021) → Delhi NCR → Greater Noida. Instagram: `@cakeasy99`. Treat changes as production-priority: the site is live.
@@ -71,6 +71,8 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - 2026-10-07: **Indexing + local SEO release** (branch `seo-prerender-local`). Root cause of slow indexing / no AI visibility: every page served an empty `<div id="root">`, so crawlers that don't run JavaScript (most AI crawlers, Bing's first pass) saw no text. Now `api/_lib/prerender.ts` server-renders real, semantic HTML for each public page inside `#root` (nav links, h1, page copy, catalogue/gallery/FAQ text from the CMS, footer with address + hours); React replaces it on load. `/admin` stays empty. New Greater Noida landing pages from `shared/landing.ts` + `src/components/LandingView.tsx`: **`/custom-cakes-greater-noida`** and **`/eggless-cakes`** (facts only; in the footer, sitemap, llms.txt; FAQPage schema). Bakery schema now has geo, opening hours (from GBP), `hasMap`, `areaServed` (Greater Noida, Noida, Delhi NCR) and `knowsAbout`; inner pages get BreadcrumbList. `/contact` shows hours. `llms.txt` lists hours, areas, Maps link and FAQs. **IndexNow** (Bing/Yandex): key file `public/3427882d14bc3b1903b5011106a74b35.txt` (public by design), run `node scripts/indexnow.mjs` after publishing new pages. Deployed `39aa910` (preview checked first) and verified live: every public page serves 130–650 words of real HTML, `/admin` stays empty. IndexNow: 202 Accepted for 21 URLs. Search Console: sitemap resubmitted (Success, 21 pages); indexing requested for `/custom-cakes-greater-noida`, `/eggless-cakes`, `/catalog`, `/about`, `/contact`, `/cakes/birthday`, `/cakes/engagement`, `/cakes/anniversary` and `/` (daily quota). Still to request on a later day: `/cakes/bento`, `/cakes/designer`, `/weddings`, `/gallery`, `/consultation` (were requested on 25 Sep; re-request since content changed).
 - 2026-10-07 (with Piyush's OK): **Google Business Profile service area** set to **Greater Noida + Noida** (Uttar Pradesh). The yellow "review and confirm your info" prompt was still left for Piyush. **Bing Webmaster Tools** isn't signed up yet; signing up creates an account, so Piyush does that step himself (sign in at bing.com/webmasters with pixiforu Google → "Import from Google Search Console"). Claude can do the rest once signed in.
 
+- 2026-10-24 (via the Cakeasy Chrome profile, cakeasy94): **Meta for Developers** app "Cakeasy Website" (App ID `2258784791546941`, business "Cakeasy", mode In development). Checked and fixed: Basic settings now have App domain `cakeasy.in`, Privacy policy `https://www.cakeasy.in/privacy-policy`, Terms `https://www.cakeasy.in/terms`, data deletion URL = the privacy page (it says how to delete an enquiry), category "Business and pages" (saved). Not set: app icon (1024×1024; only needed to publish). Instagram use case is set up: Instagram app "Cakeasy Website-IG" (id `1368522001905707`), permission `instagram_business_basic` is enough for the gallery, **`cakeasy99` is already an Instagram Tester and added under "Generate access tokens"**. Webhooks / business login / publishing are not needed. **`/api/instagram` still returns 503 "not configured"** because the token is not in Vercel yet (Piyush does this step; Claude must not handle the token).
+
 ## Open / next
 ### Current follow-up (2026-10-09)
 - Piyush reported Cakeasy's **first website sale on 9 October 2026**. He shared a screenshot of an AI recommendation naming Cakeasy by Neha Chaudhary; this is user-reported sale evidence, not independently verified conversion attribution. No customer details stored here.
@@ -94,16 +96,16 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 8. Spam protection: basic validation and per-instance rate limit; forms do not yet send the accepted `website` honeypot. Consider stronger protection if spam appears.
 
 <!-- auto-snapshot:start -->
-## Auto snapshot (2026-10-07 18:24, Claude ended a turn)
+## Auto snapshot (2026-10-17 21:32, Claude ended a turn)
 Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
 
 - Branch: `main`
-- Last request in the session: yes
+- Last request in the session: what to do next
 - Uncommitted files (2), work in progress that is not committed yet:
   - `?? .claude/`
   - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
 - Last commits:
+  - 2026-10-09 e20fe75 docs: record first sale and verified Google indexing follow-up
   - 2026-10-07 28427c2 docs: record GBP service area and Bing Webmaster next step
   - 2026-10-07 3023342 docs: record indexing release, IndexNow and Search Console requests
-  - 2026-10-07 39aa910 feat: server-rendered page content, Greater Noida landing pages and IndexNow
 <!-- auto-snapshot:end -->
