@@ -1,6 +1,6 @@
 # HANDOFF — Cakeasy
 
-_Last updated: 2026-10-24 by Claude (Meta app, Instagram feed live, Search Console check). Update this file whenever you stop working._
+_Last updated: 2026-11-02 by Codex (repository consolidation complete; performance issue assessed). Update this file whenever you stop working._
 
 ## What this is
 The **live** website for Cakeasy, a bespoke wedding & celebration cake studio run by founder/main baker **Neha Chaudhary**. Its story runs Lucknow (2021) → Delhi NCR → Greater Noida. Instagram: `@cakeasy99`. Treat changes as production-priority: the site is live.
@@ -76,6 +76,15 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 - 2026-10-24 (Search Console check, via Piyush's Chrome): **16 pages indexed (was 6), 6 not indexed.** The "Not found (404)" validation **Passed**. Not indexed: 1 "Page with redirect" (expected: an old URL that 301s, nothing to fix) and 5 "Discovered - currently not indexed": `/custom`, `/cakes/cupcakes`, `/cakes/dessert-boxes`, `/cakes/pastries` (indexing requested for these 4 today) and `/terms` (low value, left alone). Search, last 28 days: 4 clicks, 102 impressions, average position 9.6; queries include "cakeasy", "bento cake", "engagement cake noida", "designer cakes in noida", "customised cake in noida". Re-check these 4 pages in about a week.
 
 ## Open / next
+### Current work (2026-11-02)
+- Piyush requested committing/merging everything, then starting the next issues. Fetched origin: every remote branch is already an ancestor of `main`; no unmerged commits and no open PRs. Existing uncommitted handoff change was only Claude's automatic snapshot; preserved it.
+- `.claude/launch.json` has no secrets; corrected its dev port from 5173 to the actual 3000 and will track it. Verified all 15 nested collateral PDFs are byte-identical to the tracked parent PDFs; preserved those local copies and added only the duplicate folder to `.gitignore`.
+- Agent Chat at `127.0.0.1:4747` refused the connection. Did not start the server or contact Claude through another route.
+- Next implementation: route-level code splitting to reduce the initial public JS bundle (553 KB / 164 KB gzipped on 9 Oct). Keep home/Neha and server-rendered SEO unchanged; verify client navigation and direct links before pushing.
+- Consolidation verification: lint, production build and all 23 unit tests passed on 2 Nov. Baseline remains public JS 553.35 KB / 163.87 KB gzipped; admin 830.36 KB / 210.74 KB gzipped. Current `main` deployment e346435 had a successful Vercel status before the cleanup commit.
+- Performance assessment: `src/App.tsx` eagerly imports every public view (including the cake simulator, gallery and consultation); only AdminApp uses lazy loading. Next patch should lazy-load secondary route components behind Suspense while retaining the homepage and shared navigation. No performance source edits made yet.
+- Browser QA blocker: computer-use could not activate/capture Chrome confidently after one recovery attempt, then stopped the turn because it could not determine the current browser URL well enough to enforce policy. No further app input attempted. Resume browser QA in a fresh turn before deploying a performance patch; Agent Chat also remains offline.
+
 ### Current follow-up (2026-10-09)
 - Piyush reported Cakeasy's **first website sale on 9 October 2026**. He shared a screenshot of an AI recommendation naming Cakeasy by Neha Chaudhary; this is user-reported sale evidence, not independently verified conversion attribution. No customer details stored here.
 - Live technical audit completed: all **21 sitemap URLs** return 200, have matching canonical URLs, one H1, indexable robots metadata and real server-rendered page content. robots.txt permits public pages and lists the canonical sitemap.
@@ -98,16 +107,16 @@ CMS QA without real Google: run `npx firebase-tools@13.35.1 emulators:start --on
 8. Spam protection: basic validation and per-instance rate limit; forms do not yet send the accepted `website` honeypot. Consider stronger protection if spam appears.
 
 <!-- auto-snapshot:start -->
-## Auto snapshot (2026-10-24 09:10, Claude ended a turn)
+## Auto snapshot (2026-10-24 09:58, Claude ended a turn)
 Written automatically by a script, not by Claude. If it is newer than the notes above, the last session may have stopped before updating them: check the uncommitted files first.
 
 - Branch: `main`
-- Last request in the session: done and redeployed
+- Last request in the session: yes short and simple
 - Uncommitted files (2), work in progress that is not committed yet:
   - `?? .claude/`
   - `?? output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/`
 - Last commits:
+  - 2026-10-24 e346435 docs: record 24 Oct Search Console check
   - 2026-10-24 f8e00ed docs: Instagram feed live, token renewal date
   - 2026-10-24 f75ae4a docs: record Meta developer app settings and Instagram token next step
-  - 2026-10-09 e20fe75 docs: record first sale and verified Google indexing follow-up
 <!-- auto-snapshot:end -->

@@ -15,3 +15,6 @@ firebase-debug.log
 firestore-debug.log
 ui-debug.log
 .firebase/
+
+# Duplicate folder created when extracting the print pack locally
+output/Cakeasy_Print_Collateral_Pack/Cakeasy_Print_Collateral_Pack/
